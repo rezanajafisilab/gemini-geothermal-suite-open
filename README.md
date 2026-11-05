@@ -36,7 +36,10 @@ and no API key.
 
 **Measured on this release** (qwen3.5:9b on a GPU): 185 of 185 chat cases, 59 of 61 unclear or
 incomplete requests, and 71 of 76 turns in multi-turn conversations. 1,081 Python tests and 682
-interface tests pass.
+interface tests pass. The report and its transcripts come from the test run of the morning of 5 Nov
+(184 of 185, 51 of 52 and 64 of 65). This release then added project memory, CO₂ by unit, the inputs
+reset and design alerts, with new test cases for them; on the earlier cases it scores 185 of 185,
+50 of 52 and 62 of 65.
 
 ## What you need
 
