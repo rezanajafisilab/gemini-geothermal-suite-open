@@ -1,0 +1,2256 @@
+/* The inputs card's own parts (the rows' base styles are in styles.css, "The inputs card"):
+   the switches and the doublets' stop dates under the rows, the form of edit mode, and the
+   folded card's "Show the inputs". Every class is the card's own: the app's global .switch
+   (the header's old mode switch) squeezed the switch rows into a 26 px column. */
+
+.inputs-done .inputs-show {
+  margin-left: auto;
+}
+
+/* The options under the rows: a control on the left, its label and hint beside it. */
+.inputs-opts {
+  border: 0;
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--tile);
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.inputs-opt {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: start;
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+.inputs-opt-switch {
+  position: relative;
+  display: inline-flex;
+  padding-top: 1px;
+  cursor: pointer;
+}
+.inputs-opt-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+.inputs-opt-track {
+  position: relative;
+  flex: none;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(17, 24, 28, 0.18);
+  transition: background 0.15s ease;
+}
+.inputs-opt-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--card);
+  box-shadow: 0 1px 2px rgba(17, 24, 28, 0.25);
+  transition: transform 0.15s ease;
+}
+.inputs-opt-switch input:checked + .inputs-opt-track {
+  background: var(--teal);
+}
+.inputs-opt-switch input:checked + .inputs-opt-track .inputs-opt-thumb {
+  transform: translateX(14px);
+}
+.inputs-opt-switch input:focus-visible + .inputs-opt-track {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+.inputs-opt-switch input:disabled + .inputs-opt-track {
+  opacity: 0.55;
+}
+.inputs-opt-icon {
+  display: inline-flex;
+  justify-content: center;
+  padding-top: 1px;
+  color: var(--ink-3);
+}
+.inputs-stops.on .inputs-opt-icon {
+  color: var(--teal);
+}
+.inputs-opt-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  min-width: 0;
+}
+.inputs-opt-label {
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.inputs-stops .inputs-opt-label {
+  cursor: default;
+}
+.inputs-opt-hint {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.inputs-opt-hint b {
+  font-weight: 650;
+  color: var(--ink-2);
+}
+.inputs-opt-km {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.inputs-opt-km-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.inputs-opt-km input {
+  width: 76px;
+  padding: 4px 7px;
+  border: 1px solid var(--line-3);
+  border-radius: 7px;
+  background: var(--card);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.inputs-opt-km .unit {
+  color: var(--ink-3);
+}
+
+/* Who places the stops, and each doublet's block or ranges. */
+.inputs-stops-mode,
+.inputs-stop-kind {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--soft);
+}
+.inputs-stop-kind {
+  margin-top: 0;
+  padding: 2px;
+  border-radius: 8px;
+}
+.inputs-stops-mode label,
+.inputs-stop-kind label {
+  position: relative;
+  padding: 5px 11px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 550;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.inputs-stop-kind label {
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 12.5px;
+}
+.inputs-stops-mode label.on,
+.inputs-stop-kind label.on {
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(17, 24, 28, 0.14);
+}
+.inputs-stops-mode input,
+.inputs-stop-kind input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+.inputs-stops-mode label:has(input:focus-visible),
+.inputs-stop-kind label:has(input:focus-visible) {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+.inputs-stops-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+.inputs-stop {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 9px 11px;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  background: var(--card);
+}
+.inputs-stop.bad {
+  border-color: rgba(179, 38, 30, 0.45);
+}
+.inputs-stop-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+.inputs-stop-head strong {
+  font-weight: 650;
+}
+.inputs-stop-total {
+  margin-left: auto;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ok);
+  font-variant-numeric: tabular-nums;
+}
+.inputs-stop-total.short {
+  color: var(--red-ink);
+}
+.inputs-stop-range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.inputs-stop-range input[type="date"] {
+  padding: 4px 7px;
+  border: 1px solid var(--line-3);
+  border-radius: 7px;
+  background: var(--card);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.inputs-stop-range input[aria-invalid="true"] {
+  border-color: #b3261e;
+}
+.inputs-stop-to,
+.inputs-stop-days {
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.inputs-stop-remove {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--soft);
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+.inputs-stop-add {
+  align-self: flex-start;
+  font-size: 12.5px;
+}
+
+/* Edit mode: fields in the rows that hold parameters, the others greyed with a lock. */
+.inputs-edit-note {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--teal-bg);
+  color: var(--teal);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.inputs-table.editing .inputs-row.locked {
+  opacity: 0.62;
+  cursor: help;
+}
+.inputs-lock {
+  display: inline-flex;
+  color: var(--ink-4);
+}
+.inputs-now {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.inputs-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 3px 0 2px;
+}
+.inputs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  max-width: 100%;
+}
+.inputs-field-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.inputs-field-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 9.5em;
+  max-width: 100%;
+  padding: 0 9px;
+  border: 1.5px solid #cbd6d7;
+  border-radius: 9px;
+  background: var(--card);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.inputs-field-box:focus-within {
+  border-color: var(--teal-2);
+  box-shadow: 0 0 0 3px rgba(11, 143, 160, 0.18);
+}
+.inputs-field-box input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  padding: 6px 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.inputs-field-box .unit {
+  flex: none;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.inputs-field select {
+  max-width: 100%;
+  padding: 6px 8px;
+  border: 1.5px solid #cbd6d7;
+  border-radius: 9px;
+  background: var(--card);
+  font: inherit;
+  font-size: 14px;
+}
+.inputs-field select:focus-visible {
+  outline: none;
+  border-color: var(--teal-2);
+  box-shadow: 0 0 0 3px rgba(11, 143, 160, 0.18);
+}
+.inputs-field.changed .inputs-field-box,
+.inputs-field.changed select,
+.inputs-field.changed .inputs-field-options label.on {
+  border-color: var(--amber-dot);
+  background: #fffaf0;
+}
+.inputs-field.bad .inputs-field-box,
+.inputs-field.bad select {
+  border-color: #b3261e;
+  box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.1);
+}
+.inputs-field-range {
+  font-size: 11.5px;
+  color: var(--ink-4);
+  font-variant-numeric: tabular-nums;
+}
+.inputs-field-error {
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--red-ink);
+}
+.inputs-field-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.inputs-field-options label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  border: 1.5px solid #cbd6d7;
+  border-radius: 999px;
+  background: var(--card);
+  font-size: 13px;
+  cursor: pointer;
+}
+.inputs-field-options input {
+  margin: 0;
+  accent-color: var(--teal);
+}
+.inputs-edit-count {
+  align-self: center;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.inputs-edit-count.bad {
+  color: var(--red-ink);
+  font-weight: 550;
+}
+.inputs-type-instead {
+  align-self: flex-start;
+  font-size: 13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inputs-opt-track,
+  .inputs-opt-thumb,
+  .inputs-field-box {
+    transition: none;
+  }
+}
+
+/* "Another design" with nothing changed: the card says these inputs already ran. */
+.inputs-again {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.inputs-again strong {
+  font-weight: 650;
+}
+.inputs-again-label {
+  color: var(--amber-ink-2);
+}
+
+
+/* ------------------------------------------------------------------ Maintenance (2 Nov) */
+/* One list of units (4 Nov): a card per unit that stops (the doublets always, the others once
+   added), each with what it is and when it stops; tiles under it add another unit's stop. */
+.mt {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  font-size: 13.5px;
+}
+.mt-lead {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.mt-lead b {
+  color: var(--ink);
+  font-weight: 650;
+}
+.mt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mt-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: var(--shadow-chip);
+}
+.mt-card.bad {
+  border-color: rgba(179, 38, 30, 0.45);
+}
+.mt-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mt-card-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.mt-card-titles b {
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--ink);
+}
+.mt-what {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+.mt-req {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.mt-remove {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.mt-remove:hover {
+  background: var(--soft);
+  color: var(--ink);
+}
+.mt-remove:focus-visible,
+.mt-add-tile:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+.mt-card > .mt-seg,
+.mt-card > .mt-days,
+.mt-card > .inputs-stops-list,
+.mt-card > .mt-unit-dates,
+.mt-card > .inputs-field-error {
+  margin-left: 38px;
+}
+.mt-card > .inputs-stops-list {
+  width: auto;
+  margin-top: 0;
+}
+.mt-unit-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.mt-unit-each {
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+/* The year, a month per segment, the days off as bars. */
+.mt-year {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 440px;
+}
+.mt-year-track {
+  position: relative;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--soft);
+  overflow: hidden;
+}
+.mt-year-tick {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 1px;
+  background: var(--line-3);
+}
+.mt-year-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 3px;
+  border-radius: 3px;
+  background: var(--teal-2);
+}
+.mt-year-months {
+  position: relative;
+  height: 12px;
+  font-size: 9.5px;
+  color: var(--ink-4);
+}
+.mt-year-months span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+/* Add a stop: a tile per unit with no stop, its icon, name and what it does. */
+.mt-add {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.mt-add-head {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.mt-add-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 6px;
+}
+.mt-add-tile {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px dashed var(--line-3);
+  border-radius: 10px;
+  background: var(--tile);
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.mt-add-tile:hover {
+  border-style: solid;
+  border-color: var(--teal-2);
+  background: var(--card);
+}
+.mt-add-tile .ic-ico {
+  width: 26px;
+  height: 26px;
+}
+.mt-add-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.mt-add-text b {
+  font-size: 13px;
+  font-weight: 650;
+}
+.mt-add-text small {
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--ink-3);
+}
+.mt-add-plus {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+@media (max-width: 640px) {
+  .mt-card > .mt-seg,
+  .mt-card > .mt-days,
+  .mt-card > .inputs-stops-list,
+  .mt-card > .mt-unit-dates,
+  .mt-card > .inputs-field-error {
+    margin-left: 0;
+  }
+}
+.mt-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--soft);
+  width: fit-content;
+  max-width: 100%;
+}
+.mt-seg label {
+  position: relative;
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 550;
+  color: var(--ink-2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mt-seg label.on {
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(17, 24, 28, 0.14);
+}
+.mt-seg input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+.mt-seg label:has(input:focus-visible) {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+.mt-days {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+.mt-day {
+  display: grid;
+  grid-template-columns: 6.5rem 5rem auto;
+  align-items: center;
+  gap: 4px 10px;
+}
+.mt-day > label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.mt-day input,
+.mt-block-days {
+  width: 5rem;
+  height: 30px;
+  box-sizing: border-box;
+  padding: 0 8px;
+  border: 1px solid var(--line-3);
+  border-radius: 8px;
+  background: var(--card);
+  font: inherit;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.mt-block-days {
+  width: 4.2rem;
+}
+.mt-day input:focus-visible,
+.mt-block-days:focus-visible {
+  outline: none;
+  border-color: var(--teal-2);
+  box-shadow: 0 0 0 3px var(--teal-bg);
+}
+.mt-day.bad input {
+  border-color: var(--red);
+}
+.mt-unit {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.mt-day > .mt-relaxed,
+.mt-day > .inputs-field-error {
+  grid-column: 2 / -1;
+}
+.mt-relaxed {
+  display: block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+/* ---------------------------------------------------------------- the card in pages (4 Nov) */
+/* A step bar, a page of rows (each parameter: its name and explanation on the left, its box
+   and range bar on the right, its issues under them), a review page, and a foot with Back,
+   Next and Run. Red blocks the run, amber warns, teal marks a change. */
+
+.ic .inputs-body {
+  gap: 12px;
+}
+.ic-steps {
+  display: flex;
+  gap: 3px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--soft);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ic-steps::-webkit-scrollbar {
+  display: none;
+}
+.ic-step {
+  position: relative;
+  flex: 1 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 9px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.ic-step:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.55);
+}
+.ic-step.on {
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(17, 24, 28, 0.14);
+}
+.ic-step:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+.ic-step-num {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(17, 24, 28, 0.08);
+  color: var(--ink-2);
+  font-size: 10.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ic-step.on .ic-step-num {
+  background: var(--ink);
+  color: #fff;
+}
+.ic-step.changed .ic-step-num {
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+.ic-step.on.changed .ic-step-num {
+  background: var(--teal);
+  color: #fff;
+}
+.ic-step.review .ic-step-num {
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+.ic-step.review.on .ic-step-num {
+  background: var(--teal);
+  color: #fff;
+}
+.ic-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--soft);
+}
+.ic-step.on .ic-dot {
+  box-shadow: 0 0 0 2px var(--card);
+}
+.ic-dot.block {
+  background: var(--red);
+}
+.ic-dot.warn {
+  background: var(--amber-dot);
+}
+
+.ic-page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.ic-page-head h3 {
+  margin: 2px 0 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.005em;
+}
+.ic-page-head p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+.ic-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ic-row {
+  display: flex;
+  flex-direction: column;
+  padding: 11px 14px 6px;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--card);
+  min-width: 0;
+}
+.ic-row.changed {
+  box-shadow: inset 3px 0 0 var(--teal);
+}
+.ic-row.info {
+  background: var(--tile);
+  padding-bottom: 11px;
+}
+.ic-row-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 12px;
+}
+.ic-row-head h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--ink);
+}
+.ic-src {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 4px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.ic-src i {
+  align-self: center;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-4);
+}
+.ic-src b {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.ic-src.src-data i {
+  background: #0b8fa0;
+}
+.ic-src.src-fixed i {
+  background: #3d6aa8;
+}
+.ic-src.src-derived i {
+  background: #7856c4;
+}
+.ic-src.src-assumed i {
+  background: var(--amber-dot);
+}
+.ic-src.src-asked i,
+.ic-src.src-mine i {
+  background: var(--teal);
+}
+.ic-src.src-mine b {
+  color: var(--teal);
+}
+.ic-src-detail .file-ref {
+  font-size: 11.5px;
+}
+.ic-row-value {
+  margin: 3px 0 4px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.ic-row-why {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.ic-row-why svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--ink-3);
+}
+
+/* One parameter: text left, control right; issues and "More" under both. */
+.ic-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 18px;
+  padding: 10px 0 8px;
+  border-top: 1px dashed var(--line-3);
+}
+.ic-field.wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ic-field-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ic-field-name-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+.ic-field-name {
+  font-size: 13.5px;
+  font-weight: 620;
+  color: var(--ink);
+}
+.ic-was {
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--teal-bg);
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.ic-help {
+  max-width: 58ch;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+.ic-field-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  min-width: 0;
+}
+.ic-field.wide .ic-field-control {
+  align-items: flex-start;
+}
+.ic-box {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line-3);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: var(--shadow-chip);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.ic-box:focus-within {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(10, 111, 124, 0.14);
+}
+.ic-box input {
+  width: 92px;
+  padding: 6px 4px 6px 9px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 550;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ic-box input::placeholder {
+  color: var(--red-ink);
+  font-weight: 500;
+  font-size: 12px;
+}
+.ic-box .unit {
+  padding: 0 9px 0 3px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.ic-box.small input {
+  width: 72px;
+  padding: 4px 4px 4px 7px;
+  font-size: 13px;
+}
+.lvl-changed .ic-box {
+  border-color: rgba(10, 111, 124, 0.5);
+  background: #f4fbfc;
+}
+.lvl-warn .ic-box {
+  border-color: var(--amber-dot);
+  background: #fffaf0;
+}
+.ic-box.bad,
+.lvl-block .ic-box {
+  border-color: var(--red);
+  background: var(--red-bg);
+}
+.lvl-block .ic-box:focus-within,
+.ic-box.bad:focus-within {
+  box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.15);
+}
+.ic-list-hint {
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+.ic-field-control .ic-box input[inputmode="text"] {
+  width: 160px;
+  text-align: left;
+}
+
+/* The model's range: typical values shaded, the challenge's cap ticked, the value a dot. */
+.ic-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 168px;
+}
+.ic-bar-track {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--soft-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.ic-bar-typical {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 3px;
+  background: rgba(11, 143, 160, 0.28);
+}
+.ic-bar-cap {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--ink-2);
+}
+.ic-bar-dot {
+  position: absolute;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  margin: -5.5px 0 0 -5.5px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow:
+    0 0 0 2px var(--card),
+    0 1px 3px rgba(17, 24, 28, 0.3);
+  transition: left 0.2s ease;
+}
+.ic-bar-dot.warn {
+  background: var(--amber-dot);
+}
+.ic-bar-dot.block {
+  background: var(--red);
+}
+.ic-bar-ends {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 10.5px;
+  line-height: 1.2;
+  color: var(--ink-4);
+  font-variant-numeric: tabular-nums;
+}
+.ic-bar-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.ic-bar-key::before {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-radius: 2px;
+  background: rgba(11, 143, 160, 0.28);
+}
+.ic-bar-key.cap::before {
+  width: 2px;
+  height: 8px;
+  background: var(--ink-2);
+}
+
+/* Issues: red blocks the run, amber warns, a note says what follows. */
+.ic-issues {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+.ic-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.ic-msg-icon {
+  flex: none;
+  display: inline-flex;
+  margin-top: 2px;
+}
+.ic-msg.block {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--red-bg-2);
+  color: var(--red-ink);
+  font-weight: 560;
+}
+.ic-msg.block .ic-msg-icon {
+  color: var(--red);
+}
+.ic-msg.warn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+}
+.ic-msg.warn .ic-msg-icon {
+  color: var(--amber-dot);
+}
+.ic-msg.note {
+  color: var(--ink-2);
+}
+.ic-msg.note .ic-msg-icon {
+  color: var(--teal);
+}
+.ic-more {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.ic-more summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--teal);
+  cursor: pointer;
+  list-style: none;
+}
+.ic-more summary::-webkit-details-marker {
+  display: none;
+}
+.ic-more summary::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+.ic-more[open] summary::after {
+  margin-top: 3px;
+  transform: rotate(225deg);
+}
+.ic-more dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 3px 12px;
+  margin: 6px 0 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--tile);
+}
+.ic-more dt {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.ic-more dd {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+/* Choices: a segmented strip (up to four), a select, or chips for several. */
+.ic-seg,
+.ic-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--soft);
+}
+.ic-seg label,
+.ic-chips label {
+  position: relative;
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 560;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.ic-seg label.on {
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(17, 24, 28, 0.14);
+}
+.ic-chips {
+  background: transparent;
+  padding: 0;
+  gap: 6px;
+}
+.ic-chips label {
+  border: 1px solid var(--line-3);
+  background: var(--card);
+}
+.ic-chips label.on {
+  border-color: var(--teal);
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+.ic-seg input,
+.ic-chips input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+.ic-seg label:has(input:focus-visible),
+.ic-chips label:has(input:focus-visible) {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+.ic-select select {
+  padding: 6px 28px 6px 10px;
+  border: 1px solid var(--line-3);
+  border-radius: 8px;
+  background: var(--card);
+  font: inherit;
+  font-size: 13.5px;
+}
+
+/* A records field: a small table of boxes. */
+.ic-records {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.ic-records table {
+  border-collapse: separate;
+  border-spacing: 4px 3px;
+  font-size: 12.5px;
+}
+.ic-records th {
+  font-weight: 600;
+  color: var(--ink-2);
+  text-align: left;
+  white-space: nowrap;
+}
+.ic-records thead th {
+  padding: 0 2px;
+  vertical-align: bottom;
+}
+.ic-records th small {
+  display: block;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.ic-records tbody th {
+  padding-right: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.ic-records tbody th small {
+  display: inline;
+  margin-left: 4px;
+  font-size: 10.5px;
+}
+.ic-records td input {
+  width: 78px;
+  padding: 5px 7px;
+  border: 1px solid var(--line-3);
+  border-radius: 7px;
+  background: var(--card);
+  font: inherit;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ic-records td input:focus {
+  outline: 0;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(10, 111, 124, 0.14);
+}
+.ic-records td input.bad {
+  border-color: var(--red);
+  background: var(--red-bg);
+}
+.ic-rec-remove {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: 16px;
+  cursor: pointer;
+}
+.ic-rec-remove:hover {
+  background: var(--red-bg);
+  color: var(--red-ink);
+}
+.ic-rec-add {
+  font-size: 12.5px;
+}
+
+/* Switches inside a row. */
+.ic-row .ic-toggle {
+  padding: 10px 0 8px;
+  border-top: 1px dashed var(--line-3);
+}
+.ic-row-opts .ic-toggle:first-child {
+  border-top: 0;
+}
+.ic-toggle .ic-msg {
+  margin-top: 4px;
+}
+.ic-toggle .ic-more {
+  margin-top: 2px;
+}
+.ic-maint {
+  padding: 10px 0 8px;
+  border-top: 1px dashed var(--line-3);
+}
+
+/* The review. */
+.ic-review {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ic-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.ic-tile {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--tile);
+  border: 1px solid var(--line-2);
+}
+.ic-tile b {
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+.ic-tile span {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.ic-tile.teal {
+  background: var(--teal-num);
+  border-color: rgba(10, 111, 124, 0.18);
+}
+.ic-tile.teal b {
+  color: var(--teal);
+}
+.ic-tile.red {
+  background: var(--red-bg);
+  border-color: rgba(180, 35, 24, 0.2);
+}
+.ic-tile.red b,
+.ic-tile.red span {
+  color: var(--red-ink);
+}
+.ic-tile.ok b {
+  color: var(--ok);
+}
+.ic-tile.amber {
+  background: var(--amber-bg);
+  border-color: rgba(217, 154, 30, 0.3);
+}
+.ic-tile.amber b,
+.ic-tile.amber span {
+  color: var(--amber-ink);
+}
+.ic-review-block {
+  padding: 10px 14px;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--card);
+}
+.ic-review-block.red {
+  border-color: rgba(180, 35, 24, 0.28);
+  box-shadow: inset 3px 0 0 var(--red);
+}
+.ic-review-block.amber {
+  border-color: rgba(217, 154, 30, 0.35);
+  box-shadow: inset 3px 0 0 var(--amber-dot);
+}
+.ic-review-block h4 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.ic-review-block ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ic-review-block li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 14px;
+  padding: 5px 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.ic-review-block li + li {
+  border-top: 1px solid var(--line);
+}
+.ic-review-what b {
+  font-weight: 620;
+  margin-right: 4px;
+}
+.ic-was-now {
+  color: var(--ink-3);
+  text-decoration: line-through;
+  text-decoration-color: rgba(17, 24, 28, 0.3);
+}
+.ic-now {
+  font-weight: 620;
+  color: var(--teal);
+}
+.ic-goto {
+  flex: none;
+  font-size: 12.5px;
+}
+.ic-review-none {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.ic-follows li {
+  display: block;
+  color: var(--ink-2);
+}
+
+/* The foot: Back and Next on the left, the status and Run on the right. */
+.ic-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-2);
+}
+.ic-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ic-nav .btn {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+.ic-go {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 12px;
+  margin-left: auto;
+}
+.ic-status {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.ic-status.bad {
+  color: var(--red-ink);
+  font-weight: 600;
+}
+.ic-change {
+  font-size: 13px;
+}
+.ic-run.is-blocked {
+  background: var(--ink-3);
+}
+
+@media (max-width: 620px) {
+  .ic-field {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ic-field-control {
+    align-items: flex-start;
+  }
+  .ic-step-name {
+    display: none;
+  }
+  .ic-step.on .ic-step-name {
+    display: inline;
+  }
+  .ic-tiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.ic-row-help {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.ic-row-help + .ic-row-value {
+  margin-top: 2px;
+}
+.ic-chips.neg label.on {
+  border-color: rgba(180, 35, 24, 0.45);
+  background: var(--red-bg);
+  color: var(--red-ink);
+  text-decoration: line-through;
+  text-decoration-color: rgba(161, 44, 34, 0.55);
+}
+
+/* ------------------------------------------- 4 Nov, second pass: fewer words, more cues */
+/* Tints for the icons (pages and rows): heat, cold, rock, brine, limits, prices, request. */
+.ic-ico {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+.t-heat {
+  background: #fdebe2;
+  color: var(--heat);
+}
+.t-cold {
+  background: #e3eefa;
+  color: var(--cold);
+}
+.t-earth {
+  background: #f3ece2;
+  color: #8a5a2b;
+}
+.t-teal {
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+.t-violet {
+  background: #efeafb;
+  color: #5b3fa6;
+}
+.t-red {
+  background: var(--red-bg-2);
+  color: var(--red-ink);
+}
+.t-green {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.t-amber {
+  background: var(--amber-bg);
+  color: var(--amber-ink-2);
+}
+.t-ink {
+  background: var(--soft);
+  color: var(--ink-2);
+}
+
+/* The step bar: an icon per page in its tint. */
+.ic-step-ico {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink-3);
+}
+.ic-step:not(.on) .ic-step-ico {
+  background: transparent;
+}
+.ic-step.on .ic-step-ico,
+.ic-step.changed .ic-step-ico {
+  background: var(--soft);
+}
+.ic-step.on .ic-step-ico.t-heat,
+.ic-step.on .ic-step-ico.t-amber {
+  background: var(--amber-bg);
+  color: var(--amber-ink-2);
+}
+.ic-step.on .ic-step-ico.t-earth {
+  background: #f3ece2;
+  color: #8a5a2b;
+}
+.ic-step.on .ic-step-ico.t-teal {
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+.ic-step.on .ic-step-ico.t-violet {
+  background: #efeafb;
+  color: #5b3fa6;
+}
+.ic-step.on .ic-step-ico.t-red {
+  background: var(--red-bg-2);
+  color: var(--red-ink);
+}
+.ic-step.on .ic-step-ico.t-green {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.ic-step.on .ic-step-ico.t-ink {
+  background: var(--soft);
+  color: var(--ink);
+}
+.ic-step.changed:not(.on) .ic-step-ico {
+  color: var(--teal);
+  background: var(--teal-bg);
+}
+
+/* A row: icon, name and one line, the source as a chip; the value as read on one line. */
+.ic-row-head {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ic-row-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.ic-row-titles h4 {
+  line-height: 1.3;
+}
+.ic-row-titles .ic-row-help {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+.ic-src {
+  flex: 0 1 auto;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+  max-width: 46%;
+  margin-top: 2px;
+}
+.ic-src b {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  padding: 1px 8px 1px 7px;
+  border-radius: 999px;
+  background: var(--soft);
+  font-size: 11.5px;
+  font-weight: 620;
+  white-space: nowrap;
+}
+.ic-src.src-mine b {
+  background: var(--teal-bg);
+}
+.ic-src-detail {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+}
+.ic-src-detail .file-ref {
+  max-width: 100%;
+}
+.ic-row-value {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 6px 0 2px 38px;
+  font-size: 12.5px;
+}
+.ic-asread {
+  flex: none;
+  padding: 0 6px;
+  border-radius: 5px;
+  background: var(--tile);
+  border: 1px solid var(--line-2);
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  line-height: 16px;
+}
+.ic-row-why {
+  margin-left: 38px;
+}
+.ic-row .ic-field,
+.ic-row .ic-toggle,
+.ic-row .ic-maint {
+  margin-left: 38px;
+}
+
+/* A parameter: a coloured edge for its state, one line of help with "more". */
+.ic-field {
+  position: relative;
+  padding-left: 12px;
+}
+.ic-field::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 2px;
+  background: transparent;
+}
+.ic-field.lvl-changed::before,
+.ic-field.lvl-mine::before {
+  background: var(--teal);
+}
+.ic-field.lvl-warn::before {
+  background: var(--amber-dot);
+}
+.ic-field.lvl-block::before {
+  background: var(--red);
+}
+.lvl-mine .ic-box {
+  border-color: rgba(10, 111, 124, 0.45);
+}
+.ic-help {
+  display: block;
+}
+.ic-more-btn {
+  margin-left: 6px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--teal);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 650;
+  line-height: 18px;
+  cursor: pointer;
+  vertical-align: 1px;
+}
+.ic-more-btn:hover {
+  background: var(--teal-bg);
+}
+.ic-more-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+.ic-more-panel {
+  grid-column: 1 / -1;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--tile);
+  border: 1px solid var(--line-2);
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.ic-more-panel p {
+  margin: 0 0 6px;
+  line-height: 1.45;
+}
+.ic-more-panel dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 5px 12px;
+  margin: 0;
+}
+.ic-more-panel dt {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-top: 2px;
+}
+.ic-more-panel dd {
+  margin: 0;
+  line-height: 1.45;
+}
+.ic-toggle .ic-more-panel {
+  margin-top: 6px;
+}
+
+/* Chips: yours (teal), a link to another box (outlined), what it changes in the design (grey). */
+.ic-chip-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 5px;
+  min-width: 0;
+}
+.ic-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 560;
+  line-height: 20px;
+  white-space: nowrap;
+}
+button.ic-chip {
+  cursor: pointer;
+}
+.ic-chip.mine {
+  background: var(--teal-bg);
+  color: var(--teal);
+  font-weight: 650;
+}
+.ic-chip.mine.strong {
+  padding: 1px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.ic-chip.mine.strong b {
+  font-weight: 750;
+}
+.ic-chip.link,
+.ic-chip.linked {
+  border-color: rgba(10, 111, 124, 0.35);
+  background: var(--card);
+  color: var(--teal);
+}
+.ic-chip.link:hover,
+.ic-chip.linked:hover {
+  background: var(--teal-bg);
+}
+.ic-chip.out {
+  background: var(--soft);
+  color: var(--ink-2);
+}
+
+/* The banner: what you set, and what each one affects. */
+.ic-yours {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(10, 111, 124, 0.22);
+  background: linear-gradient(180deg, #f2fafb, #ffffff);
+}
+.ic-yours.folded {
+  padding: 6px 12px;
+}
+.ic-yours-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.ic-yours-head .ic-ico {
+  width: 24px;
+  height: 24px;
+}
+.ic-yours-head b {
+  font-weight: 650;
+  white-space: nowrap;
+}
+.ic-yours-sub {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+.ic-yours-head .ic-more-btn {
+  margin-left: auto;
+}
+.ic-yours ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ic-yours li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px 8px;
+}
+.ic-yours-arrow {
+  color: var(--ink-4);
+  line-height: 22px;
+}
+
+/* The foot's status: dots instead of words where they can. */
+.ic-dot-inline {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin: 0 5px 1px 8px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.ic-dot-inline:first-child {
+  margin-left: 0;
+}
+.ic-dot-inline.block {
+  background: var(--red);
+}
+.ic-dot-inline.warn {
+  background: var(--amber-dot);
+}
+.ic-dot-inline.changed {
+  background: var(--teal);
+}
+.ic-run svg {
+  margin-right: 2px;
+}
+
+@media (max-width: 620px) {
+  .ic-row .ic-field,
+  .ic-row .ic-toggle,
+  .ic-row .ic-maint,
+  .ic-row-value,
+  .ic-row-why {
+    margin-left: 0;
+  }
+  .ic-row-head {
+    flex-wrap: wrap;
+  }
+  .ic-src {
+    max-width: 100%;
+  }
+  .ic-yours li {
+    flex-wrap: wrap;
+  }
+}
+
+/* The step bar as a stepper: the icon above its name, every step the same width. */
+.ic-step {
+  flex: 1 1 0;
+  min-width: 58px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 4px 5px;
+  font-size: 11.5px;
+}
+.ic-step-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ic-dot {
+  top: 5px;
+  right: calc(50% - 17px);
+}
+.ic-follow-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+.ic-follow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--tile);
+}
+/* The words beside the icon (not every span: the icon's box is one, and must stay a centred grid). */
+.ic-follow-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+.ic-follow b {
+  font-size: 16px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.ic-follow small {
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+
+/* The aquifers' table: what each one is, its note, the boxes the server fills. */
+.ic-rec-kind {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 16px;
+  vertical-align: 1px;
+}
+.ic-records tbody th small.ic-rec-kind {
+  margin-left: 5px;
+}
+.ic-rec-kind.k-known {
+  background: #f3ece2;
+  color: #8a5a2b;
+}
+.ic-rec-kind.k-assumed {
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+}
+.ic-rec-kind.k-given,
+.ic-rec-kind.k-new {
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+.ic-records tr.has-note td,
+.ic-records tr.has-note th {
+  padding-bottom: 0;
+}
+.ic-rec-note td {
+  padding: 0 0 4px 2px;
+  font-size: 11.5px;
+  line-height: 1.3;
+  color: var(--ink-3);
+}
+.ic-records td input.auto::placeholder {
+  color: var(--ink-4);
+  font-style: italic;
+}
+.ic-records td input::placeholder {
+  color: var(--red-ink);
+  font-size: 11.5px;
+}
+
+/* ------------------------------------------------------------------ the project's defaults (5 Nov) */
+/* "Reset to defaults" at the card's foot: every input back to the project's own (the server
+   shows the card again); a field typed away from its default has a violet dot and its own
+   "default …" button; a typed reply that was refused, or a reset, is said at the card's top. */
+.ic-reset-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border: 1px solid #e6d3a6;
+  border-radius: 999px;
+  background: #fffdf7;
+  color: var(--amber-ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+.ic-reset-all:hover:not(:disabled) {
+  background: #fff3d6;
+  border-color: var(--amber-dot);
+}
+.ic-reset-all:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+.ic-reset-all:disabled {
+  cursor: default;
+  color: var(--ink-4);
+  border-color: var(--line-3);
+  background: transparent;
+}
+.ic-default {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.ic-default-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #7a5af5;
+  box-shadow: 0 0 0 2px rgba(122, 90, 245, 0.16);
+}
+.ic-default-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 7px;
+  border: 1px solid rgba(122, 90, 245, 0.28);
+  border-radius: 999px;
+  background: #f5f2ff;
+  color: #5b3fd0;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.ic-default-btn:hover:not(:disabled) {
+  background: #ebe5ff;
+}
+.ic-default-btn:focus-visible {
+  outline: 2px solid #7a5af5;
+  outline-offset: 1px;
+}
+.ic-default-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.ic-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.ic-notice.refused {
+  border: 1px solid #f0d9a4;
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+}
+.ic-notice.reset {
+  border: 1px solid rgba(10, 111, 124, 0.22);
+  background: linear-gradient(180deg, #f2fafb, #ffffff);
+  color: var(--ink-2);
+}
+.ic-notice .ic-ico {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+.ic-notice-text {
+  min-width: 0;
+}
+.ic-notice-text b {
+  font-weight: 650;
+}
+.ic-notice-text ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+.ic-notice-text li + li {
+  margin-top: 2px;
+}
+.ic-notice-text p {
+  margin: 4px 0 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ic-reset-all {
+    transition: none;
+  }
+}

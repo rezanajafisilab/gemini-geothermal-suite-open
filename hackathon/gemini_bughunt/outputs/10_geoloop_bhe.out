@@ -1,0 +1,20 @@
+=== 1. Stand-alone, default config (100 m single U-tube, TIN mode, Tin=5 C, m=0.45 kg/s)
+  geoloop dt = 360000 s (100 h per model step); Tg=10 C, Tgrad=2.0 C/100m?
+  step  1: T_out=5.979 C, Q_b=1848.1 W, m*cp*(Tout-Tin)=1842.3 W, pump=17.95 W, T_b,mean=8.102 C, wall-time 43 ms, history len=1
+  step  2: T_out=5.915 C, Q_b=1726.0 W, m*cp*(Tout-Tin)=1720.6 W, pump=17.96 W, T_b,mean=7.897 C, wall-time 68 ms, history len=2
+  step  5: T_out=5.843 C, Q_b=1590.6 W, m*cp*(Tout-Tin)=1585.6 W, pump=17.96 W, T_b,mean=7.670 C, wall-time 157 ms, history len=5
+  step 10: T_out=5.802 C, Q_b=1513.6 W, m*cp*(Tout-Tin)=1508.8 W, pump=17.97 W, T_b,mean=7.540 C, wall-time 237 ms, history len=10
+  step 20: T_out=5.761 C, Q_b=1436.7 W, m*cp*(Tout-Tin)=1432.1 W, pump=17.97 W, T_b,mean=7.411 C, wall-time 379 ms, history len=20
+  step 40: T_out=5.727 C, Q_b=1371.6 W, m*cp*(Tout-Tin)=1367.3 W, pump=17.97 W, T_b,mean=7.302 C, wall-time 615 ms, history len=40
+  per-step wall time grows: step1 43 ms -> step40 615 ms (whole history re-simulated every call)
+
+=== 2. Same model inside gemini_simulator.Solver (DynamicModel path), 5 solver time steps
+  solver steps=5 -> calculate_output calls=5, update_state calls=10, geoloop history length=10 (expected 5)
+  solver-recorded outputs T_out: [5.915, 5.859, 5.832, 5.815, 5.802]
+
+=== 3. Hourly use: nled=1 -> dt
+  nled=1 -> geoloop dt = 3600 s
+  200 hourly steps in 217.8 s; last step T_out=5.916 C
+
+=== 4. POWER mode (heat load prescribed)
+  POWER ok: T_in=0.162 T_out=1.752 Q_b=3000.0 W

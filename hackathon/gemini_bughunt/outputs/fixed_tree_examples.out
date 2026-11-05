@@ -1,0 +1,39 @@
+=== FIXED TREE: run_doublet_plant_example
+Solved primary flow rate (well nodal balance): 210.67 m3/h
+Separator out:   P=2.7893 bar, T=79.00 C
+Heat exch. out:  T_primary=55.12 C, T_secondary=63.04 C
+Boiler:          T_out=67.82 C, power_th=0.655 MW
+CHP:             T_out=23.18 C, power_el=0.055 MW, power_th=0.109 MW
+Secondary gas power (boiler.power_th + chp.power_th): 0.765 MW
+ESP (producer):  power_el=0.1955 MW
+Injector well:   P_wellhead=0.0010 bar (surface P=0.4676 bar)
+Injector pump:   power_el=0.0000 MW
+
+T_s_out:         58.89 C   (flow-weighted mix of boiler/CHP outlets)
+power_plant:     6.670 MW  (secondary-network thermal power)
+power_doublet:   5.905 MW  (primary-side thermal power extracted)
+power_total:     6.529 MW  (power_plant - ESP - InjectorPump + CHP)
+electricity_surplus: -0.1409 MW  (CHP - ESP - InjectorPump)
+emission_total:  6022.30 kg CO2/day  (boiler + CHP gas, ESP + InjectorPump electricity)
+
+----------------------------------------------------------
+Q (primary flow rate):        210.67 m3/h
+Pres_P (producer reservoir):  250.00 bar
+Pres_I (injector reservoir):  240.00 bar
+ESP_in (intake pressure):     46.7800 bar
+ESP_out (discharge pressure): 70.6569 bar
+T_s_out:                      58.89 C
+power_plant:                  6.670 MW
+emission_total:               6022.30 kg CO2/day
+=== FIXED TREE: run_parallel_hex_plant_example
+Primary flow rate (well nodal balance): 125.10 m3/h
+ESP power_el:    0.2431 MW
+Degasser out:    P=9.8749 bar, T=76.00 C
+Filter_1 out:    P=8.6232 bar, T=75.00 C, Q=125.10 m3/h
+hex_1:          Q_primary=62.55 m3/h, T_primary_out=71.00 C, T_secondary_out=24.00 C
+hex_2:          Q_primary=37.53 m3/h, T_primary_out=71.00 C, T_secondary_out=24.00 C
+hex_3:          Q_primary=25.02 m3/h, T_primary_out=71.00 C, T_secondary_out=24.00 C
+HEX mixer out:   Q=125.10 m3/h, T=71.00 C
+Filter_2 out:    P=8.4973 bar, T=70.00 C, Q=125.10 m3/h
+Injector well:   P_wellhead=54.8642 bar
+Injector pump:   power_el=0.2014 MW, emission=1450.08 kg CO2/day

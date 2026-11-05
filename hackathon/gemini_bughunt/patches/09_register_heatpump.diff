@@ -1,0 +1,18 @@
+--- a/src/gemini_simulator/registry.py
++++ b/src/gemini_simulator/registry.py
+@@ -15,6 +15,7 @@ from gemini_model.chp.chp import CHP
+ from gemini_model.filter.filter import Filter
+ from gemini_model.fluid.pvt_water_stp import PVTConstantSTP
+ from gemini_model.heat_exchanger.heat_exchanger import HeatExchanger
++from gemini_model.heatpump.heatpump_basic import HeatpumpBasic
+ from gemini_model.injector_pump.injector_pump import InjectorPump
+ from gemini_model.mixer.mixer import Mixer
+ from gemini_model.pump.esp import ESP
+@@ -32,6 +33,7 @@ COMPONENT_REGISTRY = {
+     "separator": Separator,
+     "filter": Filter,
+     "heat_exchanger": HeatExchanger,
++    "heatpump": HeatpumpBasic,
+     "boiler": Boiler,
+     "chp": CHP,
+     "injector_pump": InjectorPump,

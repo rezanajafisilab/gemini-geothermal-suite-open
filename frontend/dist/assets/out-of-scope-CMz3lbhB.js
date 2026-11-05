@@ -1,0 +1,31 @@
+var e=`data: {"type": "RUN_STARTED", "timestamp": 1793260300000, "threadId": "w-out", "runId": "d4c0de5e04"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793260300001, "stepName": "intake", "metadata": {"label": "Read the request", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793260300002, "stepName": "intake", "metadata": {"tokens": 0, "relevant": false, "intent": "other", "screened": true, "seconds": 0.001}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793260300003, "stepName": "answer", "metadata": {"label": "Write the answer", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793260301023, "stepName": "answer", "metadata": {"decided_by": "model", "model": "qwen3.5:9b", "device": "gpu", "tokens": 1933, "understood": "You want tomorrow's weather forecast for Paris.", "kind": "out_of_scope", "scope": "out", "seconds": 1.02}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260301023, "name": "usage", "value": {"purpose": "answer", "model": "qwen3.5:9b", "prompt_tokens": 1872, "output_tokens": 61, "seconds": 1.02, "load_seconds": 0.002, "prompt_seconds": 0.306, "output_seconds": 0.694, "ok": true, "error": ""}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793260301024, "messageId": "5c2e1f0a55", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260301064, "messageId": "5c2e1f0a55", "delta": "I can't forecast the weather: I design geothermal heating and cooling for a district, and "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260301104, "messageId": "5c2e1f0a55", "delta": "I only report what a simulation or your data supports. If the weather matters for "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260301144, "messageId": "5c2e1f0a55", "delta": "your design, I can show how the district's heating and cooling demand changes over the "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260301184, "messageId": "5c2e1f0a55", "delta": "year."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793260301185, "messageId": "5c2e1f0a55"}
+
+data: {"type": "CUSTOM", "timestamp": 1793260301186, "name": "answer", "value": {"understood": "You want tomorrow's weather forecast for Paris.", "kind": "out_of_scope", "scope": "out", "used": [], "model": "qwen3.5:9b", "device": "gpu", "fallback": false, "corrections": []}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260301187, "name": "suggestions", "value": ["How does the heating demand change over the year?", "Design heating and cooling for this district", "What can you do?"]}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793260301188, "threadId": "w-out", "runId": "d4c0de5e04", "outcome": {"type": "success"}, "usage": [{"model": "qwen3.5:9b", "provider": "ollama", "inputTokens": 1872, "outputTokens": 61, "totalTokens": 1933}], "result": {"asked": [], "ungrounded": [], "dropped": [], "verified": null, "language": "en", "screened": true, "seconds": 1.187, "llm_calls": 1, "calls": ["answer: qwen3.5:9b"], "prompt_tokens": 1872, "output_tokens": 61, "load_seconds": 0.004, "prompt_seconds": 0.306, "output_seconds": 0.694, "tool_calls": 0, "cache_hits": 0, "tool_errors": 0, "left_out": [], "user_turns": 1, "model": "qwen3:1.7b", "prompt_version": "answer_v1", "behaviour": "refuse", "answer": "I can't forecast the weather: I design geothermal heating and cooling for a district, and I only report what a simulation or your data supports. If the weather matters for your design, I can show how the district's heating and cooling demand changes over the year.", "reasoning": false, "decided_by": {"answer": "model"}, "intent": "other"}}
+
+`;export{e as default};

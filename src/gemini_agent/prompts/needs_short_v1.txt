@@ -1,0 +1,1 @@
+Say what the reply to this message to Dioscuri needs. Reply with JSON only: {"needs": one of new_design_run, about_one_existing_design, designs_side_by_side, how_the_design_was_found, no_particular_design}.

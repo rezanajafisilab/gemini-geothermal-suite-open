@@ -1,0 +1,754 @@
+/* The tabs' shared components (TabFrame, DesignPicker, ProvenanceChip, AskButton, EmptyState,
+   Skeleton). Tokens come from src/styles.css (:root). */
+
+/* ------------------------------------------------------------------ frame */
+.wb-frame {
+  width: 100%;
+  max-width: 1240px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 28px clamp(16px, 4vw, 24px) 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.wb-head {
+  /* Above the content, so the picker's menu covers it (the rise animation makes this a stacking
+     context), the canvas's Full screen button (z 6) included. */
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  min-width: 0;
+}
+.wb-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  max-width: 100%;
+}
+/* The title first, tight at the left; the picker and the tags follow it on the same line. */
+.wb-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px 14px;
+  min-width: 0;
+}
+.wb-frame h1 {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.2;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  min-width: 0;
+}
+/* Shown only when a refetch takes a while, so quick ones don't flicker. */
+@keyframes wb-appear {
+  to {
+    opacity: 1;
+  }
+}
+.wb-refreshing {
+  display: inline-flex;
+  opacity: 0;
+  animation: wb-appear 0.2s ease 0.5s forwards;
+}
+.wb-lead {
+  margin: 0;
+  max-width: 72ch;
+  font-size: 14.5px;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.wb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.wb-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+.wb-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #fff8eb;
+  border: 1px solid #eedab0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.wb-strip strong {
+  color: var(--ink);
+  font-weight: 650;
+}
+.wb-state {
+  max-width: 680px;
+}
+.wb-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+/* ------------------------------------------------------------------ skeleton */
+@keyframes wb-skel {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+.wb-skel {
+  display: block;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #e8eded 25%, #f2f5f5 50%, #e8eded 75%);
+  background-size: 200% 100%;
+  animation: wb-skel 1.4s ease-in-out infinite;
+}
+.wb-skel-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
+  gap: 12px;
+}
+.wb-skel-card {
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wb-skel {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ empty state */
+.wb-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 44px 24px 40px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.wb-empty-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--teal-bg);
+  color: var(--teal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.wb-empty-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 650;
+  text-wrap: balance;
+}
+.wb-empty-hint {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 14px;
+  color: var(--ink-3);
+  text-wrap: pretty;
+}
+.wb-empty .btn {
+  margin-top: 10px;
+}
+
+/* ------------------------------------------------------------------ design picker */
+/* The cap sits on the wrapper: on the button alone the wrapper keeps the untruncated name's width
+   and leaves an empty stretch after the button. */
+.wb-picker {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+  max-width: min(480px, 100%);
+}
+.wb-pick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 4px 10px 4px 4px;
+  border-radius: 13px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  box-shadow: var(--shadow-chip);
+  cursor: pointer;
+  text-align: left;
+}
+.wb-pick-btn[aria-expanded="true"] {
+  border-color: #9db4b6;
+}
+.wb-code {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 9px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+}
+.wb-code.small {
+  padding: 1px 7px;
+  border-radius: 7px;
+  font-size: 12.5px;
+}
+.wb-pick-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+.wb-pick-name {
+  font-size: 14.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wb-pick-sub {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Wide, so a design's long name takes at most two lines with its tags beside it; moved left
+   (--menu-shift, DesignPicker's useOnScreen) when it would run past the window's right edge. */
+.wb-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: var(--menu-shift, 0px);
+  z-index: 50;
+  width: min(1040px, calc(100vw - 32px));
+  max-height: min(64vh, 560px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(17, 24, 28, 0.08), 0 18px 40px -14px rgba(17, 24, 28, 0.28);
+}
+.wb-menu:focus-visible {
+  outline: none;
+}
+.wb-menu-cap {
+  padding: 4px 8px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+/* One row per design: its name and code, the name (two lines at most, whole on hover), its tags
+   at the right, the tick. */
+.wb-opt {
+  display: grid;
+  grid-template-columns: minmax(64px, auto) minmax(0, 1fr) minmax(0, max-content) 16px;
+  align-items: center;
+  gap: 4px 14px;
+  padding: 7px 10px 7px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.wb-opt-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.wb-opt:hover,
+.wb-opt.active {
+  background: var(--soft-2);
+}
+.wb-opt[aria-selected="true"] {
+  background: #e6f0f0;
+}
+.wb-opt-main {
+  display: contents;
+}
+.wb-opt-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.wb-opt-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px 6px;
+  max-width: 420px;
+  font-size: 12px;
+}
+/* A what-if's label wraps inside the column rather than over the name (only past 420 px). */
+.wb-opt-tags .tag {
+  white-space: normal;
+  text-align: right;
+}
+.wb-pick-more {
+  align-self: center;
+  margin-left: 4px;
+}
+.wb-opt .wb-check {
+  margin-top: 3px;
+  color: var(--teal);
+}
+.wb-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ok);
+  font-weight: 600;
+}
+.wb-fails {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--red-ink);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ provenance chip + tooltip */
+.prov {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 650;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: help;
+}
+.prov:focus-visible {
+  border-radius: 999px;
+}
+.prov-gemini {
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+.prov-mock {
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+}
+.prov-user,
+.prov-rule {
+  background: var(--soft-2);
+  color: var(--ink-2);
+}
+.wb-tip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 7px);
+  transform: translate(calc(-50% + var(--tip-shift, 0px)), 2px);
+  width: max-content;
+  max-width: min(240px, calc(100vw - 32px));
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0;
+  white-space: normal;
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  z-index: 60;
+}
+.prov:hover > .wb-tip,
+.prov:focus-visible > .wb-tip {
+  opacity: 1;
+  transform: translate(calc(-50% + var(--tip-shift, 0px)), 0);
+}
+
+/* ------------------------------------------------------------------ ask button */
+.wb-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px 5px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.wb-ask.compact {
+  padding: 5px;
+}
+
+/* The picker's list (2 Nov): a search box, sections, a star on each row. */
+.wb-pop {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+.wb-find {
+  padding: 10px 10px 6px;
+  border-bottom: 1px solid var(--line-2);
+}
+.wb-find input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line-3);
+  border-radius: 10px;
+  background: var(--tile);
+  font: inherit;
+  font-size: 13.5px;
+  outline: none;
+}
+.wb-find input:focus {
+  background: #fff;
+  border-color: var(--teal-2);
+  box-shadow: 0 0 0 3px var(--teal-bg);
+}
+.wb-list {
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  overflow-y: auto;
+  max-height: min(56vh, 500px);
+}
+.wb-group {
+  margin: 0 0 6px;
+  padding: 0;
+  list-style: none;
+}
+.wb-list .wb-menu-cap {
+  display: block;
+  padding: 8px 8px 4px;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.wb-list .wb-opt {
+  grid-template-columns: minmax(40px, auto) minmax(0, 1fr) minmax(0, max-content) 24px 16px;
+}
+.wb-opt-sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.wb-opt-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.wb-star {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  color: var(--ink-4);
+  font-size: 15px;
+  line-height: 1;
+}
+.wb-star:hover {
+  background: var(--soft);
+  color: var(--amber-dot);
+}
+.wb-star.on,
+.wb-star-on {
+  color: var(--amber-dot);
+}
+.wb-empty {
+  padding: 14px 10px;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+.wb-pop-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--line-2);
+  font-size: 12px;
+  color: var(--ink-4);
+}
+.wb-pop-foot kbd {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--soft);
+  color: var(--ink-3);
+}
+
+
+/* ------------------------------------------------------------------ header (3 Nov redesign) */
+/* The title block: the tab's icon tile, its group as an eyebrow, the title, the lead; the
+   actions at the right; on the one-design tabs a design bar under it with the picker and the
+   design's headline figures. */
+.wb-head {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  padding: 18px 20px 16px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line), 0 12px 32px -22px rgba(17, 24, 28, 0.22);
+}
+.wb-head-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: 0;
+}
+.wb-tab-icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e2f3f5;
+  color: #0a6f7c;
+}
+.wb-tab-icon.tab-energy {
+  background: #fcede6;
+  color: #c24e1c;
+}
+.wb-tab-icon.tab-economics {
+  background: #e3f5ea;
+  color: #0f7a3d;
+}
+.wb-tab-icon.tab-compare,
+.wb-tab-icon.tab-sensitivity {
+  background: #efeafb;
+  color: #5b3fa6;
+}
+.wb-tab-icon.tab-trace,
+.wb-tab-icon.tab-evidence {
+  background: #e8effb;
+  color: #2363a6;
+}
+.wb-head-main .wb-titles {
+  flex: 1 1 auto;
+}
+.wb-eyebrow {
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.wb-eyebrow-hint {
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.wb-frame h1 {
+  font-size: 23px;
+}
+.wb-head-main .wb-actions {
+  flex: none;
+  margin-left: auto;
+  padding-top: 2px;
+}
+.wb-btn,
+.wb-actions .wb-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+.wb-btn:hover,
+.wb-actions .wb-ask:hover {
+  background: #f4f7f7;
+  border-color: #c8d3d3;
+}
+.wb-actions .wb-ask {
+  color: var(--teal);
+}
+/* The design bar. */
+.wb-dbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #f5f8f8;
+  min-width: 0;
+}
+.wb-dbar-cap {
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.wb-dbar .wb-pick-btn {
+  box-shadow: none;
+  border-color: #dfe6e6;
+  padding: 5px 10px 5px 5px;
+}
+.wb-dbar .wb-code {
+  background: #eaf0f0;
+  color: var(--ink);
+  font-family: var(--mono, ui-monospace, monospace);
+  font-weight: 600;
+}
+.wb-dbar-figs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  margin: 0 0 0 auto;
+}
+.wb-dbar-fig {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.wb-dbar-fig dt {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.wb-dbar-fig dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.wb-dbar-fig .u {
+  margin-left: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+/* The Export menu. */
+.xm {
+  position: relative;
+}
+.xm-pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: auto;
+  z-index: 50;
+  width: 320px;
+  padding: 6px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line), 0 20px 44px -18px rgba(17, 24, 28, 0.35);
+  display: flex;
+  flex-direction: column;
+}
+.xm-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink-2);
+  transition: background 0.15s ease;
+}
+.xm-item:hover,
+.xm-item:focus-visible {
+  background: #f1f5f5;
+  outline: none;
+}
+.xm-item svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--teal);
+}
+.xm-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.xm-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.xm-hint {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.xm-foot {
+  padding: 6px 10px 4px;
+  font-size: 12px;
+  color: var(--ink-3);
+  border-top: 1px solid var(--line-2);
+  margin-top: 4px;
+}
+@media (max-width: 760px) {
+  .wb-head-main {
+    flex-wrap: wrap;
+  }
+  .wb-dbar-figs {
+    margin-left: 0;
+  }
+}

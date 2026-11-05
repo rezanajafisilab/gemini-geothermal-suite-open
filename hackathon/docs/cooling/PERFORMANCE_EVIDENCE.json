@@ -1,0 +1,64 @@
+{
+  "python": "3.12.16",
+  "platform": "Windows-11-10.0.26100-SP0",
+  "processor": "AMD64 Family 26 Model 8 Stepping 1, AuthenticAMD",
+  "numpy": "2.2.6",
+  "scipy": "1.13.1",
+  "repeats": 100,
+  "statistic": "median per call after 10 warmups",
+  "scope": "kernel and pure adapter including validation; no I/O, well solves or string diagnostics",
+  "joint_m5_end_to_end_ms": null,
+  "cases": [
+    {
+      "option": "water",
+      "shape": [
+        365
+      ],
+      "kernel_median_ms": 0.34804999999999997,
+      "adapter_median_ms": 0.3906
+    },
+    {
+      "option": "water",
+      "shape": [
+        365,
+        24
+      ],
+      "kernel_median_ms": 1.5894,
+      "adapter_median_ms": 1.862
+    },
+    {
+      "option": "air",
+      "shape": [
+        365
+      ],
+      "kernel_median_ms": 0.3418,
+      "adapter_median_ms": 0.38485
+    },
+    {
+      "option": "air",
+      "shape": [
+        365,
+        24
+      ],
+      "kernel_median_ms": 1.51675,
+      "adapter_median_ms": 1.8046
+    },
+    {
+      "option": "absorption",
+      "shape": [
+        365
+      ],
+      "kernel_median_ms": 0.35075,
+      "adapter_median_ms": 0.3938
+    },
+    {
+      "option": "absorption",
+      "shape": [
+        365,
+        24
+      ],
+      "kernel_median_ms": 1.588,
+      "adapter_median_ms": 2.07575
+    }
+  ]
+}

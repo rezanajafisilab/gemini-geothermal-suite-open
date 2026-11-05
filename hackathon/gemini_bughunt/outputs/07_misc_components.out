@@ -1,0 +1,29 @@
+=== Boiler: 1 kg/s gas (caloric 50 MJ/kg), eta 0.9, water 100 m3/h @ 60 C
+  power_th=45.000 MW (expect 45.000), water-side heat=45.000 MW, T_out=427.35 C, CO2=10188.0 kg/h (expect 56.6 kg/GJ*180 GJ/h=10188)
+  same gas, only 10 m3/h water: T_out=3733.5 C (no boiling/limit check)
+
+=== CHP: 1 kg/s gas, eta 0.8 (fixed el. fraction 1/3 of eta*fuel)
+  fuel=50 MW -> power_el=13.33 MW (el. eff 26.7%), power_th=26.67 MW (th. eff 53.3%), total 80%
+
+=== InjectorPump: 150 m3/h, 2 -> 52 bar, eta 0.8
+  power_el=260.4 kW (hand: 150/3600*50e5/0.8 = 260.4 kW)
+  same in bar (as the surface chain uses bar!): power_el=2.60 W  <- unit trap; InjectorPump expects Pa, Separator/Filter/BoosterPump emit bar
+
+=== Compressor: 1 kg/s natural gas-ish (R=518 J/kgK, k=1.3), 1 -> 10 bar, 1 stage, 20 C, eff 1
+  model=355.0 kW, isentropic hand calc k/(k-1)*R*T1*(r^((k-1)/k)-1) = 461.4 kW, ratio model/hand = 0.769 (= 1/k = 0.769)
+  2 stages: model=308.1 kW, hand=400.5 kW
+  3 stages: model=294.3 kW, hand=382.5 kW
+
+=== Mixer energy balance (3 streams)
+  flow=0.03, T=53.333 (expect 53.333)
+
+=== Two-phase path in DPDT (PVT GMF>0): us_g uses gmf instead of mg (pressure_drop.py:105)
+  GMF=0 Q= 50 m3/h: p_wh=   4.51 bar fric=  0.24 grav= 245.25; us_g code=0.0000 m/s vs mg-based=0.0000 m/s
+  GMF=0 Q=150 m3/h: p_wh=   2.91 bar fric=  1.84 grav= 245.25; us_g code=0.0000 m/s vs mg-based=0.0000 m/s
+  GMF=0 Q=300 m3/h: p_wh=   0.00 bar fric=  6.89 grav= 245.25; us_g code=0.0000 m/s vs mg-based=0.0000 m/s
+  GMF=0.0001 Q= 50 m3/h: p_wh=  26.21 bar fric=  0.32 grav= 223.47; us_g code=0.0016 m/s vs mg-based=0.0213 m/s
+  GMF=0.0001 Q=150 m3/h: p_wh=   3.03 bar fric=  1.72 grav= 245.25; us_g code=0.0016 m/s vs mg-based=0.0639 m/s
+  GMF=0.0001 Q=300 m3/h: p_wh=   0.47 bar fric=  6.53 grav= 242.99; us_g code=0.0016 m/s vs mg-based=0.1278 m/s
+  GMF=0.001 Q= 50 m3/h: p_wh=   4.60 bar fric=  0.15 grav= 245.25; us_g code=0.0161 m/s vs mg-based=0.1487 m/s
+  GMF=0.001 Q=150 m3/h: p_wh=  39.98 bar fric=  1.25 grav= 208.77; us_g code=0.0161 m/s vs mg-based=0.4460 m/s
+  GMF=0.001 Q=300 m3/h: p_wh=   1.19 bar fric=  3.56 grav= 245.25; us_g code=0.0161 m/s vs mg-based=0.8919 m/s

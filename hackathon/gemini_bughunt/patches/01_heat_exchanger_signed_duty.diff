@@ -1,0 +1,12 @@
+--- a/src/gemini_model/heat_exchanger/heat_exchanger.py
++++ b/src/gemini_model/heat_exchanger/heat_exchanger.py
+@@ -104,7 +104,8 @@
+ 
+         ntu = self.parameters["heat_transfer_coefficient"] / capacity_min
+         capacity_ratio = capacity_min / capacity_max
+-        heat_duty_max = capacity_min * abs(secondary_temperature_in - primary_temperature_in)
++        # signed: > 0 when the primary is the hotter stream, < 0 when the secondary is
++        heat_duty_max = capacity_min * (primary_temperature_in - secondary_temperature_in)
+ 
+         if self.parameters["flow_configuration"] == "parallel":
+             effectiveness = (1 - math.exp(-ntu * (1 + capacity_ratio))) / (1 + capacity_ratio)

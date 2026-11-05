@@ -1,0 +1,11 @@
+# Per-conversation server output; eval summaries (*.jsonl here) are committed.
+traces/
+sessions/
+# Document search cache (src/gemini_agent/docs.py): chunks and Chroma vectors, rebuilt on demand.
+docs_index/
+docs_index_evals/
+generated_models_evals/
+# User projects made in the app (src/gemini_agent/projects.py): their uploads stay local.
+projects/
+# The recommended design (src/gemini_agent/lead.py): computed on the first GET /api/lead.
+lead/

@@ -1,0 +1,61 @@
+--- a/src/gemini_simulator/well_flow.py
++++ b/src/gemini_simulator/well_flow.py
+@@ -98,11 +98,11 @@
+     return top, bottom
+ 
+ 
+-def _build_dpdt(segments, roughness=0.01):
++def _build_dpdt(segments, roughness=4.5e-5):
+     """Build a ready-to-use DPDT well-segment model from a segment list.
+ 
+     ``roughness`` is the pipe wall roughness (m) used by the well's
+-    friction correlation; defaults to 0.01 m if not overridden by a
++    friction correlation; defaults to 4.5e-5 m if not overridden by a
+     well config's own ``roughness_m``.
+     """
+     well = DPDT()
+@@ -150,7 +150,7 @@
+               "trajectory_table": [{"MD": m, "TVD": m, "ID": m}, ...],  # preferred
+               # or, legacy per-segment form:
+               # "welltrajectory": [{"angle": deg, "depth": m, "diameter": m}, ...],
+-              "roughness_m": float,                  # optional, defaults to 0.01
++              "roughness_m": float,                  # optional, defaults to 4.5e-5
+               "esp_depth_m": float,                  # optional, omit for no ESP
+               "esp": {"no_stages": int, "head_coeff": [...], "power_coeff": [...]},
+               "esp_freq_hz": float,
+@@ -194,7 +194,7 @@
+     esp_depth = well_config.get("esp_depth_m")
+     esp_config = well_config.get("esp")
+     esp_freq = well_config.get("esp_freq_hz")
+-    roughness_m = well_config.get("roughness_m", 0.01)
++    roughness_m = well_config.get("roughness_m", 4.5e-5)
+ 
+     trajectory_segments = _resolve_trajectory_segments(well_config)
+ 
+@@ -271,7 +271,7 @@
+     top_segments, _ = _split_trajectory_at_depth(
+         _resolve_trajectory_segments(well_config), esp_depth
+     )
+-    dpdt_top = _build_dpdt(top_segments, roughness=well_config.get("roughness_m", 0.01))
++    dpdt_top = _build_dpdt(top_segments, roughness=well_config.get("roughness_m", 4.5e-5))
+     wellhead_temperature_k = wellhead_temperature_c + CELSIUS_TO_KELVIN
+     dpdt_top.calculate_output(
+         {
+@@ -328,7 +328,7 @@
+               "reservoir_pressure_bar": float,
+               "productivity_index_m3h_per_bar": float,
+               "welltrajectory": [{"angle": deg, "depth": m, "diameter": m}, ...],
+-              "roughness_m": float,                  # optional, defaults to 0.01
++              "roughness_m": float,                  # optional, defaults to 4.5e-5
+             }
+ 
+         (Same ``"trajectory_table"``-vs-``"welltrajectory"`` choice as
+@@ -359,7 +359,7 @@
+     )
+     dpdt = _build_dpdt(
+         _resolve_trajectory_segments(injector_well_config),
+-        roughness=injector_well_config.get("roughness_m", 0.01),
++        roughness=injector_well_config.get("roughness_m", 4.5e-5),
+     )
+ 
+     pressure_bracket_pa = (pressure_bracket_bar[0] * 1e5, pressure_bracket_bar[1] * 1e5)

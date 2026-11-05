@@ -1,0 +1,20 @@
+data: {"type": "RUN_STARTED", "timestamp": 1793185368209, "threadId": "v-about", "runId": "712417dbc9"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185368209, "stepName": "intake", "metadata": {"label": "Read the request", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185368210, "stepName": "intake", "metadata": {"tokens": 0, "relevant": true, "intent": "about", "screened": true, "seconds": 0.0}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185368211, "stepName": "report", "metadata": {"label": "Write the answer", "kind": "report", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185368211, "stepName": "report", "metadata": {"ungrounded": [5.0], "seconds": 0.0}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793185368212, "messageId": "fe4b2493c9", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793185368212, "messageId": "fe4b2493c9", "delta": "I'm Dioscuri. I design geothermal heating and cooling for a district on TNO's GEMINI digital twin. I read your request, ask once for anything missing, simulate the options with physics tools, check every design (energy balance, the Carnot limit, temperatures) and explain the result. Every number comes from a simulation or from you, and I can look up the project's data. I run locally: qwen3:1.7b reads your messages, and in reasoning mode qwen3.5:9b plans the study and explains the result."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793185368212, "messageId": "fe4b2493c9"}
+
+data: {"type": "CUSTOM", "timestamp": 1793185368212, "name": "suggestions", "value": ["Design heating and cooling for this district", "Compare well depths", "What does the reservoir temperature change?"]}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793185368213, "threadId": "v-about", "runId": "712417dbc9", "outcome": {"type": "success"}, "usage": [], "result": {"behaviour": "about", "asked": [], "answer": "I'm Dioscuri. I design geothermal heating and cooling for a district on TNO's GEMINI digital twin. I read your request, ask once for anything missing, simulate the options with physics tools, check every design (energy balance, the Carnot limit, temperatures) and explain the result. Every number comes from a simulation or from you, and I can look up the project's data. I run locally: qwen3:1.7b reads your messages, and in reasoning mode qwen3.5:9b plans the study and explains the result.", "ungrounded": [5.0], "dropped": [], "verified": null, "reasoning": false, "decided_by": {}, "intent": "about", "language": "en", "screened": true, "seconds": 0.004, "llm_calls": 0, "calls": [], "prompt_tokens": 0, "output_tokens": 0, "load_seconds": 0, "prompt_seconds": 0, "output_seconds": 0, "tool_calls": 0, "cache_hits": 0, "tool_errors": 0, "left_out": [], "user_turns": 1, "model": "qwen3:1.7b", "prompt_version": "intake_v2"}}
+

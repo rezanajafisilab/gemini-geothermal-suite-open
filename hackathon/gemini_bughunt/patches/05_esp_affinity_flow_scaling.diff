@@ -1,0 +1,20 @@
+--- a/src/gemini_model/pump/esp.py
++++ b/src/gemini_model/pump/esp.py
+@@ -70,7 +70,7 @@
+ 
+     def head_function(self, pump_flow, freq):
+         """Calculate ESP head from flow and frequency (uses US-unit correlation)."""
+-        pump_flow = pump_flow * self.M3S_TO_BBLD  # m3/s to bbl/d
++        pump_flow = pump_flow * (60.0 / freq) * self.M3S_TO_BBLD  # affinity: Q60 = Q*60/f, bbl/d
+         head = (
+             self.parameters["no_stages"]
+             * ((freq / 60) ** 2)
+@@ -80,7 +80,7 @@
+ 
+     def power_function(self, pump_flow, freq):
+         """Calculate ESP power from flow and frequency (US-unit correlation)."""
+-        pump_flow = pump_flow * self.M3S_TO_BBLD  # m3/s to bbl/d
++        pump_flow = pump_flow * (60.0 / freq) * self.M3S_TO_BBLD  # affinity: Q60 = Q*60/f, bbl/d
+         pump_power = (
+             self.parameters["no_stages"]
+             * ((freq / 60) ** 3)

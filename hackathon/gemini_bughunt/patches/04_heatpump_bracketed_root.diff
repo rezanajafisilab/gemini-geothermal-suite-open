@@ -1,0 +1,187 @@
+--- a/src/gemini_model/heatpump/heatpump_basic.py
++++ b/src/gemini_model/heatpump/heatpump_basic.py
+@@ -27,7 +27,7 @@
+ """
+ 
+ import numpy as np
+-from scipy.optimize import minimize
++from scipy.optimize import brentq
+ 
+ from gemini_model.model_abstract import StaticModel
+ 
+@@ -172,141 +172,48 @@
+             (COP, Th_out, Ts_out, thermal_production, electrical_consumption)
+         """
+ 
+-        def lorenz_model(x, Th_out, Th_in, Ts_in, mh, ms):
+-            """Residual function for the Lorenz-efficiency model.
+-
+-            Solves for (COP, Ts_out) given a fixed target Th_out.
+-
+-            Combines two residuals: J1 enforces the Lorenz COP equation
+-            COP = eta_lorenz * (Th / (Th - Ts)), where Th and Ts are the
+-            logarithmic mean temperatures of the sink and source glide
+-            (see module reference for the Lorenz cycle); J2 enforces the
+-            energy balance COP = Qh / (Qh - Qs).
+-            """
+-            COP = x[0]
+-            Ts_out = x[1]
+-
+-            Qh = self.parameters["Cp_h"] * (Th_out - Th_in) * mh
+-            Qs = self.parameters["Cp_s"] * (Ts_in - Ts_out) * ms
+-
+-            Th = (Th_in - Th_out) / np.log(Th_in / Th_out)
+-            Ts = (Ts_in - Ts_out) / np.log(Ts_in / Ts_out)
+-
+-            J1 = np.abs(COP - (self.parameters["eta_lorenz"] * (Th / (Th - Ts))))
+-            J2 = np.abs(COP - Qh / (Qh - Qs))
+-            J = J1 + J2
+-            return J
+-
+-        def lorenz_model2(x, Ts_out, Th_in, Ts_in, mh, ms):
+-            """Residual function for the Lorenz-efficiency model.
+-
+-            Solves for (COP, Th_out) given a fixed minimum source outlet
+-            temperature Ts_out (used when the unconstrained solution
+-            violates Ts_in_minimum). See `lorenz_model` for the underlying
+-            equations.
+-            """
+-            COP = x[0]
+-            Th_out = x[1]
+-
+-            Qh = self.parameters["Cp_h"] * (Th_out - Th_in) * mh
+-            Qs = self.parameters["Cp_s"] * (Ts_in - Ts_out) * ms
+-
+-            Th = (Th_in - Th_out) / np.log(Th_in / Th_out)
+-            Ts = (Ts_in - Ts_out) / np.log(Ts_in / Ts_out)
+-
+-            J1 = np.abs(COP - (self.parameters["eta_lorenz"] * (Th / (Th - Ts))))
+-            J2 = np.abs(COP - Qh / (Qh - Qs))
+-            J = J1 + J2
+-            return J
+-
+-        def carnot_model(x, Th_out, Th_in, Ts_in, mh, ms):
+-            """Residual function for the Carnot-efficiency model.
+-
+-            Solves for (COP, Ts_out) given a fixed target Th_out.
+-
+-            Combines two residuals: J1 enforces the Carnot COP equation
+-            COP = eta_carnot * (Th / (Th - Ts)), where Th = Th_out and
+-            Ts = Ts_in are treated as constant condenser/evaporator
+-            temperatures (see module reference for the Carnot cycle);
+-            J2 enforces the energy balance COP = Qh / (Qh - Qs).
+-            """
+-            COP = x[0]
+-            Ts_out = x[1]
+-
+-            Qh = self.parameters["Cp_h"] * (Th_out - Th_in) * mh
+-            Qs = self.parameters["Cp_s"] * (Ts_in - Ts_out) * ms
+-
+-            Th = Th_out
+-            Ts = Ts_in
+-
+-            J1 = np.abs(COP - (self.parameters["eta_carnot"] * (Th / (Th - Ts))))
+-            J2 = np.abs(COP - Qh / (Qh - Qs))
+-
+-            J = J1 + J2
+-
+-            return J
+-
+-        def carnot_model2(x, Ts_out, Th_in, Ts_in, mh, ms):
+-            """Residual function for the Carnot-efficiency model.
+-
+-            Solves for (COP, Th_out) given a fixed minimum source outlet
+-            temperature Ts_out (used when the unconstrained solution
+-            violates Ts_in_minimum). See `carnot_model` for the underlying
+-            equations.
+-            """
+-            COP = x[0]
+-            Th_out = x[1]
++        # Deterministic solve of the same equations (eta-Carnot/eta-Lorenz COP +
++        # energy balance Qh = Qs + W), bracketing the physical root explicitly.
++        p = self.parameters
++        cph, cps = p["Cp_h"], p["Cp_s"]
++        Ts_min = p["Ts_in_minimum"] + 273.15
++        mode = p["mode"]
++        eta = p["eta_carnot"] if mode == "carnot" else p["eta_lorenz"]
++
++        def lmean(a, b):
++            return a if abs(a - b) < 1e-9 else (a - b) / np.log(a / b)
++
++        def cop_of(th_out, ts_out):
++            if mode == "carnot":
++                th, ts = th_out, Ts_in
++            else:
++                th, ts = lmean(Th_in, th_out), lmean(Ts_in, ts_out)
++            return eta * th / (th - ts) if th > ts else np.inf
+ 
+-            Qh = self.parameters["Cp_h"] * (Th_out - Th_in) * mh
+-            Qs = self.parameters["Cp_s"] * (Ts_in - Ts_out) * ms
++        Qh = cph * mh * (Th_out - Th_in)
++        if mode == "carnot":
++            Ts_out = Ts_in - Qh * (1 - 1 / cop_of(Th_out, None)) / (cps * ms)
++        else:
+ 
+-            Th = Th_out
+-            Ts = Ts_in
++            def g(ts):
++                return cps * ms * (Ts_in - ts) - Qh * (1 - 1 / cop_of(Th_out, ts))
+ 
+-            J1 = np.abs(COP - (self.parameters["eta_carnot"] * (Th / (Th - Ts))))
+-            J2 = np.abs(COP - Qh / (Qh - Qs))
++            Ts_out = brentq(g, Ts_min, Ts_in - 1e-9) if g(Ts_min) > 0 else Ts_min - 1.0
+ 
+-            J = J1 + J2
++        if Ts_out < Ts_min:  # source-limited: fix Ts_out, lower Th_out (physical root only)
++            Ts_out = Ts_min
++            Qs = cps * ms * (Ts_in - Ts_out)
+ 
+-            return J
++            def f(th):
++                return cph * mh * (th - Th_in) * (1 - 1 / cop_of(th, Ts_out)) - Qs
+ 
+-        x0 = [self.parameters["COP_0"], Ts_in - 10]
+-        if self.parameters["mode"] == "carnot":
+-            result = minimize(
+-                carnot_model, x0, args=(Th_out, Th_in, Ts_in, mh, ms), method="Nelder-Mead"
+-            )
+-        else:
+-            result = minimize(
+-                lorenz_model, x0, args=(Th_out, Th_in, Ts_in, mh, ms), method="Nelder-Mead"
+-            )
+-
+-        COP = result.x[0]
+-        Ts_out = result.x[1]
+-
+-        if Ts_out < self.parameters["Ts_in_minimum"] + 273.15:
+-            x0 = [self.parameters["COP_0"], Th_out]
+-            if self.parameters["mode"] == "carnot":
+-                result = minimize(
+-                    carnot_model2,
+-                    x0,
+-                    args=(self.parameters["Ts_in_minimum"] + 273.15, Th_in, Ts_in, mh, ms),
+-                    method="Nelder-Mead",
+-                )
+-            else:
+-                result = minimize(
+-                    lorenz_model2,
+-                    x0,
+-                    args=(self.parameters["Ts_in_minimum"] + 273.15, Th_in, Ts_in, mh, ms),
+-                    method="Nelder-Mead",
+-                )
+-
+-            COP = result.x[0]
+-            Th_out = result.x[1]
+-            Ts_out = self.parameters["Ts_in_minimum"] + 273.15
++            lo = Th_in + 1e-9
++            if f(lo) < 0 < f(Th_out):
++                Th_out = brentq(f, lo, Th_out)
+ 
+-        thermal_production = self.parameters["Cp_h"] * (Th_out - Th_in) * mh
++        COP = cop_of(Th_out, Ts_out)
++        thermal_production = cph * (Th_out - Th_in) * mh
+         electrical_consumption = thermal_production / COP
+-
+         return COP, Th_out, Ts_out, thermal_production, electrical_consumption
+ 
+     def get_output(self):

@@ -1,0 +1,32 @@
+=== ESP curve of doublet_plant.json (10 stages) evaluated over the default nodal bracket 0.01-700 m3/h
+  50 Hz:
+    Q=   0 m3/h head=   17.24 bar power=     43.2 kW eff=     0.0 %
+    Q=  50 m3/h head=   16.23 bar power=     50.3 kW eff=    44.7 %
+    Q= 100 m3/h head=   16.47 bar power=     69.2 kW eff=    66.1 %
+    Q= 150 m3/h head=   16.70 bar power=     84.9 kW eff=    81.9 %
+    Q= 200 m3/h head=   13.53 bar power=     88.7 kW eff=    84.6 %
+    Q= 250 m3/h head=    5.53 bar power=     78.1 kW eff=    49.1 %
+    Q= 300 m3/h head=   -2.69 bar power=     57.0 kW eff=   -39.3 %
+    Q= 400 m3/h head=   53.41 bar power=     32.5 kW eff=  1823.8 %
+    Q= 500 m3/h head=  494.71 bar power=    182.4 kW eff=  3762.6 %
+    Q= 600 m3/h head= 1991.97 bar power=    788.2 kW eff=  4206.9 %
+    Q= 700 m3/h head= 5704.43 bar power=   2251.5 kW eff=  4920.6 %
+  65 Hz:
+    Q=   0 m3/h head=   29.14 bar power=     95.0 kW eff=     0.0 %
+    Q=  50 m3/h head=   27.42 bar power=    110.6 kW eff=    34.4 %
+    Q= 100 m3/h head=   27.84 bar power=    152.0 kW eff=    50.8 %
+    Q= 150 m3/h head=   28.22 bar power=    186.5 kW eff=    63.0 %
+    Q= 200 m3/h head=   22.86 bar power=    194.8 kW eff=    65.1 %
+    Q= 250 m3/h head=    9.34 bar power=    171.5 kW eff=    37.8 %
+    Q= 300 m3/h head=   -4.55 bar power=    125.2 kW eff=   -30.2 %
+    Q= 400 m3/h head=   90.26 bar power=     71.4 kW eff=  1402.9 %
+    Q= 500 m3/h head=  836.06 bar power=    400.7 kW eff=  2894.3 %
+    Q= 600 m3/h head= 3366.43 bar power=   1731.7 kW eff=  3236.1 %
+    Q= 700 m3/h head= 9640.49 bar power=   4946.5 kW eff=  3785.0 %
+
+=== Sweep of ProducerWell (doublet_plant.json producer)
+  cases=90 exceptions=0 intake-clamped=0 ESP-curve-out-of-range=3
+  (freq Hz, Pwh bar, PI m3/h/bar, roughness m) -> Q m3/h, ESP_in bar, head bar, power kW, eff %, flags
+    (40, 3.0, 10.0, 4.5e-05, 148.9, np.float64(58.06), 10.7, 43.3, 102.0, ['ESP_curve_out_of_range'])
+    (40, 3.0, 30.0, 4.5e-05, 202.4, np.float64(61.88), 8.5, 45.3, 105.1, ['ESP_curve_out_of_range'])
+    (40, 10.0, 30.0, 4.5e-05, 167.9, np.float64(65.96), 10.3, 45.0, 106.8, ['ESP_curve_out_of_range'])

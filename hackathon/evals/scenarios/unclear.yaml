@@ -1,0 +1,231 @@
+# Unclear, incomplete and conflicting requests (4 Nov), written by hand as a held-out gate.
+# What the user asked of the models: "prompts
+# that might lack some information or not clear: the model should be able to handle these
+# well; in case it does not understand it should ask for clarification".
+#
+# Run: python hackathon/evals/run_evals.py --scenarios hackathon/evals/scenarios/unclear.yaml \
+#          --mode auto --device auto
+#
+# Groups: conflicts (inputs that break a rule or each other: refused on the inputs card, and
+# said), missing (a request without what it needs: asked about, not guessed), unclear (a
+# message that cannot be read: asked about), path (a follow-up that leans on the chat), card
+# (5 Nov: a typed reply at the inputs card past the limits keeps the card as it was; one that
+# asks for the defaults back, in any words, puts every input back; nothing runs either way).
+
+- id: CH00_base
+  prompt: Design a geothermal heating and cooling system for this district.
+  expect: {behaviour: design}
+
+# --- conflicts: the inputs card opens with the refused value said ---------------------------
+
+- id: U01_heated_cooled
+  group: conflicts
+  confirm: false
+  wordings:
+    - "design a geothermal system: heated temperature should be 50 and cooled temperature should be 10C."
+    - "I need a geothermal plant, heating at 50 degrees and cooling at 10."
+    - "geothermal design pls, heat 50, cold 10 C"
+  expect: {behaviour: clarify, contains_any: ["did not take", "50"]}
+
+- id: U02_return_above_supply
+  group: conflicts
+  confirm: false
+  wordings:
+    - Design the plant with a heating return of 105 °C.
+    - Please design it; the heating network's water comes back at 105 degrees.
+    - Design heating and cooling; return temperature on the heat side 105C.
+  expect: {behaviour: clarify, contains_any: ["did not take", "105"]}
+
+- id: U03_cooling_inverted
+  group: conflicts
+  confirm: false
+  wordings:
+    - Design it with chilled water supplied at 30 °C.
+    - Design the system; the cooling should leave at 30 degrees.
+    - New design, cold side supply 30C please.
+  expect: {behaviour: clarify, contains_any: ["did not take", "30"]}
+
+- id: U04_flow_floor_above_cap
+  group: conflicts
+  confirm: false
+  wordings:
+    - Design the plant with a minimum flow of 320 m³/h per doublet.
+    - Please design it so each running doublet never goes below 320 m3/h.
+    - design, min flow 320 cubic metres an hour
+  expect: {behaviour: clarify, contains_any: ["did not take", "320"]}
+
+# --- missing: a request without what it needs is asked about ------------------------------
+
+- id: U10_store_no_size
+  group: missing
+  after: CH00_base
+  wordings:
+    - Add a heat store to the design.
+    - Could we put a buffer tank in?
+    - what if we had some storage
+  expect: {behaviour: clarify}
+
+- id: U11_gas_up_no_amount
+  group: missing
+  after: CH00_base
+  wordings:
+    - What happens if the gas price goes up?
+    - And if gas gets more expensive?
+    - gas price higher, then what
+  expect: {behaviour: clarify}
+
+- id: U12_two_of_what
+  group: missing
+  after: CH00_base
+  wordings:
+    - Run it again with 2.
+    - Try it with two instead.
+    - "ok now 2"
+  expect: {behaviour: clarify}
+
+- id: U13_solar_no_size
+  group: missing
+  after: CH00_base
+  wordings:
+    - Add solar panels.
+    - Can we put PV on it?
+    - some solar please
+  expect: {behaviour: clarify}
+
+- id: U14_stop_no_dates
+  group: missing
+  after: CH00_base
+  wordings:
+    - The wells need a stop in summer for maintenance.
+    - Put the doublet's yearly shutdown in the summer.
+    - summer maintenance stop for the wells pls
+  expect: {behaviour: clarify}
+
+- id: U15_more_doublets_no_count
+  group: missing
+  after: CH00_base
+  wordings:
+    - Use more doublets.
+    - Could we drill more pairs of wells?
+    - more wells
+  expect: {behaviour: clarify}
+
+# --- unclear: a message that cannot be read is asked about ----------------------------------
+
+- id: U20_cut_off
+  group: unclear
+  after: CH00_base
+  pick: false
+  wordings:
+    - Can you change the
+    - What if we made the boiler
+    - I was thinking about the
+  expect: {behaviour: clarify}
+
+- id: U21_bare_number
+  group: unclear
+  after: CH00_base
+  pick: false
+  wordings:
+    - "42"
+    - "3?"
+    - "hmm 70"
+  expect: {behaviour: clarify}
+
+- id: U22_garbled
+  group: unclear
+  after: CH00_base
+  pick: false
+  wordings:
+    - asdf the thing pump no
+    - wel hte heat thign tmorow?
+    - "...."
+  expect: {behaviour: clarify}
+
+- id: U23_thing_from_before
+  group: unclear
+  pick: false
+  wordings:
+    - Do that thing from before again.
+    - Use the setting we talked about.
+    - Same as last time please.
+  expect: {behaviour: clarify}
+
+# --- path: a follow-up with no subject leans on the chat ------------------------------------
+
+- id: U30_and_in_winter
+  group: path
+  after: CH00_base
+  wordings:
+    - And in winter?
+    - what about January
+    - and on the coldest day?
+  expect: {behaviour: answer, contains_any: ["MW", "boiler", "January", "winter", "peak"]}
+
+- id: U31_is_that_a_lot
+  group: path
+  after: CH00_base
+  wordings:
+    - Is that a lot?
+    - Is that expensive?
+    - is that good or bad?
+  expect: {behaviour: answer, contains_any: ["€/MWh", "gas", "cheaper", "%"]}
+
+- id: U32_where_are_we
+  group: path
+  after: CH00_base
+  wordings:
+    - So where are we now?
+    - What have we decided so far?
+    - Sum up where things stand.
+  expect: {behaviour: answer, contains_any: ["{chosen}", "€/MWh", "doublet"]}
+
+# --- card: typed replies at the inputs card (5 Nov) ----------------------------------------
+# "Add a 4th doublet at 100 m" left one aquifer at 100 m on the card, and "get back to default
+# values" then ran the design with it. The card's table names the aquifers: "1. 2,500 m" is
+# the known one first, "1. 100 m" a list replaced.
+
+- id: U40_card_open
+  group: card
+  confirm: false
+  prompt: Design heating and cooling for the district.
+  expect: {behaviour: clarify}
+  checks: [shows_inputs]
+
+- id: U41_card_past_the_limits
+  group: card
+  after: U40_card_open
+  confirm: false
+  wordings:
+    - add a 4th doublet at 100 m
+    - put one more well pair in at 100 metres
+    - Add one more doublet, a fourth one, at 4,200 m.
+  expect:
+    behaviour: clarify
+    contains: ["Nothing changed", "1. 2,500 m", "3,500 m"]
+    not_contains: ["1. 100 m", "1. 4,200 m"]
+  checks: [shows_inputs]
+
+- id: U42_card_changed
+  group: card
+  after: U40_card_open
+  confirm: false
+  prompt: Make the heating return 50 °C and add 5 km of network heat losses.
+  expect: {behaviour: clarify, contains: ["return 50"]}
+  checks: [shows_inputs]
+
+- id: U43_card_back_to_defaults
+  group: card
+  after: U42_card_changed
+  confirm: false
+  wordings:
+    - get back to default values
+    - undo my changes
+    - use the original numbers
+    - restore defaults
+  expect:
+    behaviour: clarify
+    contains: ["Back to the project's defaults", "return 60"]
+    not_contains: ["return 50"]
+  checks: [shows_inputs]
+

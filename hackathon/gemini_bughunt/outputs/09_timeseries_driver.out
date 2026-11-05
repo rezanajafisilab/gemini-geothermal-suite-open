@@ -1,0 +1,6 @@
+demand profile: min 0.60 MW, max 7.80 MW, annual 28.8 GWh
+A. ProfileSource + one run(range(8760)): 10.7 s (1.23 ms/h); delivered 28.5 GWh/yr, T_s_out range 54.5-102.8 C
+B. Python loop set_boundary_input + run([t]): 10.3 s (1.18 ms/h); history length 8760
+C. demand-following (brentq on secondary flow): 500 h in 4.8 s, 8.2 solves/h, 9.7 ms/h -> ~1.4 min for 8760 h; unmet hours 22
+   memory note: run() keeps full input/output history for every component at every step (history entries now: 4105)
+wall=26.48s maxrss=204800KB

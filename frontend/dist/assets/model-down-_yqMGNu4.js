@@ -1,0 +1,23 @@
+var e=`data: {"type": "RUN_STARTED", "timestamp": 1793182854048, "threadId": "u-down", "runId": "b64e571036"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182854048, "stepName": "intake", "metadata": {"label": "Read the request", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182854051, "stepName": "intake", "metadata": {"tokens": 0, "relevant": true, "intent": "other", "seconds": 0.002}}
+
+data: {"type": "CUSTOM", "timestamp": 1793182854051, "name": "usage", "value": {"purpose": "intake", "model": "qwen3:1.7b", "prompt_tokens": 0, "output_tokens": 0, "seconds": 0.002, "load_seconds": 0.0, "prompt_seconds": 0.0, "output_seconds": 0.0, "ok": false, "error": "ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download"}}
+
+data: {"type": "CUSTOM", "timestamp": 1793182854051, "name": "model_unavailable", "value": {"model": "qwen3:1.7b", "error": "ConnectionError: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download", "fix": "ollama serve"}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182854051, "stepName": "report", "metadata": {"label": "Write the answer", "kind": "report", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182854051, "stepName": "report", "metadata": {"ungrounded": [], "seconds": 0.0}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793182854051, "messageId": "b219f604c0", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793182854051, "messageId": "b219f604c0", "delta": "I can't read your request right now: the local model qwen3:1.7b isn't available. Run \`ollama serve\` and ask again."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793182854051, "messageId": "b219f604c0"}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793182854051, "threadId": "u-down", "runId": "b64e571036", "outcome": {"type": "success"}, "usage": [{"model": "qwen3:1.7b", "provider": "ollama", "inputTokens": 0, "outputTokens": 0, "totalTokens": 0}], "result": {"behaviour": "model_unavailable", "asked": [], "answer": "I can't read your request right now: the local model qwen3:1.7b isn't available. Run \`ollama serve\` and ask again.", "ungrounded": [], "dropped": [], "verified": null, "intent": "other", "language": "en", "screened": false, "seconds": 0.003, "llm_calls": 1, "prompt_tokens": 0, "output_tokens": 0, "load_seconds": 0.0, "prompt_seconds": 0.0, "output_seconds": 0.0, "tool_calls": 0, "cache_hits": 0, "tool_errors": 0, "left_out": [], "user_turns": 1, "model": "qwen3:1.7b", "prompt_version": "intake_v1"}}
+
+`;export{e as default};

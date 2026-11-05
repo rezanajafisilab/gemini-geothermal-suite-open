@@ -1,0 +1,20 @@
+data: {"type": "RUN_STARTED", "timestamp": 1793182837114, "threadId": "u-refuse", "runId": "0213c4d52c"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182837114, "stepName": "intake", "metadata": {"label": "Read the request", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182837115, "stepName": "intake", "metadata": {"tokens": 0, "relevant": false, "intent": "other", "seconds": 0.0}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182837115, "stepName": "report", "metadata": {"label": "Write the answer", "kind": "report", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182837116, "stepName": "report", "metadata": {"ungrounded": [], "seconds": 0.0}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793182837116, "messageId": "12f3baf351", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793182837116, "messageId": "12f3baf351", "delta": "That's outside what I do: I design geothermal heating and cooling for a district, and every number comes from a simulator. Try one of these instead."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793182837116, "messageId": "12f3baf351"}
+
+data: {"type": "CUSTOM", "timestamp": 1793182837116, "name": "suggestions", "value": ["Design heating and cooling for this district", "Compare well depths", "What does the reservoir temperature change?"]}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793182837117, "threadId": "u-refuse", "runId": "0213c4d52c", "outcome": {"type": "success"}, "usage": [], "result": {"behaviour": "refuse", "asked": [], "answer": "That's outside what I do: I design geothermal heating and cooling for a district, and every number comes from a simulator. Try one of these instead.", "ungrounded": [], "dropped": [], "verified": null, "intent": "other", "language": "en", "screened": true, "seconds": 0.002, "llm_calls": 0, "prompt_tokens": 0, "output_tokens": 0, "load_seconds": 0, "prompt_seconds": 0, "output_seconds": 0, "tool_calls": 0, "cache_hits": 0, "tool_errors": 0, "left_out": [], "user_turns": 1, "model": "qwen3:1.7b", "prompt_version": "intake_v1"}}
+

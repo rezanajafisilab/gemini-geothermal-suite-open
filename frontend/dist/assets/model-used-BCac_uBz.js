@@ -1,0 +1,41 @@
+var e=`data: {"type": "RUN_STARTED", "timestamp": 1793188250269, "threadId": "k1", "runId": "4d5f73c624"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793188250269, "stepName": "register", "metadata": {"label": "Save the approved model", "kind": "tool", "code": "registry.save('adsorption_chiller')"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793188250310, "toolCallId": "d07ce726f3", "toolCallName": "register_model"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793188250310, "toolCallId": "d07ce726f3", "delta": "{\\"component\\": \\"adsorption_chiller\\", \\"approved_by\\": \\"user\\", \\"model\\": \\"qwen3.5:4b\\"}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793188250310, "toolCallId": "d07ce726f3"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793188250310, "messageId": "d07ce726f3-result", "toolCallId": "d07ce726f3", "content": "{\\"cached\\": false, \\"result\\": \\"/tmp/claude-1978995908/-home-rn2038-Projects-GEOHACKATHON/b6915066-9ab1-4789-b907-6d653b215277/scratchpad/agent-ui/models_r5/adsorption_chiller.py\\"}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793188250313, "stepName": "register", "metadata": {"saved": true, "seconds": 0.043}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793188250314, "stepName": "use_model", "metadata": {"label": "Run the adsorption chiller model at this design's conditions", "kind": "tool", "code": "adsorption_chiller(2 case(s), sandboxed)"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793188250351, "toolCallId": "fec7bd4992", "toolCallName": "evaluate_adsorption_chiller"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793188250351, "toolCallId": "fec7bd4992", "delta": "{\\"model\\": \\"adsorption_chiller\\", \\"sha256\\": \\"b8fd5e92016009899e125f6ef5126888d2e757e1c84e675d1053f56d91c244de\\", \\"cases\\": [{\\"drive_temp_c\\": 45.0, \\"heat_available_mw\\": 2.96, \\"chilled_water_temp_c\\": 6.0}, {\\"drive_temp_c\\": 55.0, \\"heat_available_mw\\": 2.96, \\"chilled_water_temp_c\\": 6.0}]}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793188250351, "toolCallId": "fec7bd4992"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793188250351, "messageId": "fec7bd4992-result", "toolCallId": "fec7bd4992", "content": "{\\"cached\\": false, \\"result\\": {\\"name\\": \\"adsorption_chiller\\", \\"cases\\": [{\\"drive_temp_c\\": 45.0, \\"heat_available_mw\\": 2.96, \\"cooling_water_temp_c\\": 27.0, \\"chilled_water_temp_c\\": 6.0}, {\\"drive_temp_c\\": 55.0, \\"heat_available_mw\\": 2.96, \\"cooling_water_temp_c\\": 27.0, \\"chilled_water_temp_c\\": 6.0}], \\"assumed\\": [[\\"cooling_water_temp_c\\"], [\\"cooling_water_temp_c\\"]], \\"outputs\\": [{\\"cold_mw\\": 0.0, \\"drive_heat_mw\\": 0.0, \\"rejected_heat_mw\\": 0.0, \\"cop\\": 0.0, \\"min_drive_temp_c\\": 48.0}, {\\"cold_mw\\": 0.4700279750114279, \\"drive_heat_mw\\": 1.036, \\"rejected_heat_mw\\": 1.506027975011428, \\"cop\\": 0.45369495657473735, \\"min_drive_temp_c\\": 48.0}], \\"checks\\": [{\\"name\\": \\"Returns every output as a finite number\\", \\"passed\\": true, \\"detail\\": \\"holds in all 2 cases\\", \\"requirement\\": false}, {\\"name\\": \\"No negative outputs\\", \\"passed\\": true, \\"detail\\": \\"holds in all 2 cases\\", \\"requirement\\": false}, {\\"name\\": \\"Energy balance\\", \\"passed\\": true, \\"detail\\": \\"holds in all 2 cases\\", \\"requirement\\": false}, {\\"name\\": \\"Uses no more heat than is available\\", \\"passed\\": true, \\"detail\\": \\"holds in all 2 cases\\", \\"requirement\\": false}, {\\"name\\": \\"COP = cold / drive heat\\", \\"passed\\": true, \\"detail\\": \\"holds in all 2 cases\\", \\"requirement\\": false}, {\\"name\\": \\"COP within the Carnot limit\\", \\"passed\\": true, \\"detail\\": \\"holds in all 2 cases\\", \\"requirement\\": false}, {\\"name\\": \\"No cold below the minimum drive temperature\\", \\"passed\\": true, \\"detail\\": \\"holds in all 2 cases\\", \\"requirement\\": false}], \\"warnings\\": [], \\"seconds\\": 0.036}}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793188250352, "stepName": "use_model", "metadata": {"passed": true, "cases": 2, "seconds": 0.038}}
+
+data: {"type": "CUSTOM", "timestamp": 1793188250353, "name": "model_result", "value": {"component": "adsorption_chiller", "title": "Adsorption chiller", "cases": [{"drive_temp_c": 45.0, "heat_available_mw": 2.96, "cooling_water_temp_c": 27.0, "chilled_water_temp_c": 6.0}, {"drive_temp_c": 55.0, "heat_available_mw": 2.96, "cooling_water_temp_c": 27.0, "chilled_water_temp_c": 6.0}], "outputs": [{"cold_mw": 0.0, "drive_heat_mw": 0.0, "rejected_heat_mw": 0.0, "cop": 0.0, "min_drive_temp_c": 48.0}, {"cold_mw": 0.4700279750114279, "drive_heat_mw": 1.036, "rejected_heat_mw": 1.506027975011428, "cop": 0.45369495657473735, "min_drive_temp_c": 48.0}], "assumed": [["cooling_water_temp_c"], ["cooling_water_temp_c"]], "units": {"drive_temp_c": "°C", "heat_available_mw": "MW", "cooling_water_temp_c": "°C", "chilled_water_temp_c": "°C", "cold_mw": "MW", "drive_heat_mw": "MW", "rejected_heat_mw": "MW", "cop": "-", "min_drive_temp_c": "°C"}, "checks": [{"name": "Returns every output as a finite number", "passed": true, "detail": "holds in all 2 cases", "requirement": false}, {"name": "No negative outputs", "passed": true, "detail": "holds in all 2 cases", "requirement": false}, {"name": "Energy balance", "passed": true, "detail": "holds in all 2 cases", "requirement": false}, {"name": "Uses no more heat than is available", "passed": true, "detail": "holds in all 2 cases", "requirement": false}, {"name": "COP = cold / drive heat", "passed": true, "detail": "holds in all 2 cases", "requirement": false}, {"name": "COP within the Carnot limit", "passed": true, "detail": "holds in all 2 cases", "requirement": false}, {"name": "No cold below the minimum drive temperature", "passed": true, "detail": "holds in all 2 cases", "requirement": false}], "warnings": []}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793188250353, "stepName": "report", "metadata": {"label": "Write the answer", "kind": "report", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793188250354, "stepName": "report", "metadata": {"ungrounded": [], "seconds": 0.0}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793188250354, "messageId": "d891b2d4f8", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793188250354, "messageId": "d891b2d4f8", "delta": "With the adsorption chiller model you approved, at drive temp 45 °C, heat available 2.96 MW, chilled water temp 6 °C: cold 0 MW, drive heat 0 MW, rejected heat 0 MW, cop 0, min drive temp 48 °C. At drive temp 55 °C, heat available 2.96 MW, chilled water temp 6 °C: cold 0.47 MW, drive heat 1.04 MW, rejected heat 1.51 MW, cop 0.45, min drive temp 48 °C. Assumed from the spec's defaults: cooling water temp 27 °C. All 7 per-case checks pass. Source: the generated model, run in the sandbox (not a GEMINI model)."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793188250354, "messageId": "d891b2d4f8"}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793188250355, "threadId": "k1", "runId": "4d5f73c624", "outcome": {"type": "success"}, "usage": [], "result": {"behaviour": "answer", "asked": [], "answer": "With the adsorption chiller model you approved, at drive temp 45 °C, heat available 2.96 MW, chilled water temp 6 °C: cold 0 MW, drive heat 0 MW, rejected heat 0 MW, cop 0, min drive temp 48 °C. At drive temp 55 °C, heat available 2.96 MW, chilled water temp 6 °C: cold 0.47 MW, drive heat 1.04 MW, rejected heat 1.51 MW, cop 0.45, min drive temp 48 °C. Assumed from the spec's defaults: cooling water temp 27 °C. All 7 per-case checks pass. Source: the generated model, run in the sandbox (not a GEMINI model).", "ungrounded": [], "dropped": [], "verified": null, "reasoning": false, "decided_by": {}, "intent": "explain", "language": "en", "answered": ["approval"], "generated_model": "adsorption_chiller", "seconds": 0.086, "llm_calls": 0, "calls": [], "prompt_tokens": 0, "output_tokens": 0, "load_seconds": 0, "prompt_seconds": 0, "output_seconds": 0, "tool_calls": 2, "cache_hits": 0, "tool_errors": 0, "left_out": [], "user_turns": 4, "model": "qwen3:1.7b", "prompt_version": "intake_v2"}}
+
+`;export{e as default};

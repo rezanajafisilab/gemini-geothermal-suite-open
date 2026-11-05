@@ -1,0 +1,27 @@
+{
+  "hashes": {
+    "START_HERE.md": "6188cb393d713f3e0dec3471cdc47c3a349f658f88bd58f7b2af192fed262921",
+    "hackathon/data/raw/challenge/GEMINI_Cooling_Demand_Daily_2027.csv": "e0ceec2332cd708ca1f97dd3cf6141521058e83e05406b628a758ad15bc3d47a",
+    "hackathon/data/raw/challenge/GEMINI_Hackathon_Challenge_Requirements.docx.pdf": "925144aa7e30a9affb7f78497a23390b1db10543ddbb90d31cfaa3287238cdff",
+    "hackathon/data/raw/challenge/GEMINI_Heating_Demand_Daily_2027.csv": "f5ab8feeb33721bbe6e0e5a4f84c4076de30c7c58b71987838b800761c913efb",
+    "hackathon/data/raw/reference/Three_Cooling_Options_Model_Design_Report.pdf": "4ff72d0459d407b54a1f0d0a55f26c6ba6188ff35efc3d8668f5a371c7bd820a",
+    "hackathon/data/raw/weather/knmi_debilt_2025/DATA_DICTIONARY.md": "a1467fa7de2ad56180bd582f7f6fbb2c3458971e6c4ebaf2f15a14c2f24ee85b",
+    "hackathon/data/raw/weather/knmi_debilt_2025/GEMINI_Weather_Daily_2027_KNMI_DeBilt_2025.csv": "2b51c2d848db73bf3d79c57b1cee6a7cb2852f8844966178062d64465943113b",
+    "hackathon/data/raw/weather/knmi_debilt_2025/GEMINI_Weather_Hourly_2027_KNMI_DeBilt_2025.csv": "d0a357572ffab16dbfeab8eb33e4e66794402e79bdb2f55246f21e360f778c1f",
+    "hackathon/data/raw/weather/knmi_debilt_2025/MANIFEST.json": "f50302690d55530fad4a806747752cc52bf83b33e571258766b261c00d0118b9",
+    "hackathon/data/raw/weather/knmi_debilt_2025/metadata.json": "27a035e3145d09baafb1be733afc06e138f1f99bd62ad323274db7e0818db431",
+    "hackathon/data/raw/weather/knmi_debilt_2025/README_WEATHER.md": "06ae6a9d819f7aad7a64e8cb71d39aad998ecd13ae9c25bd317bc354583e266d",
+    "hackathon/data/raw/weather/knmi_debilt_2025/sources/GEMINI_Cooling_Demand_Daily_2027.csv": "e0ceec2332cd708ca1f97dd3cf6141521058e83e05406b628a758ad15bc3d47a",
+    "hackathon/data/raw/weather/knmi_debilt_2025/sources/GEMINI_Heating_Demand_Daily_2027.csv": "f5ab8feeb33721bbe6e0e5a4f84c4076de30c7c58b71987838b800761c913efb",
+    "hackathon/data/raw/weather/knmi_debilt_2025/sources/KNMI_DeBilt_260_2021-2030_original.zip": "006a04a2a17f8f90d487aa187c606414d64ae90726d2cceb57981cec95b67fe6",
+    "hackathon/data/raw/weather/knmi_debilt_2025/validation.json": "fbac3683cbebdc8119d0b9ace9f222ee7c0efc5fa76300a59057cd9b5fe2331e"
+  },
+  "demand_mwh": {
+    "heating_demand_MWth": 111667.68,
+    "cooling_demand_MWcool": 23742.528000000002
+  },
+  "weather_rows": [
+    8760,
+    365
+  ]
+}

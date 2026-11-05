@@ -1,0 +1,311 @@
+/* Parts shared by the Energy and Economics tabs (parts.tsx). Every rule is scoped to the two tabs;
+   tokens come from src/styles.css (:root). */
+
+:is(.tab-energy, .tab-economics) .ee-panel {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px clamp(14px, 3vw, 20px) 16px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line), 0 12px 32px -18px rgba(17, 24, 28, 0.18);
+}
+:is(.tab-energy, .tab-economics) .ee-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 14px;
+  min-width: 0;
+}
+:is(.tab-energy, .tab-economics) .ee-panel-titles {
+  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+:is(.tab-energy, .tab-economics) .ee-panel h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+:is(.tab-energy, .tab-economics) .ee-panel-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+  text-wrap: pretty;
+}
+:is(.tab-energy, .tab-economics) .ee-panel-aside {
+  flex: none;
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+/* ------------------------------------------------------------------ tiles */
+:is(.tab-energy, .tab-economics) .ee-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(164px, 100%), 1fr));
+  gap: 12px;
+}
+:is(.tab-energy, .tab-economics) .ee-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 14px 16px 13px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line);
+}
+:is(.tab-energy, .tab-economics) .ee-tile-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 8px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+:is(.tab-energy, .tab-economics) .ee-tile-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+:is(.tab-energy, .tab-economics) .ee-tile-note {
+  margin-left: auto;
+  white-space: nowrap;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+:is(.tab-energy, .tab-economics) .ee-tile-note.good {
+  color: var(--ok);
+  font-weight: 600;
+}
+:is(.tab-energy, .tab-economics) .ee-tile-note.bad {
+  color: var(--red-ink);
+  font-weight: 600;
+}
+:is(.tab-energy, .tab-economics) .ee-tile-value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 5px;
+}
+:is(.tab-energy, .tab-economics) .ee-tile-value strong {
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+:is(.tab-energy, .tab-economics) .ee-tile-value strong.good {
+  color: var(--ok);
+}
+:is(.tab-energy, .tab-economics) .ee-tile-value strong.bad {
+  color: var(--red-ink);
+}
+:is(.tab-energy, .tab-economics) .ee-tile-value strong.muted {
+  color: var(--ink-3);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+:is(.tab-energy, .tab-economics) .ee-tile-unit {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+:is(.tab-energy, .tab-economics) .ee-tile-sub {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  text-wrap: pretty;
+  font-variant-numeric: tabular-nums;
+}
+:is(.tab-energy, .tab-economics) .ee-split,
+:is(.tab-energy, .tab-economics) .ee-meter {
+  display: flex;
+  gap: 2px;
+  height: 6px;
+  margin-top: auto;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #e7eded;
+}
+:is(.tab-energy, .tab-economics) .ee-split > span,
+:is(.tab-energy, .tab-economics) .ee-meter > span {
+  flex: none;
+  height: 100%;
+}
+
+/* ------------------------------------------------------------------ legend, keys, hatch */
+:is(.tab-energy, .tab-economics) .ee-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+:is(.tab-energy, .tab-economics) .ee-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+:is(.tab-energy, .tab-economics) .ee-key .ee-fig {
+  color: var(--ink-3);
+}
+:is(.tab-energy, .tab-economics) .ee-swatch {
+  flex: none;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+:is(.tab-energy, .tab-economics) .ee-hatch {
+  background: repeating-linear-gradient(135deg, #b42318 0 3px, #e9928a 3px 6px);
+}
+:is(.tab-energy, .tab-economics) .ee-short {
+  color: var(--red-ink);
+  font-weight: 650;
+}
+
+/* ------------------------------------------------------------------ switch, table toggle */
+:is(.tab-energy, .tab-economics) .ee-switch {
+  width: 168px;
+  flex: none;
+}
+:is(.tab-energy, .tab-economics) .ee-switch button {
+  font-size: 13.5px;
+  padding: 5px 4px;
+}
+:is(.tab-energy, .tab-economics) .ee-table-btn {
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+:is(.tab-energy, .tab-economics) .ee-table-btn[aria-pressed="true"] {
+  background: var(--soft);
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------------ charts */
+:is(.tab-energy, .tab-economics) .ee-plot {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  border-radius: 10px;
+}
+:is(.tab-energy, .tab-economics) .ee-plot svg {
+  display: block;
+  overflow: visible;
+  touch-action: pan-y;
+}
+:is(.tab-energy, .tab-economics) .ee-plot:focus-visible {
+  outline: 2px solid var(--teal-2);
+  outline-offset: 4px;
+}
+:is(.tab-energy, .tab-economics) .ee-tip {
+  position: absolute;
+  top: 8px;
+  z-index: 3;
+  transform: translateX(14px);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 150px;
+  padding: 8px 11px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 10px 28px -12px rgba(17, 24, 28, 0.3);
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+:is(.tab-energy, .tab-economics) .ee-tip.flip {
+  transform: translateX(calc(-100% - 14px));
+}
+:is(.tab-energy, .tab-economics) .ee-tip-title {
+  font-weight: 650;
+  color: var(--ink);
+}
+:is(.tab-energy, .tab-economics) .ee-tip-sub {
+  margin-top: -2px;
+  color: var(--ink-3);
+}
+:is(.tab-energy, .tab-economics) .ee-tip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+:is(.tab-energy, .tab-economics) .ee-tip-row strong {
+  min-width: 34px;
+  font-size: 13px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+:is(.tab-energy, .tab-economics) .ee-tip-row .u,
+:is(.tab-energy, .tab-economics) .ee-tip-row .n {
+  color: var(--ink-3);
+}
+:is(.tab-energy, .tab-economics) .ee-tip-row.total {
+  margin-top: 2px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line-2);
+}
+:is(.tab-energy, .tab-economics) .ee-tip-row.short strong,
+:is(.tab-energy, .tab-economics) .ee-tip-row.short .n {
+  color: var(--red-ink);
+}
+:is(.tab-energy, .tab-economics) .ee-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+:is(.tab-energy, .tab-economics) .ee-xcap {
+  margin: 4px 0 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+:is(.tab-energy, .tab-economics) .ee-foot {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  text-wrap: pretty;
+}
+
+/* A legend entry whose series is hidden (another is shown alone), and the note that says so. */
+:is(.tab-energy, .tab-economics) .ee-key.is-off {
+  opacity: 0.45;
+}
+:is(.tab-energy, .tab-economics) .ee-key[tabindex] {
+  cursor: context-menu;
+  border-radius: 6px;
+}
+:is(.tab-energy, .tab-economics) .ee-only {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 1px 4px 1px 10px;
+  border-radius: 999px;
+  background: var(--teal-bg);
+  color: var(--teal);
+  font-weight: 600;
+}

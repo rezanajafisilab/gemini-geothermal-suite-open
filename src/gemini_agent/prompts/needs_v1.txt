@@ -1,0 +1,10 @@
+You read one message sent to Dioscuri, which designs geothermal heating and cooling plants for a district, and say what the reply needs. Reply with JSON only: {"needs": "<one choice>"}.
+
+The choices:
+- new_design_run: the message asks for another or a new design to be run or set up, in any words: "I want to do another design", "design it again", "let's start over", "let me set up the inputs myself", "try a different plant".
+- about_one_existing_design: the message asks about a design already made, or asks a what-if or a failure on it: its cost, figures, units, checks, why it was chosen. "What does heat cost?", "why does it need a boiler?", "is the cheapest one reliable?", "what if we flared the gas?", "what if the ESP fails in January?".
+- designs_side_by_side: the message asks to see two or more designs compared side by side, in a table or next to each other.
+- how_the_design_was_found: the message asks how the design was arrived at, how the search went, or which designs were tried.
+- no_particular_design: anything else: the conversation itself (what was discussed, which designs were looked at, a summary), the project's own data (its demand, its peak, its reservoir), what a term means ("what does N-1 mean?"), general knowledge, greetings, thanks, off-topic messages.
+
+A what-if or a failure on a design is about_one_existing_design, never new_design_run. A question about one design is about_one_existing_design even when it does not name the design.

@@ -1,0 +1,271 @@
+/* The cost basis (CostBasis.tsx): the bar of what the cost includes, what it leaves out, its
+   terms and the tornado of how far it moves. */
+
+.cb {
+  display: grid;
+  gap: 18px;
+}
+.cb-block {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.cb-h {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.cb-h strong {
+  color: var(--ink);
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 13px;
+}
+.cb-bar {
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--soft);
+}
+.cb-bar > span {
+  height: 100%;
+  min-width: 2px;
+}
+.cb-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.cb-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.cb-key i,
+.cb-parts i {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  flex: none;
+}
+.cb-key b {
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.cb-key small,
+.cb-num small {
+  color: var(--ink-3);
+  font-weight: 500;
+  font-size: 11.5px;
+}
+.cb-parts {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 2px 22px;
+}
+.cb-parts li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.cb-part {
+  flex: 1;
+  min-width: 0;
+  color: var(--ink-2);
+}
+.cb-num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.cb-more {
+  justify-self: start;
+}
+.cb-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cb-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--tile);
+  border: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.cb-chip b {
+  color: var(--ink);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.cb-chip small {
+  color: var(--ink-4);
+  font-size: 11px;
+}
+.cb-chip-out {
+  align-items: center;
+  background: transparent;
+  border-style: dashed;
+  border-color: rgba(17, 24, 28, 0.18);
+  color: var(--ink-3);
+  cursor: help;
+}
+.cb-x {
+  flex: none;
+  color: var(--ink-4);
+}
+.cb-out {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.cb-out li {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.cb-out .cb-x {
+  transform: translateY(1px);
+}
+.cb-out strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.cb-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 82ch;
+}
+.cb-muted {
+  color: var(--ink-3);
+  font-size: 12.5px;
+}
+
+/* The tornado: a row per assumption, its bar from the cheaper case to the dearer one. */
+.cb-tornado {
+  display: grid;
+  gap: 5px;
+}
+.cb-trow {
+  display: grid;
+  grid-template-columns: minmax(130px, 210px) 1fr;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+}
+.cb-tlabel {
+  display: grid;
+  color: var(--ink);
+  font-weight: 550;
+  line-height: 1.25;
+}
+.cb-tlabel small {
+  color: var(--ink-4);
+  font-weight: 450;
+  font-size: 11.5px;
+}
+.cb-track {
+  position: relative;
+  height: 22px;
+  margin: 0 112px;
+}
+.cb-track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px solid var(--line-2);
+}
+.cb-base {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 0;
+  border-left: 1.5px solid var(--ink-2);
+  z-index: 1;
+}
+.cb-seg {
+  position: absolute;
+  top: 4px;
+  height: 14px;
+}
+.cb-cheap {
+  background: #5aa6ae;
+  border-radius: 4px 0 0 4px;
+  transform-origin: 100% 50%;
+}
+.cb-dear {
+  background: #e3a33b;
+  border-radius: 0 4px 4px 0;
+}
+.cb-end {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  color: var(--ink-3);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+.cb-end b {
+  color: var(--ink);
+  font-weight: 650;
+  font-size: 12px;
+}
+.cb-end-l {
+  padding-right: 6px;
+}
+.cb-end-r {
+  padding-left: 6px;
+}
+.cb-taxis {
+  position: relative;
+  height: 16px;
+  margin: 0 112px;
+}
+.cb-taxis span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+@media (max-width: 720px) {
+  .cb-trow {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .cb-track {
+    margin: 0 92px;
+  }
+  .cb-taxis {
+    margin: 0 92px;
+  }
+}

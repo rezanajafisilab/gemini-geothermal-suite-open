@@ -1,0 +1,28 @@
+Loaded plant:    $SCR/work/gemini-dev/simulator_examples/projects/doublet_plant.json
+Solved primary flow rate (well nodal balance): 129.02 m3/h
+Separator out:   P=2.8710 bar, T=79.00 C
+Heat exch. out:  T_primary=44.11 C, T_secondary=59.04 C
+Boiler:          T_out=61.97 C, power_th=0.401 MW
+CHP:             T_out=21.95 C, power_el=0.033 MW, power_th=0.067 MW
+Secondary gas power (boiler.power_th + chp.power_th): 0.468 MW
+ESP (producer):  power_el=0.1744 MW
+Injector well:   P_wellhead=0.0010 bar (surface P=1.4500 bar)
+Injector pump:   power_el=0.0000 MW
+
+T_s_out:         53.97 C   (flow-weighted mix of boiler/CHP outlets)
+power_plant:     5.825 MW  (secondary-network thermal power)
+power_doublet:   5.357 MW  (primary-side thermal power extracted)
+power_total:     5.684 MW  (power_plant - ESP - InjectorPump + CHP)
+electricity_surplus: -0.1410 MW  (CHP - ESP - InjectorPump)
+emission_total:  4082.05 kg CO2/day  (boiler + CHP gas, ESP + InjectorPump electricity)
+
+----------------------------------------------------------
+Q (primary flow rate):        129.02 m3/h
+Pres_P (producer reservoir):  250.00 bar
+Pres_I (injector reservoir):  240.00 bar
+ESP_in (intake pressure):     45.6706 bar
+ESP_out (discharge pressure): 74.1015 bar
+T_s_out:                      53.97 C
+power_plant:                  5.825 MW
+emission_total:               4082.05 kg CO2/day
+wall=0.40s maxrss=75776KB

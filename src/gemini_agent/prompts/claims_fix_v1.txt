@@ -1,0 +1,4 @@
+Each numbered statement below was flagged as not backed by the sources. Give two lists, one string per statement, in order.
+quotes: copy from the sources, word for word, the shortest passage that says the same thing or from which the statement follows directly. Write "" when no passage does; never write a passage that is merely about the same topic.
+fixed: when the statement is close to what the sources say but worded wrong (a wrong name, label, turn or unit, a word that says more than the sources do), the statement rewritten to say only what the sources say, keeping its point, its tone and its language. Write "" when it is right as it is, or when nothing of it holds.
+What the user asked Dioscuri to remember (their name, how to answer) is a source for how to address them. What the user said earlier is a source only for what they said, never for a fact about the project. Answer with JSON only.

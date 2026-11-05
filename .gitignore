@@ -1,5 +1,6 @@
 .idea
 .venv
+.tools
 .vscode
 venv
 __pycache__

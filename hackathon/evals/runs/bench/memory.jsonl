@@ -1,0 +1,16 @@
+{"model": "qwen3.5:4b", "device": "auto", "size_mb": 3481, "vram_mb": 3481, "context": 16384}
+{"model": "qwen3.5:9b", "device": "auto", "size_mb": 5863, "vram_mb": 5863, "context": 16384}
+{"model": "qwen3.5:4b", "device": "cpu", "size_mb": 3765, "vram_mb": 2559, "context": 8192}
+{"model": "qwen3.5:2b-q4_K_M", "device": "cpu", "size_mb": 2087, "vram_mb": 1218, "context": 8192}
+{"model": "qwen2.5:7b", "device": "auto", "size_mb": 5374, "vram_mb": 5374, "context": 16384}
+{"model": "qwen3:8b", "device": "auto", "size_mb": 7188, "vram_mb": 7188, "context": 16384}
+{"model": "gemma3:4b", "device": "cpu", "size_mb": 2953, "vram_mb": 1882, "context": 8192}
+{"model": "mistral:7b", "device": "auto", "size_mb": 6410, "vram_mb": 6410, "context": 16384}
+{"model": "llama3.1:8b", "device": "auto", "size_mb": 6716, "vram_mb": 6716, "context": 16384}
+{"model": "granite4.2:3b", "device": "cpu", "size_mb": 2979, "vram_mb": 2038, "context": 8192}
+{"model": "phi4-mini", "device": "cpu", "size_mb": 4088, "vram_mb": 2410, "context": 8192}
+{"model": "gemma3:4b", "device": "auto", "size_mb": 2917, "vram_mb": 2917, "context": 16384}
+{"model": "gemma3:12b", "device": "auto", "size_mb": 7993, "vram_mb": 7993, "context": 16384}
+{"model": "qwen3.5:2b-q4_K_M", "device": "auto", "size_mb": 1776, "vram_mb": 1776, "context": 16384}
+{"model": "granite4.2:3b", "device": "auto", "size_mb": 3447, "vram_mb": 3447, "context": 16384}
+{"model": "phi4-mini", "device": "auto", "size_mb": 4593, "vram_mb": 4593, "context": 16384}

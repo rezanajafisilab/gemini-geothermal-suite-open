@@ -1,0 +1,1518 @@
+/* The Sensitivity tab. Every rule is scoped under .tab-sensitivity so nothing leaks into the other
+   tabs; tokens (colours, fonts, shadows) are the :root variables of src/styles.css. */
+
+.tab-sensitivity {
+  --sen-card-shadow: 0 0 0 1px var(--line), 0 12px 32px -18px rgba(17, 24, 28, 0.18);
+  --sen-grid: #e8eded;
+  --sen-axis: #c3cdce;
+}
+
+.tab-sensitivity .sen-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: var(--sen-card-shadow);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 14px;
+}
+.tab-sensitivity .sen-card h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+}
+.tab-sensitivity .sen-card-sub {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-note {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--tile);
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+
+/* ------------------------------------------------------------------ toolbar */
+.tab-sensitivity .sen-toolbar {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-toolbar-cap {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .sen-toolbar-note {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+
+/* ------------------------------------------------------------------ setup */
+/* What to vary | what to measure and run: one height. The right card's last block (Monte Carlo
+   and Run) sits at its bottom and stays in sight while the parameter list is scrolled. */
+.tab-sensitivity .sen-setup {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  gap: 18px;
+  align-items: stretch;
+}
+
+/* parameter chips */
+.tab-sensitivity .sen-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tab-sensitivity .sen-group {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  align-items: start;
+  gap: 4px 10px;
+}
+.tab-sensitivity .sen-group-cap {
+  padding-top: 5px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .sen-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px 4px 5px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  color: var(--ink-2);
+  font-size: 13px;
+  cursor: pointer;
+}
+.tab-sensitivity .sen-chip:hover {
+  border-color: #9db4b6;
+}
+.tab-sensitivity .sen-chip.is-on {
+  border-color: rgba(17, 24, 28, 0.18);
+  background: var(--soft-2);
+  color: var(--ink);
+  font-weight: 600;
+}
+.tab-sensitivity .sen-chip-mark {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.tab-sensitivity .sen-chip-mark.is-add {
+  background: var(--soft);
+  color: var(--ink-3);
+}
+
+/* picked parameter rows */
+.tab-sensitivity .sen-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+.tab-sensitivity .sen-row {
+  display: grid;
+  grid-template-columns: minmax(170px, 1fr) auto auto;
+  grid-template-areas:
+    "head range actions"
+    "desc desc desc";
+  align-items: center;
+  gap: 4px 14px;
+  padding: 10px 2px 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.tab-sensitivity .sen-row-head {
+  grid-area: head;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-row-dot {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 50%;
+}
+.tab-sensitivity .sen-row-name {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 0;
+}
+.tab-sensitivity .sen-kind {
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--soft-2);
+  color: var(--ink-3);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 18px;
+  white-space: nowrap;
+  cursor: help;
+}
+.tab-sensitivity .sen-row-range {
+  grid-area: range;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.tab-sensitivity .sen-num {
+  position: relative;
+  display: inline-flex;
+}
+.tab-sensitivity .sen-num-cap {
+  position: absolute;
+  top: -7px;
+  left: 8px;
+  padding: 0 3px;
+  background: #fff;
+  font-size: 10.5px;
+  line-height: 12px;
+  color: var(--ink-4);
+}
+.tab-sensitivity .sen-num input {
+  width: 74px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1.5px solid #cbd6d7;
+  background: #fff;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+.tab-sensitivity .sen-num input:focus {
+  outline: none;
+  border-color: var(--teal-2);
+  box-shadow: 0 0 0 3px rgba(11, 143, 160, 0.18);
+}
+.tab-sensitivity .sen-row.is-invalid .sen-num input {
+  border-color: #b3261e;
+}
+.tab-sensitivity .sen-to {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .sen-unit {
+  min-width: 42px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .sen-row-actions {
+  grid-area: actions;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 70px;
+}
+.tab-sensitivity .sen-remove {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  color: var(--ink-3);
+  cursor: pointer;
+}
+.tab-sensitivity .sen-remove:hover {
+  color: var(--red-ink);
+  border-color: #e3b5b0;
+}
+.tab-sensitivity .sen-row-desc,
+.tab-sensitivity .sen-row-err {
+  grid-area: desc;
+  padding-left: 18px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+.tab-sensitivity .sen-row-err {
+  color: #b3261e;
+  font-weight: 550;
+}
+
+/* side: outputs, the run in short, Monte Carlo, run */
+.tab-sensitivity .sen-side {
+  gap: 0;
+  padding: 6px 18px 16px;
+}
+.tab-sensitivity .sen-side-foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin-top: auto;
+  padding-bottom: 2px;
+  border-top: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 -14px 16px -14px rgba(17, 24, 28, 0.14);
+}
+.tab-sensitivity .sen-side-block.sen-sum {
+  gap: 9px;
+  border-bottom: 0;
+}
+.tab-sensitivity .sen-sum-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 10px;
+}
+.tab-sensitivity .sen-sum-total {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-sum-total strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.tab-sensitivity .sen-sum-bar {
+  display: flex;
+  gap: 2px;
+  height: 10px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #e7eded;
+}
+.tab-sensitivity .sen-sum-bar > span {
+  flex-basis: 0;
+  min-width: 3px;
+}
+.tab-sensitivity .sen-sum-parts {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .sen-sum-parts li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.tab-sensitivity .sen-sum-parts li.is-off {
+  opacity: 0.5;
+}
+.tab-sensitivity .sen-sum-parts i {
+  flex: none;
+  align-self: center;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+.tab-sensitivity .sen-sum-label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 6px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-sum-label span {
+  color: var(--ink-4);
+}
+.tab-sensitivity .sen-sum-parts strong {
+  margin-left: auto;
+  font-weight: 650;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-sum-sel {
+  margin: -3px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-3);
+  text-wrap: pretty;
+}
+.tab-sensitivity .sen-sum-dots {
+  display: inline-flex;
+  gap: 3px;
+  margin-right: 7px;
+  vertical-align: 0;
+}
+.tab-sensitivity .sen-sum-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.tab-sensitivity .sen-side-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+.tab-sensitivity .sen-side h2 {
+  font-size: 14px;
+}
+.tab-sensitivity .sen-out {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  color: var(--ink-2);
+  font-size: 13px;
+  cursor: pointer;
+}
+.tab-sensitivity .sen-out:hover {
+  border-color: #9db4b6;
+}
+.tab-sensitivity .sen-out.is-on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+  font-weight: 600;
+}
+.tab-sensitivity .sen-out-unit {
+  font-size: 11.5px;
+  font-weight: 450;
+  opacity: 0.7;
+}
+.tab-sensitivity .sen-mc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tab-sensitivity .sen-switch {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #cfd8d9;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.tab-sensitivity .sen-switch i {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(17, 24, 28, 0.25);
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.tab-sensitivity .sen-switch.is-on {
+  background: var(--teal-2);
+}
+.tab-sensitivity .sen-switch.is-on i {
+  transform: translateX(14px);
+}
+.tab-sensitivity .sen-samples {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .sen-samples strong {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-samples.is-off {
+  opacity: 0.5;
+}
+.tab-sensitivity .sen-samples input[type="range"] {
+  width: 100%;
+  margin: 4px 0 0;
+  accent-color: var(--teal-2);
+}
+.tab-sensitivity .sen-samples-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--ink-4);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-run {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding-top: 14px;
+}
+.tab-sensitivity .sen-run-btn {
+  justify-content: center;
+}
+.tab-sensitivity .sen-run-btn.is-due {
+  box-shadow: 0 0 0 3px rgba(11, 143, 160, 0.22);
+}
+.tab-sensitivity .sen-run-note {
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ results */
+.tab-sensitivity .sen-results {
+  position: relative;
+  padding: 16px 18px 18px;
+  gap: 14px;
+}
+.tab-sensitivity .sen-results.is-pending .sen-res-grid,
+.tab-sensitivity .sen-results.is-stale .sen-res-grid {
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+.tab-sensitivity .sen-res-head {
+  align-items: center;
+}
+.tab-sensitivity .sen-res-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-res-title h2 {
+  font-size: 16px;
+}
+.tab-sensitivity .sen-stale {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #fff8eb;
+  border: 1px solid #eedab0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .sen-pending {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line-2), 0 8px 20px -10px rgba(17, 24, 28, 0.3);
+  font-size: 13px;
+  font-weight: 600;
+}
+.tab-sensitivity .sen-pending-text {
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .sen-outs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tab-sensitivity .sen-pill {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  color: var(--ink-2);
+  font-size: 13px;
+  cursor: pointer;
+}
+.tab-sensitivity .sen-pill:hover {
+  border-color: #9db4b6;
+}
+.tab-sensitivity .sen-pill.is-on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+  font-weight: 600;
+}
+.tab-sensitivity .sen-res-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 32px;
+}
+.tab-sensitivity .sen-fig {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-fig figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.tab-sensitivity .sen-fig h3 {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 650;
+}
+.tab-sensitivity .sen-fig figcaption span {
+  font-size: 12.5px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .sen-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .sen-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.tab-sensitivity .sen-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+/* shared chart chrome */
+.tab-sensitivity .sen-grid line {
+  stroke: var(--sen-grid);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.tab-sensitivity .sen-grid line.is-mid {
+  stroke: #d6dede;
+}
+.tab-sensitivity .sen-axis {
+  stroke: var(--sen-axis);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.tab-sensitivity .sen-ticks text {
+  font-size: 11.5px;
+  fill: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-ticks .sen-axis-title {
+  fill: var(--ink-2);
+  font-size: 12px;
+}
+.tab-sensitivity .sen-tip {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 10px 28px -12px rgba(17, 24, 28, 0.3);
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tab-sensitivity .sen-tip-head {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.tab-sensitivity .sen-tip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .sen-tip-row strong {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-tip-row i {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex: none;
+}
+.tab-sensitivity .sen-tip-row i.line {
+  width: 12px;
+  height: 2.5px;
+  border-radius: 2px;
+}
+.tab-sensitivity .sen-tip-delta {
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-tip-foot {
+  padding-top: 2px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* tornado */
+.tab-sensitivity .sen-tornado {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-tor-rows {
+  display: flex;
+  flex-direction: column;
+}
+.tab-sensitivity .sen-tor-row,
+.tab-sensitivity .sen-tor-axis {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(96px, 34%) minmax(0, 1fr);
+  gap: 0 10px;
+  align-items: center;
+}
+.tab-sensitivity .sen-tor-row {
+  min-height: 40px;
+  border-radius: 8px;
+}
+.tab-sensitivity .sen-tor-row.is-hover {
+  background: var(--tile);
+}
+.tab-sensitivity .sen-tor-row:focus-visible {
+  outline-offset: 0;
+}
+.tab-sensitivity .sen-tor-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding-left: 4px;
+  line-height: 1.25;
+}
+.tab-sensitivity .sen-tor-name {
+  font-size: 13px;
+  color: var(--ink);
+  font-weight: 550;
+}
+.tab-sensitivity .sen-tor-range {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-tor-plot {
+  position: relative;
+  display: block;
+  height: 40px;
+}
+.tab-sensitivity .sen-tor-grid {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--sen-grid);
+}
+.tab-sensitivity .sen-tor-bar {
+  position: absolute;
+  top: 12px;
+  height: 16px;
+  border-radius: 0 4px 4px 0;
+}
+.tab-sensitivity .sen-tor-bar.is-left {
+  border-radius: 4px 0 0 4px;
+}
+.tab-sensitivity .sen-tor-bar.is-inner {
+  top: 16px;
+  height: 8px;
+  box-shadow: 0 0 0 2px #fff;
+}
+.tab-sensitivity .sen-tor-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1.5px;
+  margin-left: -0.75px;
+  background: var(--ink);
+}
+.tab-sensitivity .sen-tor-val {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tab-sensitivity .sen-tor-val.is-none {
+  font-weight: 450;
+  color: var(--ink-4);
+}
+.tab-sensitivity .sen-tor-ticks {
+  position: relative;
+  display: block;
+  height: 18px;
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .sen-tor-ticks > span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.tab-sensitivity .sen-tor-axis {
+  border-top: 1px solid var(--sen-axis);
+  padding-top: 4px;
+}
+.tab-sensitivity .sen-tor-basecap {
+  border-top: 0;
+  padding-top: 0;
+  margin-top: -6px;
+}
+.tab-sensitivity .sen-tor-base {
+  font-weight: 600;
+  color: var(--ink);
+}
+.tab-sensitivity .sen-tor-tip {
+  top: calc(100% - 4px);
+  left: calc(34% + 10px);
+}
+
+/* spider */
+.tab-sensitivity .sen-spider {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-spider-plot {
+  position: relative;
+}
+.tab-sensitivity .sen-spider-plot:focus-visible {
+  outline-offset: 4px;
+}
+.tab-sensitivity .sen-spider-plot svg {
+  display: block;
+  overflow: visible;
+}
+.tab-sensitivity .sen-base {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.tab-sensitivity .sen-spider-legend .sen-base-key {
+  font-weight: 600;
+}
+.tab-sensitivity .sen-spider-legend .sen-base-key i {
+  height: 1px;
+  background: var(--ink-2);
+}
+.tab-sensitivity .sen-ask {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+}
+.tab-sensitivity .wb-actions {
+  min-width: 0;
+  max-width: 100%;
+}
+.tab-sensitivity .sen-line polyline {
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.tab-sensitivity .sen-line {
+  transition: opacity 0.2s ease;
+}
+.tab-sensitivity .sen-line.is-dim {
+  opacity: 0.18;
+}
+.tab-sensitivity .sen-line.is-focus polyline {
+  stroke-width: 3;
+}
+.tab-sensitivity .sen-cross {
+  stroke: #8a959e;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+  pointer-events: none;
+}
+.tab-sensitivity .sen-spider-tip {
+  top: 8px;
+  transform: translateX(14px);
+}
+.tab-sensitivity .sen-spider-tip.flip {
+  transform: translateX(calc(-100% - 14px));
+}
+.tab-sensitivity .sen-spider-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .sen-spider-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: default;
+}
+.tab-sensitivity .sen-spider-legend i {
+  width: 14px;
+  height: 2.5px;
+  border-radius: 2px;
+}
+
+/* histogram */
+.tab-sensitivity .sen-hist {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-hist-main,
+.tab-sensitivity .sen-hist-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-fig.is-wide {
+  grid-column: 1 / -1;
+}
+.tab-sensitivity .sen-hist.is-wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  align-items: start;
+  gap: 14px 32px;
+}
+.tab-sensitivity .sen-hist.is-wide .sen-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.tab-sensitivity .sen-summary {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.tab-sensitivity .sen-summary strong {
+  color: var(--ink);
+  font-weight: 650;
+}
+.tab-sensitivity .sen-hist-plot {
+  position: relative;
+}
+.tab-sensitivity .sen-hist-plot svg {
+  display: block;
+  overflow: visible;
+}
+.tab-sensitivity .sen-bin.is-hover path {
+  filter: brightness(1.08);
+}
+.tab-sensitivity .sen-mark line {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  shape-rendering: crispEdges;
+}
+.tab-sensitivity .sen-mark text {
+  font-size: 11.5px;
+  font-weight: 650;
+  fill: var(--ink);
+}
+.tab-sensitivity .sen-mark-p10 line,
+.tab-sensitivity .sen-mark-p90 line {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+}
+.tab-sensitivity .sen-mark-p10 text,
+.tab-sensitivity .sen-mark-p90 text {
+  fill: var(--ink-2);
+  font-weight: 600;
+}
+.tab-sensitivity .sen-mark-base line {
+  stroke: #b06a00;
+  stroke-width: 1.5;
+}
+.tab-sensitivity .sen-mark-base text {
+  fill: #8a5a00;
+  font-weight: 650;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 3px;
+}
+.tab-sensitivity .sen-hist-tip {
+  top: 0;
+  transform: translateX(10px);
+}
+.tab-sensitivity .sen-hist-tip.flip {
+  transform: translateX(calc(-100% - 10px));
+}
+.tab-sensitivity .sen-stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+.tab-sensitivity .sen-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--tile);
+  min-width: 0;
+}
+.tab-sensitivity .sen-stats > div.is-mid {
+  background: var(--teal-num);
+}
+.tab-sensitivity .sen-stats dt {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.tab-sensitivity .sen-stats dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+.tab-sensitivity .sen-stats dd small {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* heatmap */
+.tab-sensitivity .sen-heat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.tab-sensitivity .sen-heat-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .sen-heat-key span {
+  width: 72px;
+  height: 8px;
+  border-radius: 4px;
+}
+.tab-sensitivity .sen-heat-scroll {
+  overflow-x: auto;
+  min-width: 0;
+}
+.tab-sensitivity .sen-heat-table {
+  border-collapse: separate;
+  border-spacing: 3px;
+  margin: -3px;
+  font-size: 12px;
+}
+.tab-sensitivity .sen-heat-table th {
+  font-weight: 450;
+  color: var(--ink-2);
+  text-align: left;
+}
+.tab-sensitivity .sen-heat-table thead th {
+  vertical-align: bottom;
+  padding: 0 0 3px;
+}
+.tab-sensitivity .sen-heat-table thead button {
+  display: block;
+  width: 100%;
+  min-width: 64px;
+  padding: 3px 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 11.5px;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+.tab-sensitivity .sen-heat-table thead th.is-on button {
+  color: var(--ink);
+  font-weight: 650;
+  background: var(--soft-2);
+}
+.tab-sensitivity .sen-heat-table tbody th {
+  padding-right: 8px;
+  white-space: nowrap;
+  font-size: 12.5px;
+}
+.tab-sensitivity .sen-heat-table td {
+  height: 28px;
+  min-width: 64px;
+  padding: 0 6px;
+  border-radius: 6px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.tab-sensitivity .sen-heat-table td.is-on {
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+
+/* ------------------------------------------------------------------ narrow screens */
+@media (max-width: 1060px) {
+  .tab-sensitivity .sen-setup {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .tab-sensitivity .sen-res-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tab-sensitivity .sen-hist.is-wide {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .tab-sensitivity .sen-card {
+    padding: 14px;
+  }
+  .tab-sensitivity .sen-side {
+    padding: 4px 14px 14px;
+  }
+  .tab-sensitivity .sen-group {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tab-sensitivity .sen-group-cap {
+    padding-top: 0;
+  }
+  .tab-sensitivity .sen-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "head actions"
+      "range range"
+      "desc desc";
+    gap: 8px 10px;
+  }
+  .tab-sensitivity .sen-row-desc,
+  .tab-sensitivity .sen-row-err {
+    padding-left: 0;
+  }
+  .tab-sensitivity .sen-num input {
+    width: 82px;
+  }
+  .tab-sensitivity .sen-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .tab-sensitivity .sen-tor-row,
+  .tab-sensitivity .sen-tor-axis {
+    grid-template-columns: minmax(84px, 30%) minmax(0, 1fr);
+  }
+  .tab-sensitivity .sen-pending {
+    position: static;
+    align-self: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-sensitivity .sen-switch,
+  .tab-sensitivity .sen-switch i,
+  .tab-sensitivity .sen-line,
+  .tab-sensitivity .sen-results .sen-res-grid {
+    transition: none;
+  }
+}
+
+/* Unplanned outages (2 Nov): four figures, the years' spread, the worst case. */
+.tab-sensitivity .out-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.tab-sensitivity .out-switch {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  column-gap: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.tab-sensitivity .out-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.tab-sensitivity .out-switch-track {
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--line-2);
+  position: relative;
+  transition: background 0.15s;
+}
+.tab-sensitivity .out-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+  transition: transform 0.15s;
+}
+.tab-sensitivity .out-switch input:checked + .out-switch-track {
+  background: var(--teal);
+}
+.tab-sensitivity .out-switch input:checked + .out-switch-track .out-switch-thumb {
+  transform: translateX(14px);
+}
+.tab-sensitivity .out-switch input:focus-visible + .out-switch-track {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+.tab-sensitivity .out-switch-hint {
+  grid-column: 2;
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .out-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  transition: opacity 0.15s;
+}
+.tab-sensitivity .out-tiles.is-busy {
+  opacity: 0.55;
+}
+.tab-sensitivity .out-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--soft);
+}
+.tab-sensitivity .out-tile.is-ok {
+  background: var(--ok-bg);
+}
+.tab-sensitivity .out-tile.is-warn {
+  background: var(--amber-bg);
+}
+.tab-sensitivity .out-tile-cap {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .out-tile strong {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .out-tile strong small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.tab-sensitivity .out-tile-sub {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .out-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 14px;
+}
+.tab-sensitivity .out-bars {
+  margin: 0;
+}
+.tab-sensitivity .out-bars-plot {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 150px;
+  padding-top: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.tab-sensitivity .out-bar {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+.tab-sensitivity .out-bar-fill {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: var(--amber-dot);
+}
+.tab-sensitivity .out-bar.is-none .out-bar-fill {
+  background: var(--teal);
+}
+.tab-sensitivity .out-bar-n {
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .out-none {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--ok-bg);
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .out-bars figcaption,
+.tab-sensitivity .out-foot {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  margin: 6px 0 0;
+}
+.tab-sensitivity .out-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tab-sensitivity .out-worst {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--soft);
+  font-size: 13px;
+}
+.tab-sensitivity .out-worst.is-warn {
+  background: var(--red-bg);
+}
+.tab-sensitivity .out-worst p {
+  margin: 4px 0 0;
+}
+.tab-sensitivity .out-rates {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.tab-sensitivity .out-rates caption {
+  text-align: left;
+  color: var(--ink-3);
+  padding-bottom: 4px;
+}
+.tab-sensitivity .out-rates th {
+  text-align: left;
+  font-weight: 500;
+  padding: 3px 0;
+}
+.tab-sensitivity .out-rates td {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .out-sources {
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.tab-sensitivity .out-sources summary {
+  cursor: pointer;
+  color: var(--ink-3);
+}
+.tab-sensitivity .out-sources ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+.tab-sensitivity .out-error {
+  color: var(--red-ink);
+  font-size: 13px;
+}
+@media (max-width: 900px) {
+  .tab-sensitivity .out-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tab-sensitivity .out-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ------------------------------------------------------------------ N-1 or risk (3 Nov) */
+.tab-sensitivity .risk {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tab-sensitivity .risk-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+.tab-sensitivity .risk-head h3 {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 650;
+}
+.tab-sensitivity .risk-head p {
+  margin: 0;
+  max-width: 70ch;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .risk-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+.tab-sensitivity .risk-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f5f8f8;
+}
+.tab-sensitivity .risk-tile.is-risk {
+  background: #e2f3f5;
+}
+.tab-sensitivity .risk-tile .k {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .risk-tile strong {
+  font-size: 20px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.tab-sensitivity .risk-tile .u {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+.tab-sensitivity .risk-tile .s {
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+/* The N-1 or risk figure (RiskCurve.tsx): drawn at its own pixel width, axes named. */
+.tab-sensitivity .risk-curve {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tab-sensitivity .risk-plot {
+  position: relative;
+  width: 100%;
+}
+.tab-sensitivity .risk-plot svg {
+  display: block;
+  overflow: visible;
+}
+.tab-sensitivity .risk-curve figcaption {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.tab-sensitivity .risk-axis-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  fill: var(--ink-3);
+}
+.tab-sensitivity .risk-line {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.tab-sensitivity .risk-line.is-broken {
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+.tab-sensitivity .risk-target {
+  stroke: var(--heat);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+.tab-sensitivity .risk-target-name {
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--ink-2);
+}
+.tab-sensitivity .risk-dot {
+  fill: var(--teal);
+  stroke: var(--card);
+  stroke-width: 2;
+}
+.tab-sensitivity .risk-dot.is-hover {
+  r: 5.5;
+}
+.tab-sensitivity .risk-mark {
+  fill: none;
+  stroke-width: 2;
+}
+.tab-sensitivity .risk-mark.n1 {
+  stroke: var(--ink);
+}
+.tab-sensitivity .risk-mark.pick {
+  stroke: var(--teal);
+}
+.tab-sensitivity .risk-mark-name {
+  font-size: 11.5px;
+  font-weight: 650;
+  fill: var(--ink);
+  paint-order: stroke;
+  stroke: var(--card);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.tab-sensitivity .risk-plot circle[tabindex]:focus-visible {
+  outline: none;
+  stroke: var(--teal-2);
+  stroke-width: 2;
+}
+.tab-sensitivity .risk-tip {
+  pointer-events: none;
+}

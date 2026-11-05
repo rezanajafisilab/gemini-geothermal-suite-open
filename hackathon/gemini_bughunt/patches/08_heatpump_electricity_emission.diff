@@ -1,0 +1,22 @@
+--- a/src/gemini_model/heatpump/heatpump_basic.py
++++ b/src/gemini_model/heatpump/heatpump_basic.py
+@@ -35,6 +35,8 @@ from gemini_model.model_abstract import StaticModel
+ class HeatpumpBasic(StaticModel):
+     """HeatpumpBasic model."""
+ 
++    JOULE_PER_KWH = 3.6e6
++
+     def __init__(self):
+         """Model initialization.
+ 
+@@ -128,7 +130,9 @@ class HeatpumpBasic(StaticModel):
+         self.output["source_flow_rate_m3h"] = source_flow_rate * 3600.0
+         self.output["power_th"] = result[3]
+         self.output["power_el"] = result[4]
+-        self.output["emission"] = 0.0
++        # CO2 of the electricity the compressor draws (kg/s); 0 when no factor is given
++        emission_factor = self.parameters.get("electricity_emission_factor", 0.0)
++        self.output["emission"] = emission_factor / self.JOULE_PER_KWH * result[4]
+ 
+         if "hot_pressure_in" in u:
+             self.output["hot_pressure_in"] = u["hot_pressure_in"]

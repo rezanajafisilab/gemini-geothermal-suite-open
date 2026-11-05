@@ -1,0 +1,306 @@
+{
+  "schema_version": "cooling_cost_handoff_v1",
+  "status": "partial_source_collection_missing_normalised_installed_quotes",
+  "currency": "EUR",
+  "price_year": 2025,
+  "real_discount_rate": 0.052,
+  "rate_source": "local supplied cost_sources S3, PBL SDE++ 2026 Table 6.3 p66; accepted geothermal real rate 5.2%",
+  "conversion_policy": "Source-linked EIA USD-2022 -> EUR-2022 by /1.0530, then EUR-2025 by x1.102; DOE assumed USD-2017 basis -> EUR-2017 by /1.1297 then x1.265. 3.517 kW per refrigeration ton. No annual re-escalation; no USD runtime ledger.",
+  "records": [
+    {
+      "item_id": "water_compression_package",
+      "technology": "electric_water_including_tower",
+      "status": "missing",
+      "capex_meur_per_mw": null,
+      "fixed_om_eur_per_mw_year": null,
+      "variable_om_eur_per_mwh": null,
+      "lifetime_years": null,
+      "includes_tower": true,
+      "installed_scope": null,
+      "source_id": "installed_site_package_quote_required",
+      "capacity_basis": "MW cold",
+      "missing": [
+        "comparable installed scope",
+        "tower inclusion price",
+        "source-year/FX chain",
+        "supplier domain"
+      ]
+    },
+    {
+      "item_id": "water_compression_unit_reference",
+      "technology": "water_cooled_centrifugal_chiller",
+      "status": "derived_reference_eur2025_partial_scope",
+      "source_id": "EIA_Guidehouse_2023_AppA_p125_126",
+      "source_url": "https://www.eia.gov/analysis/studies/buildings/equipcosts/pdf/appendix-a.pdf",
+      "source_page": "printed 125-126, 2022 typical column, 400/600 refrigeration ton rows",
+      "original_currency": "USD",
+      "original_price_year": 2022,
+      "original_installed_usd_per_ton": {
+        "400_ton": 560,
+        "600_ton": 590
+      },
+      "original_fixed_maintenance_usd_per_ton_year": {
+        "400_ton": 30,
+        "600_ton": 40
+      },
+      "technical_life_years": 25,
+      "economic_lifetime_years": null,
+      "capex_meur_per_mw": null,
+      "fixed_om_eur_per_mw_year": null,
+      "variable_om_eur_per_mwh": null,
+      "conversion_chain": [
+        {
+          "factor": 0.9496676163342831,
+          "source_id": "local_cost_sources_S25",
+          "description": "USD-2022 to EUR-2022: USD per EUR divisor 1.053"
+        },
+        {
+          "factor": 1.102,
+          "source_id": "local_cost_sources_S25",
+          "description": "Euro-area HICP EUR-2022 to EUR-2025 x1.102"
+        }
+      ],
+      "capacity_domain": "Only cited 400/600 ton points; no single-unit 10 MW extrapolation",
+      "includes_tower": null,
+      "scope_flags": {
+        "chiller_installation": "source total installed",
+        "tower_investment": "unconfirmed",
+        "site_BOP": "unpriced",
+        "taxes": "unconfirmed"
+      },
+      "reference_conditions": "Conventional commercial AHRI/ASHRAE full-load basis; 20 C chilled supply not validated. Tower electricity excluded from water-chiller ratings.",
+      "conversion_source_sha256": "599a1a880149e5fa279074082b81a294fd65c2a6ec42d09a4850a8900031c128",
+      "derived_eur2025": {
+        "400_ton": {
+          "capex_meur_per_mw": 0.16663601916184612,
+          "fixed_om_eur_per_mw_year": 8926.929597956043
+        },
+        "600_ton": {
+          "capex_meur_per_mw": 0.17556294875980216,
+          "fixed_om_eur_per_mw_year": 11902.572797274726
+        }
+      },
+      "normalisation_note": "Point references only; no unpriced site scope, zero variable O&M or economic life is inferred."
+    },
+    {
+      "item_id": "air_compression_unit_reference",
+      "technology": "air_cooled_screw_chiller",
+      "status": "derived_reference_eur2025_partial_scope",
+      "source_id": "EIA_Guidehouse_2023_AppA_p129_130",
+      "source_url": "https://www.eia.gov/analysis/studies/buildings/equipcosts/pdf/appendix-a.pdf",
+      "source_page": "printed 129-130, 2022 typical column, 100/300 refrigeration ton rows",
+      "original_currency": "USD",
+      "original_price_year": 2022,
+      "original_installed_usd_per_ton": {
+        "100_ton": 1250,
+        "300_ton": 820
+      },
+      "original_fixed_maintenance_usd_per_ton_year": {
+        "100_ton": 50,
+        "300_ton": 20
+      },
+      "technical_life_years": 20,
+      "economic_lifetime_years": null,
+      "capex_meur_per_mw": null,
+      "fixed_om_eur_per_mw_year": null,
+      "variable_om_eur_per_mwh": null,
+      "conversion_chain": [
+        {
+          "factor": 0.9496676163342831,
+          "source_id": "local_cost_sources_S25",
+          "description": "USD-2022 to EUR-2022: USD per EUR divisor 1.053"
+        },
+        {
+          "factor": 1.102,
+          "source_id": "local_cost_sources_S25",
+          "description": "Euro-area HICP EUR-2022 to EUR-2025 x1.102"
+        }
+      ],
+      "capacity_domain": "Only cited 100/300 ton points; modular selection requires explicit source-domain treatment",
+      "includes_tower": false,
+      "scope_flags": {
+        "chiller_installation": "source total installed",
+        "site_BOP": "unpriced",
+        "taxes": "unconfirmed"
+      },
+      "reference_conditions": "Source air-chiller efficiency includes matched condenser energy. Do not load that package COP into compressor-only model and add fans again. No 20 C rating validation.",
+      "conversion_source_sha256": "599a1a880149e5fa279074082b81a294fd65c2a6ec42d09a4850a8900031c128",
+      "derived_eur2025": {
+        "100_ton": {
+          "capex_meur_per_mw": 0.3719553999148351,
+          "fixed_om_eur_per_mw_year": 14878.215996593404
+        },
+        "300_ton": {
+          "capex_meur_per_mw": 0.24400274234413183,
+          "fixed_om_eur_per_mw_year": 5951.286398637363
+        }
+      },
+      "normalisation_note": "Point references only; no unpriced site scope, zero variable O&M or economic life is inferred."
+    },
+    {
+      "item_id": "absorption_package",
+      "technology": "single_effect_absorption_including_tower",
+      "status": "missing",
+      "source_id": "site_package_quote_required",
+      "capex_meur_per_mw": null,
+      "fixed_om_eur_per_mw_year": null,
+      "variable_om_eur_per_mwh": null,
+      "lifetime_years": null,
+      "includes_tower": true,
+      "installed_scope": null,
+      "capacity_basis": "MW cold",
+      "missing": [
+        "installed tower scope",
+        "economic life",
+        "EUR-2025 installed package quote",
+        "20 C rating"
+      ]
+    },
+    {
+      "item_id": "absorption_reference",
+      "technology": "hot_water_single_stage_LiBr",
+      "status": "derived_reference_eur2025_partial_scope",
+      "source_id": "DOE_CHP_factsheet_2017_Table3_System2",
+      "source_url": "https://www.energy.gov/sites/default/files/2017/06/f35/CHP-Absorption%20Chiller-compliant.pdf",
+      "source_page": "page 4 Table 3 System 2; performance page 3 Table 2",
+      "original_currency": "USD",
+      "original_price_year": 2017,
+      "original_installed_usd_per_ton": 2300,
+      "original_equipment_usd_per_ton": 930,
+      "original_installation_usd_per_ton": 1370,
+      "original_om_usd_per_ton_hour": 0.002,
+      "capex_meur_per_mw": null,
+      "fixed_om_eur_per_mw_year": null,
+      "variable_om_eur_per_mwh": null,
+      "lifetime_years": null,
+      "conversion_chain": [
+        {
+          "factor": 0.8851907586084802,
+          "source_id": "local_cost_sources_S25",
+          "description": "USD-2017 to EUR-2017: USD per EUR divisor 1.1297"
+        },
+        {
+          "factor": 1.265,
+          "source_id": "local_cost_sources_S25",
+          "description": "Euro-area HICP EUR-2017 to EUR-2025 x1.265"
+        }
+      ],
+      "capacity_domain": "440 ton representative point; no fitted scaling",
+      "reference_conditions": "208/190 F hot water; 54/44 F chilled water; thermal COP 0.74; illustrative composite, not a product rating",
+      "includes_tower": null,
+      "scope_flags": {
+        "installation": "source installed",
+        "tower_capital": "unconfirmed",
+        "energy": "excluded from O&M",
+        "water_quality_monitoring": "included in O&M",
+        "water_service_tariff": "unconfirmed"
+      },
+      "missing": [
+        "confirmed monetary year",
+        "economic life",
+        "tower capital scope",
+        "water/O&M overlap reconciliation"
+      ],
+      "conversion_source_sha256": "599a1a880149e5fa279074082b81a294fd65c2a6ec42d09a4850a8900031c128",
+      "price_year_status": "team source assumes publication-year price basis; original factsheet does not specify monetary year",
+      "derived_eur2025": {
+        "capex_meur_per_mw": 0.7322895968641947,
+        "variable_om_eur_per_mwh": 0.6367735624906042,
+        "fixed_om_eur_per_mw_year": null,
+        "economic_lifetime_years": null
+      }
+    },
+    {
+      "item_id": "tower_alone",
+      "technology": "wet_tower",
+      "status": "missing",
+      "source_id": "comparable_installed_tower_quote_required",
+      "capacity_basis": "MW heat rejected",
+      "energy_basis": "MWh heat rejected",
+      "capex_meur_per_mw": null,
+      "fixed_om_eur_per_mw_year": null,
+      "variable_om_eur_per_mwh": null,
+      "lifetime_years": null,
+      "includes_tower": false,
+      "installed_scope": null,
+      "missing": [
+        "installed capital",
+        "fixed/variable O&M scopes",
+        "economic life",
+        "capacity domain"
+      ],
+      "available_native_reference": {
+        "source_id": "local_cost_sources_S15_secondary_transcription",
+        "original_currency": "USD",
+        "original_price_year": 2010,
+        "formula": "170000 + 1500 * circulation_L_s**0.9",
+        "domain_circulation_l_s": [
+          100,
+          10000
+        ],
+        "scope": "field assembly, tower and pumps; not a comparable site-installed quote",
+        "cepci_2010": 550.8,
+        "cepci_2024": 800.0,
+        "usd_per_eur_2024": 1.0824,
+        "derived_2010usd_to_2024eur_factor": 1.341863289894535,
+        "final_eur2025_value": null,
+        "missing": "2024-to-2025 basis, installed scope/O&M/economic life; do not relabel EUR-2024 as EUR-2025"
+      }
+    }
+  ],
+  "water": {
+    "status": "screening_assumption_A013",
+    "basis": "m3 per MWh rejected",
+    "evaporation": 1.1755102040816328,
+    "blowdown": 0.2938775510204082,
+    "makeup": 1.469387755102041,
+    "cycles": 5,
+    "source": "specification 11; no drift; 0.8 latent fraction; 2.45 MJ/kg; 1000 kg/m3",
+    "service_prices": "four separate user Prices fields; all missing until supplied"
+  },
+  "auxiliary_inventory": {
+    "status": "screening_A007_D018",
+    "basis": "actual kernel item electricity; kWh/MWh cold = 1000*item_MWh/delivered_cold_MWh; None for no delivery",
+    "chillers": [
+      "compressor",
+      "air_fan",
+      "abs_internal",
+      "chilled_pump",
+      "hot_pump"
+    ],
+    "towers": [
+      "tower_fan",
+      "cw_pump"
+    ],
+    "pumps": "shared well/source pumps remain with existing plant"
+  },
+  "refrigerant": {
+    "charge_kg_per_mw": null,
+    "annual_leak_fraction": null,
+    "gwp100": null,
+    "status": "excluded_unless_sourced",
+    "scope": "separate CO2e; direct cooling equipment CO2=0"
+  },
+  "plant_factor_handoff": {
+    "grid_co2_t_per_mwh": 0.2,
+    "gas_co2_t_per_mwh": 0.202,
+    "source": "local supplied cost_sources S20/S21; plant owns application once",
+    "owner": "existing central plant; component models never apply these factors",
+    "grid_factor_year": 2024,
+    "grid_factor_scope": "CBS integral total electricity production, Table 1; published 5 December 2025; CO2 only",
+    "gas_factor_source": "IPCC 2006 Vol 2 Ch 2 Table 2.2, 56100 kg CO2/TJ NCV; rounded team 0.202 t/MWh LHV"
+  },
+  "team_cost_source": {
+    "path": "hackathon/docs/challenge/cost_sources.md",
+    "sha256": "599a1a880149e5fa279074082b81a294fd65c2a6ec42d09a4850a8900031c128",
+    "ref": "local supplied untracked snapshot; integration branch still unavailable",
+    "preservation": "read-only; left unchanged and not added to the task PR",
+    "factor_verification": "supplied team convention; EIA/DOE tables separately read; Eurostat API not independently requeried"
+  },
+  "source_reconciliation": [
+    "Team summary S12 says 540-590 USD/RT typical; primary 2022 typical rows are 560 (400 RT) and 590 (600 RT). Preserve primary points; flag mixed-column lower end.",
+    "Team says water chiller capital excludes tower; primary performance note excludes tower energy. Investment inclusion still requires scope confirmation.",
+    "Team high chilled-water COP estimate extrapolates 3 K past experimental domain; no performance defaults/maps were changed.",
+    "Towler/Sinnott conversion in source ends in EUR-2024; EUR-2025 tower price stays missing."
+  ]
+}

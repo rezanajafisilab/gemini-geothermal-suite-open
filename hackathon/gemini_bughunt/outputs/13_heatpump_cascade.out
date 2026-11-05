@@ -1,0 +1,14 @@
+== gemini-dev
+'heatpump' in registry as shipped: False
+Ts_min=10.0 C, sink 45->75 C at   40 m3/h, source = HEX primary out 44.1 C @ 129 m3/h: COP=5.63 Th_out=75.0 C Ts_out=36.5 C Q_cond=1.39 MW W_el=0.25 MW (source can give 1.15 MW)
+Ts_min=10.0 C, sink 45->75 C at   80 m3/h, source = HEX primary out 44.1 C @ 129 m3/h: COP=5.63 Th_out=75.0 C Ts_out=28.8 C Q_cond=2.79 MW W_el=0.49 MW (source can give 2.29 MW)
+Ts_min=30.0 C, sink 45->75 C at   40 m3/h, source = HEX primary out 44.1 C @ 129 m3/h: COP=5.63 Th_out=75.0 C Ts_out=36.5 C Q_cond=1.39 MW W_el=0.25 MW (source can give 1.15 MW)
+Ts_min=30.0 C, sink 45->75 C at   80 m3/h, source = HEX primary out 44.1 C @ 129 m3/h: COP=1.09 Th_out=311.4 C Ts_out=30.0 C Q_cond=24.76 MW W_el=22.64 MW (source can give 2.11 MW)
+== gemini-fixed
+'heatpump' in registry as shipped: False
+Ts_min=10.0 C, sink 45->75 C at   40 m3/h, source = HEX primary out 55.1 C @ 211 m3/h: COP=8.76 Th_out=75.0 C Ts_out=50.1 C Q_cond=1.39 MW W_el=0.16 MW (source can give 1.23 MW)
+Ts_min=10.0 C, sink 45->75 C at   80 m3/h, source = HEX primary out 55.1 C @ 211 m3/h: COP=8.76 Th_out=75.0 C Ts_out=45.0 C Q_cond=2.79 MW W_el=0.32 MW (source can give 2.47 MW)
+Ts_min=30.0 C, sink 45->75 C at   40 m3/h, source = HEX primary out 55.1 C @ 211 m3/h: COP=8.76 Th_out=75.0 C Ts_out=50.1 C Q_cond=1.39 MW W_el=0.16 MW (source can give 1.23 MW)
+Ts_min=30.0 C, sink 45->75 C at   80 m3/h, source = HEX primary out 55.1 C @ 211 m3/h: COP=8.76 Th_out=75.0 C Ts_out=45.0 C Q_cond=2.79 MW W_el=0.32 MW (source can give 2.47 MW)
+gemini-dev: COP=1.09 Th_out=311.4 Ts_out=30.0 Q=24.76 MW W=22.641 MW
+gemini-fixed: COP=6.15 Th_out=72.2 Ts_out=30.0 Q=2.52 MW W=0.410 MW

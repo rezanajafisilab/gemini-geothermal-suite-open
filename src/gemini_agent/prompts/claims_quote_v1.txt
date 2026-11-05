@@ -1,0 +1,1 @@
+Each numbered statement below was flagged as not backed by the sources. For each one, copy from the sources, word for word, the shortest passage that says the same thing or from which the statement follows directly. Write "" when no passage does; never write a passage that is merely about the same topic. Answer with JSON only, one string per statement, in order.

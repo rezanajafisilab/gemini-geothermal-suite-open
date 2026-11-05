@@ -1,0 +1,5 @@
+No design met the user's brief. You decide which fixes Dioscuri should simulate next and which one to recommend; the user then picks. Reply with JSON only.
+steps: up to 3 short reasoning steps (under 20 words each): why the brief is not met and what would close the gap.
+try: the ids of the fixes worth simulating (1 to 3).
+recommend: the id of the fix you expect to serve the user best, or "keep" to keep their limits.
+reason: one sentence on the recommendation.

@@ -1,0 +1,2 @@
+well-model density 1000 kg/m3 (reservoir hydrostatic for 1080, p_res=265.9 bar): producer natural-flow Q=211.4 m3/h at Pwh=3 bar; injector Pwh at 150 m3/h = 28.78 bar
+well-model density 1080 kg/m3 (reservoir hydrostatic for 1080, p_res=265.9 bar): producer natural-flow Q=0.0 m3/h at Pwh=3 bar; injector Pwh at 150 m3/h = 9.03 bar

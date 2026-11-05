@@ -1,0 +1,34 @@
+data: {"type": "RUN_STARTED", "timestamp": 1793260700000, "threadId": "v-design", "runId": "c0c0de5e09"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793260700001, "stepName": "intake", "metadata": {"label": "Read the request", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793260700392, "stepName": "intake", "metadata": {"tokens": 944, "relevant": true, "intent": "explain", "screened": false, "seconds": 0.391}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260700392, "name": "usage", "value": {"purpose": "intake", "model": "qwen3:1.7b", "prompt_tokens": 884, "output_tokens": 60, "seconds": 0.391, "load_seconds": 0.002, "prompt_seconds": 0.117, "output_seconds": 0.266, "ok": true, "error": ""}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793260700393, "stepName": "answer", "metadata": {"label": "Write the answer", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793260704513, "stepName": "answer", "metadata": {"decided_by": "rules", "model": "qwen3.5:9b", "device": "gpu", "tokens": 5084, "understood": "You want the summer cascade explained.", "kind": "answer", "scope": "project", "note": "the model's text failed the number checks twice", "seconds": 4.12}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260704513, "name": "usage", "value": {"purpose": "answer", "model": "qwen3.5:9b", "prompt_tokens": 2380, "output_tokens": 121, "seconds": 2.1, "load_seconds": 0.002, "prompt_seconds": 0.63, "output_seconds": 1.428, "ok": true, "error": ""}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260704513, "name": "usage", "value": {"purpose": "answer", "model": "qwen3.5:9b", "prompt_tokens": 2466, "output_tokens": 117, "seconds": 2.0, "load_seconds": 0.002, "prompt_seconds": 0.6, "output_seconds": 1.36, "ok": true, "error": ""}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260704514, "name": "answer", "value": {"understood": "You want the summer cascade explained.", "kind": "answer", "scope": "project", "used": ["A1"], "model": "qwen3.5:9b", "device": "gpu", "fallback": true, "corrections": []}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793260704515, "messageId": "d1e2f3a499", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260704555, "messageId": "d1e2f3a499", "delta": "In summer A1 still runs its doublet: the brine drives an absorption chiller "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260704595, "messageId": "d1e2f3a499", "delta": "that makes the district's cold, so the wells stay busy 18.1% longer and "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260704635, "messageId": "d1e2f3a499", "delta": "A1 covers 100% of the cold at 58 €/MWh. Source: the design's simulation "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260704675, "messageId": "d1e2f3a499", "delta": "(simulate_year, A1)."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793260704676, "messageId": "d1e2f3a499"}
+
+data: {"type": "CUSTOM", "timestamp": 1793260704677, "name": "suggestions", "value": ["What if the reservoir is 10 °C colder?", "Compare A1 with the gas reference"]}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793260704678, "threadId": "v-design", "runId": "c0c0de5e09", "outcome": {"type": "success"}, "usage": [{"model": "qwen3:1.7b", "provider": "ollama", "inputTokens": 884, "outputTokens": 60, "totalTokens": 944}, {"model": "qwen3.5:9b", "provider": "ollama", "inputTokens": 4846, "outputTokens": 238, "totalTokens": 5084}], "result": {"asked": [], "ungrounded": [], "dropped": [], "verified": null, "language": "en", "screened": false, "seconds": 4.677, "llm_calls": 3, "calls": ["intake: qwen3:1.7b", "answer: qwen3.5:9b", "answer: qwen3.5:9b"], "prompt_tokens": 5730, "output_tokens": 298, "load_seconds": 0.004, "prompt_seconds": 1.347, "output_seconds": 3.054, "tool_calls": 0, "cache_hits": 0, "tool_errors": 0, "left_out": [], "user_turns": 2, "model": "qwen3:1.7b", "prompt_version": "answer_v1", "behaviour": "answer", "answer": "In summer A1 still runs its doublet: the brine drives an absorption chiller that makes the district's cold, so the wells stay busy 18.1% longer and A1 covers 100% of the cold at 58 €/MWh. Source: the design's simulation (simulate_year, A1).", "reasoning": false, "decided_by": {"answer": "rules"}, "intent": "explain"}}
+

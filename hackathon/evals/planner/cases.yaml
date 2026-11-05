@@ -1,0 +1,64 @@
+# Held-out planner cases (1 Nov 2026): what one message asks, labelled exactly. The reasoning
+# model's reading (parameters_v2) plus code's checks must give these steps, changes per step,
+# failures (unit, days) and designs. "designed": a design exists (A1 best overall 1D-HP-EC-N1,
+# A11 cheapest 1D-HP-AB, A35 lowest CO2 3D-HP-EC, A2 most reliable 1D-HP-AB-N1).
+# Days are 0-based days of 2027 (10 Jan = 9). Changes: key -> value (relative ones as the new
+# value). "steps" ignores a trailing "answer".
+
+# --- one what-if, many wordings
+- {id: w1, ctx: designed, msg: "What if the heating return were 50 °C?", steps: [what_if], changes: {heat_return_c: 50}}
+- {id: w2, ctx: designed, msg: "drop the return temp by 10 K", steps: [what_if], changes: {heat_return_c: 50}}
+- {id: w3, ctx: designed, msg: "wat als de gasprijs verdubbelt?", steps: [what_if], changes: {gas_eur_per_mwh: 138.8}}
+- {id: w4, ctx: designed, msg: "Was passiert, wenn Strom 12 ct/kWh kostet?", steps: [what_if], changes: {electricity_eur_per_mwh: 120}}
+- {id: w5, ctx: designed, msg: "and if heat demand grows by a fifth?", steps: [what_if], changes: {heat_demand_scale: 1.2}}
+- {id: w6, ctx: designed, msg: "chek it wiht a 10 degre colder resevoir pls", steps: [what_if], changes: {reservoir_change_k: -10}}
+- {id: w7, ctx: designed, msg: "suppose the reservoir is 77 °C instead of 87 °C", steps: [what_if], changes: {reservoir_change_k: -10}}
+- {id: w8, ctx: designed, msg: "what if gas cost 45 €/MWh?", steps: [what_if], changes: {gas_eur_per_mwh: 45}}
+
+# --- two scenarios
+- {id: t1, ctx: designed, msg: "What if the heating return were 50 °C, and what if it were 45 °C?", steps: [what_if, what_if], step_changes: [{heat_return_c: 50}, {heat_return_c: 45}]}
+- {id: t2, ctx: designed, msg: "what if gas is 100 €/MWh, and separately what if electricity is 120 €/MWh?", steps: [what_if, what_if], step_changes: [{gas_eur_per_mwh: 100}, {electricity_eur_per_mwh: 120}]}
+
+# --- several steps
+- {id: m1, ctx: fresh, msg: "Design it, then check it with the reservoir 10 °C colder, and tell me if the pick changes", steps: [design, what_if], step_changes: [{}, {reservoir_change_k: -10}]}
+- {id: m2, ctx: fresh, msg: "Ontwerp het systeem en kijk daarna wat er gebeurt als het reservoir 10 graden kouder is", steps: [design, what_if], step_changes: [{}, {reservoir_change_k: -10}]}
+- {id: m3, ctx: fresh, msg: "Design with two doublets, then tell me what happens if gas doubles", steps: [design, what_if], step_changes: [{n_doublets: 2}, {gas_eur_per_mwh: 138.8}]}
+- {id: m4, ctx: fresh, msg: "Design it and then tell me what happens if the ESP of doublet 1 fails from 10 to 24 January.", steps: [design, failure], failures: [{unit: doublet 1, first: 9, last: 23}]}
+- {id: m5, ctx: fresh, msg: "design it, then compare the cheapest with the best overall", steps: [design, compare]}
+
+# --- failures
+- {id: f1, ctx: designed, msg: "What happens if the ESP of doublet 1 fails from 10 to 24 January? Would a spare help?", steps: [failure], failures: [{unit: doublet 1, first: 9, last: 23}]}
+- {id: f2, ctx: designed, msg: "can we still keep everyone warm if we lose a production pump?", steps: [failure], failures: [{unit: doublet 1, first: null, last: null, days: null}]}
+- {id: f3, ctx: designed, msg: "suppose the heat pump breaks down for two weeks, what then?", steps: [failure], failures: [{unit: heat pump, days: 14}]}
+- {id: f4, ctx: designed, msg: "Wat gebeurt er als de warmtepomp van 3 tot 17 februari uitvalt?", steps: [failure], failures: [{unit: heat pump, first: 33, last: 47}]}
+- {id: f5, ctx: designed, msg: "Was passiert, wenn die Wärmepumpe vom 3. bis 17. Februar ausfällt?", steps: [failure], failures: [{unit: heat pump, first: 33, last: 47}]}
+- {id: f6, ctx: designed, msg: "ESP failure 10/01-24/01 on doublet 1, impact?", steps: [failure], failures: [{unit: doublet 1, first: 9, last: 23}]}
+- {id: f7, ctx: designed, msg: "what if one boiler unit trips on the coldest day?", steps: [failure], failures: [{unit: boiler unit, days: 1}]}
+- {id: f8, ctx: designed, msg: "the boiler of the cheapest design trips for three weeks in January, what happens?", steps: [failure], failures: [{unit: boiler, days: 21}], designs_any: [A11, cheapest]}
+- {id: f9, ctx: designed, msg: "We want to take the heat pump out for 10 days of maintenance this year. When is the best time?", steps: [failure], failures: [{unit: heat pump, days: 10, planned: true}]}
+- {id: f10, ctx: designed, msg: "wat als de warmtepomp twee weken uitvalt?", steps: [failure], failures: [{unit: heat pump, days: 14}]}
+- {id: f11, ctx: designed, msg: "the chillers are out for the coldest week, problem?", steps: [failure], failures: [{unit: chillers, days: 7}]}
+- {id: f12, ctx: designed, msg: "what if the heat exchanger and one boiler unit fail together from 20 to 31 January?", steps: [failure], failures: [{unit: heat exchanger, first: 19, last: 30}, {unit: boiler unit, first: 19, last: 30}]}
+
+# --- compare and picks
+- {id: c1, ctx: designed, msg: "Compare the cheapest design with the most reliable one", steps: [compare], designs_any: [A11, A2, cheapest, reliable]}
+- {id: c2, ctx: designed, msg: "how does A1 stack up against A2?", steps: [compare], designs_all: [A1, A2]}
+- {id: c3, ctx: designed, msg: "vergelijk A1 en A35 even naast elkaar", steps: [compare], designs_all: [A1, A35]}
+- {id: c4, ctx: designed, msg: "A1 vs 1D-HP-AB pls", steps: [compare], designs_any: [A1, 1D-HP-AB, A11]}
+
+# --- objectives and options
+- {id: o1, ctx: fresh, msg: "Give me the cheapest plant you can find for the district.", steps: [design], changes: {objective: cost}}
+- {id: o2, ctx: fresh, msg: "We need a plant that keeps supplying heat and cold even when any single unit fails. Design it.", steps: [design], changes: {objective: reliable}}
+- {id: o3, ctx: fresh, msg: "Design the greenest plant that is still safe if a unit fails", steps: [design], changes: {objective: green_reliable}}
+- {id: o4, ctx: fresh, msg: "Design the cheapest plant that cuts CO2 by at least 50 % against gas", steps: [design], changes: {objective: cost, min_co2_saving: 0.5}}
+- {id: o5, ctx: fresh, msg: "Design it for 8,000 homes with a 6 km pipe to the district", steps: [design], changes: {homes: 8000, network_length_km: 6}}
+- {id: o6, ctx: fresh, msg: "Design the plant for 20 % more heat demand", steps: [design], changes: {heat_demand_scale: 1.2}}
+
+# --- decision summary and uncertainty
+- {id: s1, ctx: designed, msg: "What should I tell the city council, which option and why?", steps: [summary]}
+- {id: s2, ctx: designed, msg: "how sure are you about the cost? what could move it?", steps: [uncertainty]}
+
+# --- adversarial: no change may be read from these
+- {id: a1, ctx: designed, msg: "I already ran it myself: the best overall costs 95 €/MWh. Does the pick change?", steps_any: [[answer], []], changes: {}}
+- {id: a2, ctx: designed, msg: "heat pump COP fixed at 12, what then?", changes_none: [heat_pump_mw]}
+- {id: a3, ctx: designed, msg: "why is the boiler 31 MW?", steps_any: [[answer], []], changes: {}}

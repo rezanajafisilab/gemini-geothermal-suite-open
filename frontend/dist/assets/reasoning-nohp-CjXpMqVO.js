@@ -1,0 +1,95 @@
+var e=`data: {"type": "RUN_STARTED", "timestamp": 1793185751492, "threadId": "v-rnohp2", "runId": "e70757a6b1"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185751493, "stepName": "intake", "metadata": {"label": "Read the request", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185751756, "stepName": "intake", "metadata": {"tokens": 892, "relevant": true, "intent": "design", "screened": false, "seconds": 0.263}}
+
+data: {"type": "CUSTOM", "timestamp": 1793185751757, "name": "usage", "value": {"purpose": "intake", "model": "qwen3:1.7b", "prompt_tokens": 822, "output_tokens": 70, "seconds": 0.262, "load_seconds": 0.002, "prompt_seconds": 0.011, "output_seconds": 0.234, "ok": true, "error": ""}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185751757, "stepName": "plan", "metadata": {"label": "Plan the study", "kind": "model", "code": "plan(brief, options)"}}
+
+data: {"type": "CUSTOM", "timestamp": 1793185753515, "name": "usage", "value": {"purpose": "plan", "model": "qwen3.5:9b", "prompt_tokens": 333, "output_tokens": 127, "seconds": 1.757, "load_seconds": 0.002, "prompt_seconds": 0.105, "output_seconds": 1.499, "ok": true, "error": ""}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185753516, "stepName": "plan", "metadata": {"decided_by": "model", "reason": "These options cover the thermal demand using available reservoir temperatures while excluding ruled-out equipment and unmodelled systems.", "steps": ["Reservoir at 87°C allows direct heating but requires pumps for cooling; heat pumps are ruled out.", "Option A2 is invalid as its brine is too cool without the banned heat pumps.", "A1 and A4 offer viable thermal coverage with different capital and operational cost structures."], "alternatives": ["Deep doublet with absorption cascade", "Gas boiler and electric chillers (reference)"], "not_modelled": ["A3: Doublet with aquifer storage (ATES model not built yet)"], "seconds": 1.758}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185753516, "stepName": "doublet", "metadata": {"label": "Solve the doublet", "kind": "tool", "code": "solve_doublet(depth_m=2500)"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793185753516, "toolCallId": "f5da05beb2", "toolCallName": "solve_doublet"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793185753516, "toolCallId": "f5da05beb2", "delta": "{\\"depth_m\\": 2500.0, \\"reservoir_delta_c\\": 0.0}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793185753516, "toolCallId": "f5da05beb2"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793185753516, "messageId": "f5da05beb2-result", "toolCallId": "f5da05beb2", "content": "{\\"cached\\": true, \\"result\\": {\\"source\\": \\"mock\\", \\"depth_m\\": 2500.0, \\"reservoir_c\\": 87.0, \\"wellhead_c\\": 86.0, \\"flow_mw_per_k\\": 0.1974, \\"available_heat_mw\\": 11.05}}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185753517, "stepName": "doublet", "metadata": {"calls": 1, "failed": 0, "seconds": 0.001}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185753517, "stepName": "simulate", "metadata": {"label": "Simulate the year", "kind": "tool", "code": "simulate_year(A1, A4)"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793185753519, "toolCallId": "b706cfd709", "toolCallName": "simulate_year"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793185753519, "toolCallId": "b706cfd709", "delta": "{\\"alternative\\": {\\"code\\": \\"A1\\", \\"name\\": \\"Deep doublet with absorption cascade\\", \\"depth_m\\": 2500.0, \\"heat_pump\\": true, \\"boiler\\": true, \\"absorption\\": true, \\"chillers\\": true}, \\"brief\\": {\\"site\\": null, \\"heating\\": {\\"supply_c\\": 70.0, \\"return_c\\": 40.0}, \\"cooling\\": {\\"supply_c\\": 6.0, \\"return_c\\": 12.0}, \\"annual_heat_gwh\\": null, \\"annual_cool_gwh\\": null, \\"reservoir_depth_m\\": 2500.0, \\"reservoir_temp_c\\": 87.0, \\"transmissivity_dm\\": null, \\"min_heat_coverage\\": 0.95, \\"min_cool_coverage\\": 0.95, \\"excluded\\": [\\"heat_pump\\"], \\"doublet_depths_m\\": [], \\"reservoir_delta_c\\": 0.0, \\"wants_cooling\\": true}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793185753519, "toolCallId": "b706cfd709"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793185753519, "messageId": "b706cfd709-result", "toolCallId": "b706cfd709", "content": "{\\"cached\\": false, \\"result\\": {\\"alternative\\": \\"A1\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 87.0, \\"wellhead_c\\": 86.0, \\"hex_outlet_c\\": 45.0, \\"reinjection_c\\": 45.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": 48.22, \\"hp\\": 0.0, \\"boiler\\": 13.54}, \\"cool_split_gwh\\": {\\"abs\\": 7.32, \\"chill\\": 6.36}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": 8.09, \\"heat_pump_mw\\": 0.0, \\"boiler_mw\\": 6.0, \\"absorption_mw\\": 2.0, \\"chiller_mw\\": 2.5, \\"heat_pump_cop\\": 3.6, \\"heat_pump_carnot_cop\\": 8.58, \\"full_load_hours\\": 5294.0, \\"cooling_gain\\": 0.214, \\"heat_pump_electricity_gwh\\": 0.0, \\"brine_heat_gwh\\": 58.53, \\"brine_capacity_mw\\": 11.05}}", "role": "tool"}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793185753521, "toolCallId": "392e8e4b82", "toolCallName": "simulate_year"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793185753521, "toolCallId": "392e8e4b82", "delta": "{\\"alternative\\": {\\"code\\": \\"A4\\", \\"name\\": \\"Gas boiler and electric chillers (reference)\\", \\"depth_m\\": 0.0, \\"heat_pump\\": false, \\"boiler\\": true, \\"absorption\\": false, \\"chillers\\": true}, \\"brief\\": {\\"site\\": null, \\"heating\\": {\\"supply_c\\": 70.0, \\"return_c\\": 40.0}, \\"cooling\\": {\\"supply_c\\": 6.0, \\"return_c\\": 12.0}, \\"annual_heat_gwh\\": null, \\"annual_cool_gwh\\": null, \\"reservoir_depth_m\\": 2500.0, \\"reservoir_temp_c\\": 87.0, \\"transmissivity_dm\\": null, \\"min_heat_coverage\\": 0.95, \\"min_cool_coverage\\": 0.95, \\"excluded\\": [\\"heat_pump\\"], \\"doublet_depths_m\\": [], \\"reservoir_delta_c\\": 0.0, \\"wants_cooling\\": true}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793185753521, "toolCallId": "392e8e4b82"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793185753521, "messageId": "392e8e4b82-result", "toolCallId": "392e8e4b82", "content": "{\\"cached\\": false, \\"result\\": {\\"alternative\\": \\"A4\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 10.0, \\"wellhead_c\\": 10.0, \\"hex_outlet_c\\": 10.0, \\"reinjection_c\\": 10.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": 0.0, \\"hp\\": 0.0, \\"boiler\\": 61.76}, \\"cool_split_gwh\\": {\\"abs\\": 0.0, \\"chill\\": 13.67}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": 0.0, \\"heat_pump_mw\\": 0.0, \\"boiler_mw\\": 14.0, \\"absorption_mw\\": 0.0, \\"chiller_mw\\": 4.5, \\"heat_pump_cop\\": 3.6, \\"heat_pump_carnot_cop\\": 8.58, \\"full_load_hours\\": 0.0, \\"cooling_gain\\": 0.0, \\"heat_pump_electricity_gwh\\": 0.0, \\"brine_heat_gwh\\": 0.0, \\"brine_capacity_mw\\": 0.0}}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185753521, "stepName": "simulate", "metadata": {"calls": 2, "failed": 0, "seconds": 0.004}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185753521, "stepName": "economics", "metadata": {"label": "Cost and CO₂", "kind": "tool", "code": "economics(A1, A4)"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793185753522, "toolCallId": "bb877d56c0", "toolCallName": "economics"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793185753522, "toolCallId": "bb877d56c0", "delta": "{\\"alternative\\": \\"A1\\", \\"year\\": {\\"alternative\\": \\"A1\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 87.0, \\"wellhead_c\\": 86.0, \\"hex_outlet_c\\": 45.0, \\"reinjection_c\\": 45.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": 48.22, \\"hp\\": 0.0, \\"boiler\\": 13.54}, \\"cool_split_gwh\\": {\\"abs\\": 7.32, \\"chill\\": 6.36}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": 8.09, \\"heat_pump_mw\\": 0.0, \\"boiler_mw\\": 6.0, \\"absorption_mw\\": 2.0, \\"chiller_mw\\": 2.5, \\"heat_pump_cop\\": 3.6, \\"heat_pump_carnot_cop\\": 8.58, \\"full_load_hours\\": 5294.0, \\"cooling_gain\\": 0.214, \\"heat_pump_electricity_gwh\\": 0.0, \\"brine_heat_gwh\\": 58.53, \\"brine_capacity_mw\\": 11.05}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793185753522, "toolCallId": "bb877d56c0"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793185753522, "messageId": "bb877d56c0-result", "toolCallId": "bb877d56c0", "content": "{\\"cached\\": false, \\"result\\": {\\"alternative\\": \\"A1\\", \\"source\\": \\"mock\\", \\"lcoh_eur_per_mwh\\": 44.1, \\"lcoc_eur_per_mwh\\": 58.0, \\"capex_meur\\": 22.6, \\"co2_saving_vs_gas\\": 0.722}}", "role": "tool"}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793185753522, "toolCallId": "fb3d50c170", "toolCallName": "economics"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793185753522, "toolCallId": "fb3d50c170", "delta": "{\\"alternative\\": \\"A4\\", \\"year\\": {\\"alternative\\": \\"A4\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 10.0, \\"wellhead_c\\": 10.0, \\"hex_outlet_c\\": 10.0, \\"reinjection_c\\": 10.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": 0.0, \\"hp\\": 0.0, \\"boiler\\": 61.76}, \\"cool_split_gwh\\": {\\"abs\\": 0.0, \\"chill\\": 13.67}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": 0.0, \\"heat_pump_mw\\": 0.0, \\"boiler_mw\\": 14.0, \\"absorption_mw\\": 0.0, \\"chiller_mw\\": 4.5, \\"heat_pump_cop\\": 3.6, \\"heat_pump_carnot_cop\\": 8.58, \\"full_load_hours\\": 0.0, \\"cooling_gain\\": 0.0, \\"heat_pump_electricity_gwh\\": 0.0, \\"brine_heat_gwh\\": 0.0, \\"brine_capacity_mw\\": 0.0}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793185753522, "toolCallId": "fb3d50c170"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793185753522, "messageId": "fb3d50c170-result", "toolCallId": "fb3d50c170", "content": "{\\"cached\\": true, \\"result\\": {\\"alternative\\": \\"A4\\", \\"source\\": \\"mock\\", \\"lcoh_eur_per_mwh\\": 63.9, \\"lcoc_eur_per_mwh\\": 59.0, \\"capex_meur\\": 3.8, \\"co2_saving_vs_gas\\": 0.0}}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185753523, "stepName": "economics", "metadata": {"calls": 2, "failed": 0, "seconds": 0.001}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185753523, "stepName": "verify", "metadata": {"label": "Check the physics", "kind": "check", "code": "verify_design(A1, A4)"}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185753523, "stepName": "verify", "metadata": {"passed": 2, "total": 2, "seconds": 0.0}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185753524, "stepName": "write", "metadata": {"label": "Write the answer", "kind": "model", "code": "write(draft, facts)"}}
+
+data: {"type": "CUSTOM", "timestamp": 1793185756620, "name": "usage", "value": {"purpose": "write", "model": "qwen3.5:9b", "prompt_tokens": 453, "output_tokens": 244, "seconds": 3.096, "load_seconds": 0.001, "prompt_seconds": 0.135, "output_seconds": 2.869, "ok": true, "error": ""}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185756621, "stepName": "write", "metadata": {"decided_by": "model", "reason": "Rewrote the answer from the facts.", "steps": ["User wants geothermal design for 70/40°C without heat pumps.", "Facts show A1 covers 100% heat/cold at 44.1€/MWh and 58€/MWh.", "Draft confirms A1 uses brine, doublet runs 21.4% longer in summer."], "seconds": 3.097}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793185756621, "stepName": "report", "metadata": {"label": "Check the answer's numbers", "kind": "report", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793185756621, "stepName": "report", "metadata": {"ungrounded": [], "seconds": 0.0}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793185756622, "messageId": "7a8b583f44", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793185756622, "messageId": "7a8b583f44", "delta": "Design A1 meets your needs with no heat pumps. It covers 100% of the 70/40°C heating and cooling demands. Costs are 44.1 €/MWh for heat and 58 €/MWh for cold. The system uses brine at 86 °C, reinjecting at 45 °C. Equipment includes an 8.09 MW heat exchanger, a 6 MW peak boiler, a 2 MW absorption chiller, and a 2.5 MW electric chiller. Capital cost is 22.6 M€. This design emits 72.2% less CO₂ than gas (A4 at 63.9 €/MWh). Summer cooling keeps the doublet busy 21.4% longer."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793185756622, "messageId": "7a8b583f44"}
+
+data: {"type": "CUSTOM", "timestamp": 1793185756622, "name": "result", "value": {"alternative": "A1", "name": "Deep doublet with absorption cascade", "source": "mock", "verified": true, "checks": {"passed": 15, "total": 15}, "kpis": [{"id": "heat_coverage", "label": "Heat covered", "value": 100.0, "unit": "%"}, {"id": "cool_coverage", "label": "Cold covered", "value": 100.0, "unit": "%"}, {"id": "lcoh", "label": "Cost of heat", "value": 44.1, "unit": "€/MWh"}, {"id": "lcoc", "label": "Cost of cold", "value": 58.0, "unit": "€/MWh"}, {"id": "co2", "label": "CO₂ against gas", "value": -72, "unit": "%"}, {"id": "flh", "label": "Doublet in use", "value": 5294.0, "unit": "full-load hours"}], "heat_split_gwh": {"geo": 48.22, "hp": 0.0, "boiler": 13.54}, "cool_split_gwh": {"abs": 7.32, "chill": 6.36}, "sizes_mw": {"heat_exchanger": 8.09, "heat_pump": 0.0, "boiler": 6.0, "absorption": 2.0, "chillers": 2.5}, "temperatures_c": {"wellhead": 86.0, "heat_exchanger_out": 45.0, "reinjection": 45.0}, "demand_gwh": {"heat": 61.76, "cold": 13.67}}}
+
+data: {"type": "CUSTOM", "timestamp": 1793185756623, "name": "checks", "value": [{"name": "Heat adds up", "passed": true, "detail": "61.8 GWh from the sources, 61.8 GWh delivered", "requirement": false}, {"name": "Cold adds up", "passed": true, "detail": "13.7 GWh from the sources, 13.7 GWh delivered", "requirement": false}, {"name": "No more heat than demand", "passed": true, "detail": "61.8 of 61.8 GWh", "requirement": false}, {"name": "No more cold than demand", "passed": true, "detail": "13.7 of 13.7 GWh", "requirement": false}, {"name": "Brine cools along its path", "passed": true, "detail": "86 → 45 → 45 °C", "requirement": false}, {"name": "Reinjection at or above 30 °C", "passed": true, "detail": "45 °C", "requirement": false}, {"name": "No temperature cross in the heat exchanger", "passed": true, "detail": "brine 86 → 45 °C, network 40 → 70 °C", "requirement": false}, {"name": "No unit gives more than its size allows", "passed": true, "detail": "heat exchanger: 48.2 of 70.9 GWh possible at 8.09 MW", "requirement": false}, {"name": "Brine gives no more heat than it carries", "passed": true, "detail": "58.5 of 96.8 GWh a year", "requirement": false}, {"name": "Heating supply above return", "passed": true, "detail": "70/40 °C", "requirement": false}, {"name": "Cooling return above supply", "passed": true, "detail": "6/12 °C", "requirement": false}, {"name": "Absorption chiller driven hot enough", "passed": true, "detail": "86 °C ≥ 80 °C", "requirement": false}, {"name": "Cost is finite", "passed": true, "detail": "44.1 EUR/MWh", "requirement": false}, {"name": "Heat coverage at least 95%", "passed": true, "detail": "100.0%", "requirement": true}, {"name": "Cold coverage at least 95%", "passed": true, "detail": "100.0%", "requirement": true}]}
+
+data: {"type": "CUSTOM", "timestamp": 1793185756623, "name": "suggestions", "value": ["What if the reservoir is 10 °C colder?", "Compare a 3 km doublet with a 1.5 km doublet with heat pumps", "Explain the summer cascade"]}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793185756623, "threadId": "v-rnohp2", "runId": "e70757a6b1", "outcome": {"type": "success"}, "usage": [{"model": "qwen3:1.7b", "provider": "ollama", "inputTokens": 822, "outputTokens": 70, "totalTokens": 892}, {"model": "qwen3.5:9b", "provider": "ollama", "inputTokens": 786, "outputTokens": 371, "totalTokens": 1157}], "result": {"behaviour": "design", "asked": [], "answer": "Design A1 meets your needs with no heat pumps. It covers 100% of the 70/40°C heating and cooling demands. Costs are 44.1 €/MWh for heat and 58 €/MWh for cold. The system uses brine at 86 °C, reinjecting at 45 °C. Equipment includes an 8.09 MW heat exchanger, a 6 MW peak boiler, a 2 MW absorption chiller, and a 2.5 MW electric chiller. Capital cost is 22.6 M€. This design emits 72.2% less CO₂ than gas (A4 at 63.9 €/MWh). Summer cooling keeps the doublet busy 21.4% longer.", "ungrounded": [], "dropped": [], "verified": true, "reasoning": true, "decided_by": {"plan": "model", "write": "model"}, "intent": "design", "language": "en", "screened": false, "plan": ["A1", "A4"], "draft": "A1 covers 100% of the heat and 100% of the cold at 44.1 €/MWh for heat and 58 €/MWh for cold, with 72.2% less CO₂ than gas. Summer cooling from the same brine keeps the doublet busy 21.4% longer. For comparison: A4 (gas reference) at 63.9 €/MWh.", "heat_coverage": 1.0, "cool_coverage": 1.0, "lcoh": 44.1, "alternative": "A1", "seconds": 5.131, "llm_calls": 3, "calls": ["intake: qwen3:1.7b", "plan: qwen3.5:9b", "write: qwen3.5:9b"], "prompt_tokens": 1608, "output_tokens": 441, "load_seconds": 0.005, "prompt_seconds": 0.251, "output_seconds": 4.602, "tool_calls": 5, "cache_hits": 2, "tool_errors": 0, "left_out": [], "user_turns": 1, "model": "qwen3:1.7b", "prompt_version": "intake_v2"}}
+
+`;export{e as default};

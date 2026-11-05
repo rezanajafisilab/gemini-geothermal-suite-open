@@ -1,0 +1,29 @@
+--- a/src/gemini_model/heatpump/heatpump_basic.py
++++ b/src/gemini_model/heatpump/heatpump_basic.py
+@@ -189,20 +189,19 @@ class HeatpumpBasic(StaticModel):
+ 
+         def cop_of(th_out, ts_out):
+             if mode == "carnot":
+-                th, ts = th_out, Ts_in
++                # the evaporator runs below the source's coldest point: its outlet, when known
++                th, ts = th_out, Ts_in if ts_out is None else ts_out
+             else:
+                 th, ts = lmean(Th_in, th_out), lmean(Ts_in, ts_out)
+             return eta * th / (th - ts) if th > ts else np.inf
+ 
+         Qh = cph * mh * (Th_out - Th_in)
+-        if mode == "carnot":
+-            Ts_out = Ts_in - Qh * (1 - 1 / cop_of(Th_out, None)) / (cps * ms)
+-        else:
++        # the COP depends on Ts_out in both modes, so the source's balance is solved for it
+ 
+-            def g(ts):
+-                return cps * ms * (Ts_in - ts) - Qh * (1 - 1 / cop_of(Th_out, ts))
++        def g(ts):
++            return cps * ms * (Ts_in - ts) - Qh * (1 - 1 / cop_of(Th_out, ts))
+ 
+-            Ts_out = brentq(g, Ts_min, Ts_in - 1e-9) if g(Ts_min) > 0 else Ts_min - 1.0
++        Ts_out = brentq(g, Ts_min, Ts_in - 1e-9) if g(Ts_min) > 0 else Ts_min - 1.0
+ 
+         if Ts_out < Ts_min:  # source-limited: fix Ts_out, lower Th_out (physical root only)
+             Ts_out = Ts_min

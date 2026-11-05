@@ -1,0 +1,272 @@
+[
+ {
+  "id": "w1",
+  "ok": true,
+  "miss": [],
+  "s": 2.49
+ },
+ {
+  "id": "w2",
+  "ok": false,
+  "miss": [
+   "steps [] != ['what_if']"
+  ],
+  "s": 1.32
+ },
+ {
+  "id": "w3",
+  "ok": true,
+  "miss": [],
+  "s": 2.3
+ },
+ {
+  "id": "w4",
+  "ok": false,
+  "miss": [
+   "electricity_eur_per_mwh=None != 120"
+  ],
+  "s": 2.45
+ },
+ {
+  "id": "w5",
+  "ok": false,
+  "miss": [
+   "steps ['design'] != ['what_if']"
+  ],
+  "s": 2.38
+ },
+ {
+  "id": "w6",
+  "ok": true,
+  "miss": [],
+  "s": 2.45
+ },
+ {
+  "id": "w7",
+  "ok": true,
+  "miss": [],
+  "s": 1.97
+ },
+ {
+  "id": "w8",
+  "ok": false,
+  "miss": [
+   "steps ['design'] != ['what_if']"
+  ],
+  "s": 2.22
+ },
+ {
+  "id": "t1",
+  "ok": true,
+  "miss": [],
+  "s": 2.46
+ },
+ {
+  "id": "t2",
+  "ok": false,
+  "miss": [
+   "steps ['what_if'] != ['what_if', 'what_if']"
+  ],
+  "s": 2.56
+ },
+ {
+  "id": "m1",
+  "ok": true,
+  "miss": [],
+  "s": 2.41
+ },
+ {
+  "id": "m2",
+  "ok": true,
+  "miss": [],
+  "s": 2.25
+ },
+ {
+  "id": "m3",
+  "ok": true,
+  "miss": [],
+  "s": 2.75
+ },
+ {
+  "id": "m4",
+  "ok": true,
+  "miss": [],
+  "s": 2.71
+ },
+ {
+  "id": "m5",
+  "ok": true,
+  "miss": [],
+  "s": 1.54
+ },
+ {
+  "id": "f1",
+  "ok": true,
+  "miss": [],
+  "s": 1.87
+ },
+ {
+  "id": "f2",
+  "ok": true,
+  "miss": [],
+  "s": 2.22
+ },
+ {
+  "id": "f3",
+  "ok": true,
+  "miss": [],
+  "s": 2.2
+ },
+ {
+  "id": "f4",
+  "ok": true,
+  "miss": [],
+  "s": 2.16
+ },
+ {
+  "id": "f5",
+  "ok": true,
+  "miss": [],
+  "s": 4.4
+ },
+ {
+  "id": "f6",
+  "ok": true,
+  "miss": [],
+  "s": 4.12
+ },
+ {
+  "id": "f7",
+  "ok": false,
+  "miss": [
+   "failure 0 days None != 1"
+  ],
+  "s": 2.0
+ },
+ {
+  "id": "f8",
+  "ok": false,
+  "miss": [
+   "designs [] have none of ['A11', 'cheapest']"
+  ],
+  "s": 2.31
+ },
+ {
+  "id": "f9",
+  "ok": true,
+  "miss": [],
+  "s": 5.81
+ },
+ {
+  "id": "f10",
+  "ok": true,
+  "miss": [],
+  "s": 3.9
+ },
+ {
+  "id": "f11",
+  "ok": false,
+  "miss": [
+   "failure 0 days None != 7"
+  ],
+  "s": 3.24
+ },
+ {
+  "id": "f12",
+  "ok": true,
+  "miss": [],
+  "s": 3.43
+ },
+ {
+  "id": "c1",
+  "ok": true,
+  "miss": [],
+  "s": 1.62
+ },
+ {
+  "id": "c2",
+  "ok": true,
+  "miss": [],
+  "s": 1.48
+ },
+ {
+  "id": "c3",
+  "ok": true,
+  "miss": [],
+  "s": 1.57
+ },
+ {
+  "id": "c4",
+  "ok": true,
+  "miss": [],
+  "s": 1.51
+ },
+ {
+  "id": "o1",
+  "ok": true,
+  "miss": [],
+  "s": 1.73
+ },
+ {
+  "id": "o2",
+  "ok": true,
+  "miss": [],
+  "s": 1.88
+ },
+ {
+  "id": "o3",
+  "ok": true,
+  "miss": [],
+  "s": 1.81
+ },
+ {
+  "id": "o4",
+  "ok": true,
+  "miss": [],
+  "s": 2.26
+ },
+ {
+  "id": "o5",
+  "ok": true,
+  "miss": [],
+  "s": 2.31
+ },
+ {
+  "id": "o6",
+  "ok": true,
+  "miss": [],
+  "s": 2.33
+ },
+ {
+  "id": "s1",
+  "ok": true,
+  "miss": [],
+  "s": 1.29
+ },
+ {
+  "id": "s2",
+  "ok": false,
+  "miss": [
+   "steps [] != ['uncertainty']"
+  ],
+  "s": 0.91
+ },
+ {
+  "id": "a1",
+  "ok": true,
+  "miss": [],
+  "s": 0.89
+ },
+ {
+  "id": "a2",
+  "ok": true,
+  "miss": [],
+  "s": 3.52
+ },
+ {
+  "id": "a3",
+  "ok": true,
+  "miss": [],
+  "s": 0.86
+ }
+]

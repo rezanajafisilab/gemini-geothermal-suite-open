@@ -1,0 +1,65 @@
+##### 01 HEX (fixed tree)
+=== 1. Sweep (primary hotter than secondary, normal heating duty)
+cases=600, violations=0
+
+=== 2. Near-balanced counter-flow (Cr -> 1) continuity check
+  Qs=149.0     eps=0.579115  Q=6.3422 MW
+  Qs=149.99    eps=0.576396  Q=6.3543 MW
+  Qs=149.9999  eps=0.576369  Q=6.3545 MW
+  Qs=150.0     eps=0.576369  Q=6.3545 MW
+  Qs=150.0001  eps=0.576369  Q=6.3545 MW
+  Qs=150.01    eps=0.576380  Q=6.3546 MW
+
+=== 3. Secondary inlet HOTTER than primary inlet (e.g. cooling / heat rejection)
+    expected: heat flows from secondary (hot) to primary (cold):
+    primary_out > primary_in, secondary_out < secondary_in
+  counter : Tp_in=20.0 -> Tp_out=43.05 C;  Ts_in=60.0 -> Ts_out=36.95 C;  heat_duty=-4.236 MW
+  parallel: Tp_in=20.0 -> Tp_out=38.68 C;  Ts_in=60.0 -> Ts_out=41.32 C;  heat_duty=-3.433 MW
+  cooling case: chilled primary 6 C -> 12.71 C, building return 16 C -> 9.29 C  (should be ~>6 and <16)
+##### 02b HP grid (fixed tree)
+cases: {'carnot': 1440, ('carnot', 'source-limited'): 557, ('carnot', 'unconstrained'): 705, 'lorenz': 1440, ('lorenz', 'source-limited'): 695, ('lorenz', 'unconstrained'): 745}
+exceptions: {}
+non-physical flags: {('carnot', 'COP>Carnot(Th_out,Ts_out)'): 516, ('carnot', 'COP>reversible(log-mean) bound'): 246, ('lorenz', 'COP>Carnot(Th_out,Ts_out)'): 575}
+('carnot', 'source-limited', 'COP'): n=557 max_rel_err=3.47e-13 median=0 frac>10%=0.00
+('carnot', 'source-limited', 'Q'): n=557 max_rel_err=7.22e-14 median=0 frac>10%=0.00
+('carnot', 'source-limited', 'W'): n=557 max_rel_err=4.2e-13 median=0 frac>10%=0.00
+('carnot', 'unconstrained', 'COP'): n=705 max_rel_err=0 median=0 frac>10%=0.00
+('carnot', 'unconstrained', 'Q'): n=705 max_rel_err=0 median=0 frac>10%=0.00
+('carnot', 'unconstrained', 'W'): n=705 max_rel_err=0 median=0 frac>10%=0.00
+('lorenz', 'source-limited', 'COP'): n=695 max_rel_err=inf median=0 frac>10%=0.02
+('lorenz', 'source-limited', 'Q'): n=695 max_rel_err=0.0204 median=1.23e-16 frac>10%=0.00
+('lorenz', 'source-limited', 'W'): n=695 max_rel_err=1 median=1.33e-16 frac>10%=0.02
+('lorenz', 'unconstrained', 'COP'): n=745 max_rel_err=inf median=0 frac>10%=0.08
+('lorenz', 'unconstrained', 'Q'): n=745 max_rel_err=0 median=0 frac>10%=0.00
+('lorenz', 'unconstrained', 'W'): n=745 max_rel_err=1 median=0 frac>10%=0.08
+example per regime (Th_in, Th_t, Ts_in, qh, qs, COP_model, COP_ref, Th_out_model, Th_out_ref, Q_model MW, Q_ref MW, W_model MW, W_ref MW):
+  ('carnot', 'source-limited') (30.0, 60.0, 25.0, 0.02, 0.005, 17.095, 17.095, 33.983, 33.983, 0.333, 0.333, 0.019, 0.019)
+  ('carnot', 'unconstrained') (30.0, 60.0, 45.0, 0.005, 0.005, 11.105, 11.105, 60.0, 60.0, 0.627, 0.627, 0.056, 0.056)
+  ('lorenz', 'source-limited') (30.0, 60.0, 35.0, 0.005, 0.005, np.float64(7.227), 7.227, 59.015, 59.015, 0.607, 0.607, np.float64(0.084), 0.084)
+  ('lorenz', 'unconstrained') (30.0, 60.0, 35.0, 0.005, 0.02, np.float64(12.028), 12.028, 60.0, 60.0, 0.627, 0.627, np.float64(0.052), 0.052)
+##### 06 ESP (fixed tree; both columns now affinity-scaled once more = double-scaled, ignore column 2)
+Efficiency at the 60 Hz best-efficiency flow (code as-is):
+  f=40 Hz, Q=200 m3/h: eff=-32.7 %
+  f=50 Hz, Q=200 m3/h: eff=50.6 %
+  f=60 Hz, Q=200 m3/h: eff=70.5 %
+  f=70 Hz, Q=200 m3/h: eff=71.5 %
+
+##### 07 misc (fixed tree)
+=== Compressor: 1 kg/s natural gas-ish (R=518 J/kgK, k=1.3), 1 -> 10 bar, 1 stage, 20 C, eff 1
+  model=461.4 kW, isentropic hand calc k/(k-1)*R*T1*(r^((k-1)/k)-1) = 461.4 kW, ratio model/hand = 1.000 (= 1/k = 0.769)
+  2 stages: model=400.5 kW, hand=400.5 kW
+  3 stages: model=382.5 kW, hand=382.5 kW
+
+=== Mixer energy balance (3 streams)
+  flow=0.03, T=53.333 (expect 53.333)
+
+=== Two-phase path in DPDT (PVT GMF>0): us_g uses gmf instead of mg (pressure_drop.py:105)
+  GMF=0 Q= 50 m3/h: p_wh=   4.51 bar fric=  0.24 grav= 245.25; us_g code=0.0000 m/s vs mg-based=0.0000 m/s
+  GMF=0 Q=150 m3/h: p_wh=   2.91 bar fric=  1.84 grav= 245.25; us_g code=0.0000 m/s vs mg-based=0.0000 m/s
+  GMF=0 Q=300 m3/h: p_wh=   0.00 bar fric=  6.89 grav= 245.25; us_g code=0.0000 m/s vs mg-based=0.0000 m/s
+  GMF=0.0001 Q= 50 m3/h: p_wh=  31.95 bar fric=  0.33 grav= 217.72; us_g code=0.0016 m/s vs mg-based=0.0213 m/s
+  GMF=0.0001 Q=150 m3/h: p_wh=   2.53 bar fric=  2.22 grav= 245.25; us_g code=0.0016 m/s vs mg-based=0.0639 m/s
+  GMF=0.0001 Q=300 m3/h: p_wh=   8.06 bar fric=  7.13 grav= 234.81; us_g code=0.0016 m/s vs mg-based=0.1278 m/s
+  GMF=0.001 Q= 50 m3/h: p_wh=   9.99 bar fric=  0.21 grav= 239.80; us_g code=0.0161 m/s vs mg-based=0.1487 m/s
+  GMF=0.001 Q=150 m3/h: p_wh=  78.05 bar fric=  1.77 grav= 170.18; us_g code=0.0161 m/s vs mg-based=0.4460 m/s
+  GMF=0.001 Q=300 m3/h: p_wh=  80.04 bar fric=  6.65 grav= 163.31; us_g code=0.0161 m/s vs mg-based=0.8919 m/s

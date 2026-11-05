@@ -1,0 +1,13 @@
+Loaded plant:    $SCR/work/gemini-dev/simulator_examples/projects/parallel_hex_plant.json
+Primary flow rate (well nodal balance): 125.10 m3/h
+ESP power_el:    0.2431 MW
+Degasser out:    P=9.8749 bar, T=76.00 C
+Filter_1 out:    P=8.6232 bar, T=75.00 C, Q=125.10 m3/h
+hex_1:          Q_primary=62.55 m3/h, T_primary_out=71.00 C, T_secondary_out=24.00 C
+hex_2:          Q_primary=37.53 m3/h, T_primary_out=71.00 C, T_secondary_out=24.00 C
+hex_3:          Q_primary=25.02 m3/h, T_primary_out=71.00 C, T_secondary_out=24.00 C
+HEX mixer out:   Q=125.10 m3/h, T=71.00 C
+Filter_2 out:    P=8.4973 bar, T=70.00 C, Q=125.10 m3/h
+Injector well:   P_wellhead=44.4702 bar
+Injector pump:   power_el=0.1563 MW, emission=1125.02 kg CO2/day
+wall=0.34s maxrss=75776KB

@@ -1,0 +1,4 @@
+node_modules/
+*.log
+.vite/
+# dist/ is committed on purpose (ADR-0003): judges need only Python and Ollama.

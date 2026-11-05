@@ -1,0 +1,221 @@
+# Long conversations (v1, 4 Nov 2026): does the chat keep its thread?
+#
+# Run: python hackathon/evals/run_evals.py --suite conversations --mode auto --device auto
+#
+# Five scripted chats of 12-15 typed turns, each in one session. A chat starts ``fresh`` (no
+# design yet) or ``designed`` (the challenge designed once per run, the inputs card confirmed).
+# Turns refer back ("it", "that one", "the second one", "go back to what we discussed about
+# cooling"), change the topic and come back, run a what-if and then ask about the original
+# design, state wrong numbers about the design or the project, and claim Dioscuri said
+# something it did not.
+#
+# Placeholders: the current design's figures ({lcoh} {lcoe} {lcoc} {capex} {co2_saving}
+# {boiler_share} {reinjection} {doublets} {doublets_word} {chosen} {code}); the picks'
+# ({lcoh_cheapest} {co2_saving_co2} {capex_cheapest} {lcoh_reliable} {doublets_co2} ...,
+# handles {cheapest} {reliable} {co2}, codes {code_cheapest} ...); the latest what-if's
+# ({lcoh_whatif} {co2_saving_whatif}, handle {whatif}); the chat's start ({start_lcoh} ...); a
+# wrong figure to state as given ({lcoh_wrong}: 60 % of the right one; {reinjection_wrong}:
+# 25 K lower; {doublets_wrong}). Words are filled before a turn, checks after it.
+#
+# Checks: behaviour, contains (numbers may be rounded one decimal), contains_any, not_contains,
+# about (the reply names that design or ran on it), corrects (the opening says the user is
+# wrong), changes (what the reading took), and on every turn: no ungrounded numbers. A question
+# about the chat itself may be answered on the "about" route (Dioscuri's own self card and the
+# history): its content decides.
+
+- id: C1_follow_ups
+  title: pronouns, a what-if, back to the original, a false "you said"
+  start: designed
+  turns:
+    - say: What does heat cost in the design you recommended?
+      expect: {behaviour: answer, contains: ["{lcoh}"]}
+    - say: And cold?
+      expect: {behaviour: answer, contains: ["{lcoc}"]}
+    - say: How much capital does it need?
+      expect: {behaviour: answer, contains: ["{capex}"]}
+    - say: What if gas cost 45 €/MWh?
+      expect: {behaviour: design, contains_any: ["45"]}
+    - say: So what does heat cost then?
+      expect: {behaviour: answer, contains: ["{lcoh_whatif}"]}
+    - say: And in the original design, without the cheaper gas?
+      expect: {behaviour: answer, contains: ["{start_lcoh}"]}
+    - say: Let's talk about cooling. How is the cold made in that design?
+      expect: {behaviour: answer, contains_any: [chiller, absorption, free cooling, cooling tower]}
+    - say: What does the cheapest design charge for heat?
+      expect: {behaviour: answer, contains: ["{lcoh_cheapest}"], about: cheapest}
+    - say: Can it lose any one unit and still meet demand?
+      expect:
+        behaviour: answer
+        about: cheapest
+        contains_any: [N-1, one unit, short, not met, spare, unit out]
+    - say: Go back to what we discussed about cooling. What was the cost of cold in the recommended design?
+      expect: {behaviour: answer, contains: ["{start_lcoc}"]}
+    - say: You said earlier that heat costs {start_lcoh_wrong} €/MWh in the recommended design, right?
+      expect: {behaviour: answer, corrects: true, contains: ["{start_lcoh}"]}
+    - say: Which designs have we talked about so far?
+      expect: {behaviour: answer, contains_any: ["{cheapest}", "{code_cheapest}"]}
+    - say: Thanks. Sum up in two sentences what we found.
+      expect: {behaviour: answer, contains_any: ["{start_lcoh}", "{start_lcoe}", "{lcoh_cheapest}"]}
+
+- id: C2_premises_first
+  title: wrong facts before a design, a typed "go ahead", a short follow-up what-if
+  start: fresh
+  turns:
+    - say: Before we design anything, the district needs about 200 GWh of heat a year, right?
+      expect: {behaviour: answer, corrects: true, contains_any: ["111.7", "111.67", "112"]}
+    - say: And the aquifer sits at 3,500 m and 120 °C, so we can skip the heat pump?
+      expect: {behaviour: answer, corrects: true, contains_any: ["2,500", "2500"]}
+    - say: What flow can each doublet take at most?
+      expect: {behaviour: answer, contains: ["300"]}
+    - say: We can drill up to five doublets, can't we?
+      # A correction that ends by asking which of 1-3 doublets to use is fine too.
+      expect: {behaviour: answer_or_clarify, corrects: true, contains_any: ["3 doublets", "three", "1 to 3", "1-3", "1–3"]}
+    - say: OK, design heating and cooling for this district.
+      expect: {behaviour: clarify}
+    - say: Looks right, go ahead.
+      expect: {behaviour: design}
+    - say: What does heat cost?
+      expect: {behaviour: answer, contains: ["{lcoh}"]}
+    - say: Since you used {doublets_wrong} doublets, wouldn't fewer have been cheaper?
+      expect: {behaviour: answer, corrects: true, contains_any: ["{doublets} doublet", "{doublets_word} doublet"]}
+    - say: What if the heating return were 50 °C?
+      expect: {behaviour: design, contains_any: ["50"], changes: {heat_return_c: 50}}
+    - say: And with 45 °C?
+      expect: {behaviour: design, contains_any: ["45"], changes: {heat_return_c: 45}}
+    - say: Back to the design itself, without those what-ifs. What is its reinjection temperature?
+      expect: {behaviour: answer, contains: ["{reinjection}"]}
+    - say: You told me the gas boiler covers about {boiler_share_wrong} of the heat, correct?
+      expect: {behaviour: answer, corrects: true, contains: ["{boiler_share}"]}
+    - say: What was the first thing I asked you in this chat?
+      expect: {behaviour: answer_or_about, contains_any: ["200 GWh", "200", "heat demand", "heat a year"]}
+
+- id: C3_lists
+  title: the picks as a list, "the second one", "the first one's", "that one"
+  start: designed
+  turns:
+    - say: Which designs did the search pick, and what does heat cost in each?
+      expect: {behaviour: answer, contains: ["{lcoh_cheapest}"]}
+    - say: Put the cheapest and the greenest side by side.
+      expect: {behaviour: answer_or_design, contains_any: ["{co2}", "{code_co2}"]}
+    - say: What is the CO2 saving of the second one?
+      expect: {behaviour: answer, contains: ["{co2_saving_co2}"], about: co2}
+    - say: And the first one's capital cost?
+      expect: {behaviour: answer, contains: ["{capex_cheapest}"], about: cheapest}
+    - say: Which of the two would you pick for a council that wants the least CO2?
+      expect: {behaviour: answer, contains_any: ["{co2}", "{code_co2}"]}
+    - say: What does heat cost in that one?
+      expect: {behaviour: answer, contains: ["{lcoh_co2}"], about: co2}
+    - say: How many doublets does it have?
+      expect: {behaviour: answer, contains_any: ["{doublets_co2} doublet", "{doublets_word_co2} doublet"]}
+    - say: Now the recommended design. Why was it recommended over the cheapest?
+      expect: {behaviour: answer, contains_any: ["{lcoh}", "{lcoe}", N-1, reliab, CO2]}
+    - say: It has {doublets_wrong} doublets, hasn't it?
+      expect: {behaviour: answer, corrects: true, contains_any: ["{doublets} doublet", "{doublets_word} doublet"]}
+    - say: And the most reliable one, what does its heat cost?
+      expect: {behaviour: answer, contains: ["{lcoh_reliable}"], about: reliable}
+    - say: Remind me, what was the CO2 saving of the greenest design you mentioned?
+      expect: {behaviour: answer, contains: ["{co2_saving_co2}"]}
+    - say: Of everything we looked at, which has the lowest cost of heat?
+      expect: {behaviour: answer, contains_any: ["{cheapest}", "{code_cheapest}", "{lcoh_cheapest}"]}
+
+- id: C4_open_questions
+  title: questions back answered by typing, a store what-if, off-topic and back
+  start: designed
+  turns:
+    - say: What does it cost?
+      expect: {behaviour: answer_or_clarify}
+    - say: the cheapest one
+      expect: {behaviour: answer, contains_any: ["{lcoh_cheapest}", "{lcoe_cheapest}"], about: cheapest}
+    - say: Is that one still fine if a unit fails?
+      expect: {behaviour: answer, about: cheapest, contains_any: [N-1, one unit, short, not met, spare, unit out]}
+    - say: Add a heat store to the recommended design.
+      expect: {behaviour: clarify_or_design}
+    - say: 2 GWh
+      expect: {behaviour: design, contains_any: ["2 GWh", "2,000 MWh", "2000 MWh", "store"]}
+    - say: What did the store change?
+      expect: {behaviour: answer, contains_any: ["{lcoh_whatif}", "{lcoe_whatif}", "{co2_saving_whatif}"]}
+    - say: And without the store, what was the cost of heat?
+      expect: {behaviour: answer, contains: ["{start_lcoh}"]}
+    - say: Could we cool with outside air instead of chillers?
+      expect: {behaviour: answer_or_design, contains_any: [free cooling, outside air, cooling tower, dry cooler]}
+    - say: Let's change the subject. What's the weather in Delft tomorrow?
+      expect: {behaviour: refuse_or_answer, not_contains: ["sunny", "rain tomorrow"]}
+    - say: Sorry, back to the plant. What were we discussing before the weather?
+      expect: {behaviour: answer, contains_any: [free cooling, outside air, cool]}
+    - say: The heat store cut the cost of heat to {start_lcoh_wrong} €/MWh, didn't it?
+      expect: {behaviour: answer, corrects: true, contains_any: ["{lcoh_whatif}", "{start_lcoh}"]}
+    - say: What was the very first question I asked in this chat?
+      # The designed start's own first message counts too ("Design heating and cooling ...").
+      expect: {behaviour: answer_or_about, contains_any: [cost, Design heating and cooling]}
+
+- id: C5_long
+  title: fifteen turns, documents, Dutch, wrong numbers, two what-ifs, coming back
+  start: designed
+  turns:
+    - say: Give me the yearly heat split of the recommended design.
+      expect: {behaviour: answer, contains_any: [GWh]}
+    - say: What does GEMINI do in this design?
+      expect: {behaviour: answer, contains_any: [GEMINI]}
+    - say: What is the reinjection temperature?
+      expect: {behaviour: answer, contains: ["{start_reinjection}"]}
+    - say: So the design's capital cost is about {start_capex_wrong} M€?
+      expect: {behaviour: answer, corrects: true, contains: ["{start_capex}"]}
+    - say: Wat kost de warmte per MWh?
+      expect: {behaviour: answer, contains: ["{start_lcoh}"]}
+    - say: what if electricity were 30 % dearer?
+      expect: {behaviour: design}
+    - say: and the CO2 saving in that case?
+      expect: {behaviour: answer, contains: ["{co2_saving_whatif}"]}
+    - say: back to the original design, its CO2 saving?
+      expect: {behaviour: answer, contains: ["{start_co2_saving}"]}
+    - say: What did you say the reinjection temperature was?
+      expect: {behaviour: answer, contains: ["{start_reinjection}"]}
+    - say: Earlier you told me the reinjection temperature was {start_reinjection_wrong} °C.
+      expect: {behaviour: answer, corrects: true, contains: ["{start_reinjection}"]}
+    - say: How does the doublet's yearly stop work?
+      expect: {behaviour: answer, contains_any: ["330", "35 days", stop]}
+    - say: Could we move it to August?
+      expect: {behaviour: design, contains_any: [Aug]}
+    - say: Of the two what-ifs, which raised the cost of heat more?
+      expect: {behaviour: answer}
+    - say: Give me the decision for the board in three bullet points.
+      expect: {behaviour: answer, contains_any: ["{start_lcoh}", "{start_lcoe}", "{start_chosen}", "{start_code}"]}
+    - say: Which question did I ask you right after the heat split?
+      expect: {behaviour: answer_or_about, contains_any: [GEMINI]}
+
+# 5 Nov: a user's name given once, kept through a design, recalled, then changed (the user's
+# test of 5 Nov: after a design the replies stopped using the name, and the claim checker
+# removed "I remember your name from our first conversation").
+- id: C6_name
+  title: a name kept through a design, recalled, then changed
+  start: fresh
+  turns:
+    - say: Hi! My name is Sam. Please call me by my name from now on.
+      expect: {behaviour: answer_or_about, contains: [Sam]}
+    - say: Design heating and cooling for the district.
+      run_card: true
+      expect: {behaviour: design, contains: [Sam]}
+    - say: What does heat cost in that design?
+      expect: {behaviour: answer, contains: [Sam, "{lcoh}"]}
+    - say: Do you remember my name?
+      expect: {behaviour: answer_or_about, contains: [Sam]}
+    - say: Actually, please call me Alex instead.
+      expect: {behaviour: answer_or_about, contains: [Alex]}
+    - say: And what does cold cost?
+      expect: {behaviour: answer, contains: [Alex, "{lcoc}"], not_contains: [Sam]}
+
+- id: C7_card_limits_and_defaults
+  title: the inputs card kept past its limits, the defaults back in words, then the run (5 Nov)
+  start: fresh
+  turns:
+    - say: Design heating and cooling for the district
+      expect: {behaviour: clarify, contains: ["1. 2,500 m"]}
+    - say: add a 4th doublet at 100 m
+      expect: {behaviour: clarify, contains: ["Nothing changed", "1. 2,500 m"], not_contains: ["1. 100 m"]}
+    - say: Then make the heating return 50 °C.
+      expect: {behaviour: clarify, contains: ["return 50"]}
+    - say: get back to default values
+      expect: {behaviour: clarify, contains: ["Back to the project's defaults", "return 60"]}
+    - say: Looks right, go ahead.
+      expect: {behaviour: design, not_contains: ["100 m"]}
+

@@ -1,0 +1,16 @@
+You write one Python function that models a component of a geothermal heating and cooling plant. Reply with JSON only: {"reason": "...", "code": "..."}.
+reason: one sentence on how the code follows the physics.
+code: the complete Python source and nothing else (no Markdown fences).
+Rules for the code:
+- The only import allowed is "import math". No other modules.
+- No files, network, print, input, classes, global, nonlocal, with, eval, exec, open, getattr, and no names that start with an underscore.
+- Define the function with exactly the given name and arguments. Small helper functions are allowed. Put all work inside functions; only imports and constants may sit at the top level.
+- Return a dict with exactly the listed output keys; every value a float.
+- Follow the physics steps in the given order and units. Keep the numbers given in the steps.
+- Never divide by zero: handle the zero case first and return 0.0 for outputs of a unit that cannot run.
+Example of the form (a different component):
+def pump(flow_m3s, head_pa, efficiency):
+    if flow_m3s <= 0 or efficiency <= 0:
+        return {"power_mw": 0.0, "heat_mw": 0.0}
+    power_mw = flow_m3s * head_pa / efficiency / 1e6
+    return {"power_mw": power_mw, "heat_mw": power_mw * (1.0 - efficiency)}

@@ -1,0 +1,237 @@
+/* The investor's section of the Economics tab (InvestorPanel.tsx). Scoped under .tab-economics;
+   tokens are the :root variables of src/styles.css. The cards, tiles, legends and form fields are
+   the tab's own (energy/parts.css, EconomicsTab.css); this adds the section's frame. */
+
+/* A section of its own: a rule and an eyebrow set it apart from the plant's cost above. */
+.tab-economics .inv-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  margin-top: 14px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line-3);
+}
+.tab-economics .inv-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 18px;
+}
+.tab-economics .inv-head-titles {
+  flex: 1 1 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+.tab-economics .inv-eyebrow {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+.tab-economics .inv-head h2 {
+  margin: 2px 0 0;
+  font-size: 19px;
+  font-weight: 680;
+  line-height: 1.3;
+  color: var(--ink);
+}
+.tab-economics .inv-head p {
+  margin: 0;
+  max-width: 78ch;
+  font-size: 13.5px;
+  color: var(--ink-3);
+  text-wrap: pretty;
+}
+.tab-economics .inv-gas {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--tile);
+}
+
+.tab-economics .inv-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  transition: opacity 0.2s ease;
+}
+.tab-economics .inv-body.pending {
+  opacity: 0.6;
+}
+.tab-economics .inv-tiles {
+  grid-template-columns: repeat(auto-fit, minmax(min(176px, 100%), 1fr));
+}
+
+/* ------------------------------------------------------------------ SDE++ card */
+.tab-economics .inv-cat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+.tab-economics .inv-cat-name {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.tab-economics .inv-cat-name strong {
+  font-size: 14.5px;
+  font-weight: 650;
+  color: var(--ink);
+}
+.tab-economics .inv-cat-official {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  font-style: italic;
+}
+.tab-economics .inv-cat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tab-economics .inv-chip {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--soft-2);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tab-economics .inv-chip.warn {
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+}
+.tab-economics .inv-figs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+.tab-economics .inv-figs > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: var(--tile);
+}
+.tab-economics .inv-figs dt {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.tab-economics .inv-figs dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-3);
+}
+.tab-economics .inv-figs dd strong {
+  font-size: 19px;
+  font-weight: 650;
+  color: var(--ink);
+}
+.tab-economics .inv-block {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.tab-economics .inv-block-label {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tab-economics .inv-block-label strong {
+  color: var(--ink);
+  font-weight: 650;
+}
+.tab-economics .inv-legend {
+  font-size: 12px;
+}
+.tab-economics .inv-source {
+  margin-left: 2px;
+}
+
+/* ------------------------------------------------------------------ choices card */
+.tab-economics .inv-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.tab-economics .inv-rev {
+  color: var(--ink-2);
+  font-weight: 650;
+}
+.tab-economics .inv-apply {
+  display: flex;
+  gap: 8px;
+}
+.tab-economics .inv-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.tab-economics .inv-row-col {
+  flex-direction: column;
+  align-items: stretch;
+}
+.tab-economics .inv-select {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 9px;
+  border-radius: 9px;
+  border: 1px solid var(--line-3);
+  background: var(--tile);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+}
+.tab-economics .inv-select:focus {
+  outline: none;
+  border-color: var(--teal-2);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(11, 143, 160, 0.15);
+}
+.tab-economics .inv-status:empty {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ table and notes */
+.tab-economics .inv-table th,
+.tab-economics .inv-table td {
+  white-space: nowrap;
+}
+.tab-economics .inv-notes {
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--tile);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tab-economics .inv-notes summary {
+  cursor: pointer;
+  font-weight: 650;
+  color: var(--ink);
+}
+.tab-economics .inv-notes ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.tab-economics .inv-notes li {
+  text-wrap: pretty;
+}

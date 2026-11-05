@@ -1,0 +1,28 @@
+# Same tools and versions as GEMINI's dev dependencies (pyproject.toml), so anything that passes
+# here passes upstream CI. black/isort read their config from pyproject.toml.
+repos:
+  - repo: https://github.com/psf/black
+    rev: 25.11.0
+    hooks:
+      - id: black
+        files: ^(src|unit_test)/
+  - repo: https://github.com/PyCQA/isort
+    rev: 7.0.0
+    hooks:
+      - id: isort
+        files: ^(src|unit_test)/
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.3.0
+    hooks:
+      - id: flake8
+        files: ^(src|unit_test)/
+        args: [--max-line-length=100]
+        additional_dependencies: [flake8-docstrings==1.7.0, Flake8-pyproject==1.2.3]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=2048]

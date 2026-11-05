@@ -1,0 +1,3 @@
+# Generated models stay on this machine (gemini_agent.modelgen.Registry).
+*
+!.gitignore

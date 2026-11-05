@@ -1,0 +1,96 @@
+{
+  "schema": "cooling_contract_handoff_v1",
+  "legacy_fields": {
+    "Rules": [
+      "heat_supply_c",
+      "heat_return_c",
+      "cool_supply_c",
+      "cool_return_c",
+      "flow_min_m3h",
+      "flow_max_m3h",
+      "max_brine_cooling_k",
+      "operating_days",
+      "pump_efficiency",
+      "brine_density_kg_m3",
+      "brine_viscosity_pa_s",
+      "brine_cp_j_kg_k",
+      "gas_liquid_ratio",
+      "gas_ch4_fraction",
+      "gas_co2_fraction"
+    ],
+    "Plant": [
+      "n_doublets",
+      "depth_m",
+      "hex_approach_k",
+      "heat_pump_mw",
+      "recovery_heat_pump_mw",
+      "absorption_mw",
+      "chiller_mw",
+      "boiler_mw",
+      "chp_mw_el",
+      "burn_produced_gas",
+      "stop_start_day"
+    ],
+    "Demand": [
+      "heat_mw",
+      "cool_mw"
+    ],
+    "YearResult": [
+      "heat_demand_gwh",
+      "cool_demand_gwh",
+      "heat_delivered_gwh",
+      "cool_delivered_gwh",
+      "heat_coverage",
+      "cool_coverage",
+      "heat_split_gwh",
+      "cool_split_gwh",
+      "peak_heat_mw",
+      "peak_cool_mw",
+      "daily_mw",
+      "monthly_gwh",
+      "doublets",
+      "electricity_gwh",
+      "purchased_gas_gwh",
+      "produced_gas_burned_gwh",
+      "produced_gas_flared_gwh",
+      "co2_t",
+      "violations",
+      "source"
+    ],
+    "Economics": [
+      "lcoh_eur_per_mwh",
+      "lcoc_eur_per_mwh",
+      "capex_meur",
+      "lines",
+      "capex_items",
+      "co2_saving_vs_gas",
+      "assumptions"
+    ]
+  },
+  "legacy_functions": [
+    "simulate_year(plant, demand, doublet, rules=Rules())",
+    "economics(plant, year, prices=Prices())",
+    "stub_doublet(flow_m3h, depth_m)"
+  ],
+  "doublet_required_keys": [
+    "wellhead_c",
+    "esp_mw",
+    "injector_pump_mw",
+    "gas_nm3h"
+  ],
+  "doublet_added_diagnostic": "well_loss_k already included in wellhead_c",
+  "legacy_electricity_keys": [
+    "hp",
+    "recovery_hp",
+    "chillers",
+    "pumps"
+  ],
+  "additive_electricity_key": "towers",
+  "legacy_cold_keys": [
+    "abs",
+    "chill",
+    "recovery_hp"
+  ],
+  "additive_cold_key": "free",
+  "status": "field inventory frozen; actual annual caller/field compatibility tests deferred to joint M5"
+}

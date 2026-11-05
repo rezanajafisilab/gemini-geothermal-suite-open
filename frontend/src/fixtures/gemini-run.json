@@ -1,0 +1,186 @@
+{
+ "_fixture": "Made by hackathon/scripts/make_ui_fixtures.py from the real backend (scripted model).",
+ "ok": true,
+ "error": null,
+ "outputs": {
+  "producer_well": {
+   "flow_rate": 299.99847732792773,
+   "flow_rate_m3s": 0.08333291036886882,
+   "pressure_out": 5.0,
+   "temperature_out": 86.104,
+   "esp_power_el": 390993.5542077294,
+   "esp_intake_pressure": 49.32756640475983,
+   "esp_discharge_pressure": 82.1435196453919,
+   "power_el": 390993.5542077294,
+   "power_th": 0.0,
+   "emission": 0.0
+  },
+  "separator": {
+   "pressure_in": 5.0,
+   "pressure_out": 4.920000406045886,
+   "temperature_in": 86.104,
+   "temperature_out": 86.104,
+   "flow_rate": 0.08333291036886882,
+   "flow_rate_m3h": 299.99847732792773,
+   "gas_flow_rate": 0.06666632829509506,
+   "gas_mass_flow_rate": 0.06459967211794711,
+   "power_el": 0.0,
+   "power_th": 0.0,
+   "emission": 0.0
+  },
+  "filter_a": {
+   "pressure_in": 4.920000406045886,
+   "pressure_out": 4.0800067695186675,
+   "pressure_out_pa": 408000.6769518668,
+   "temperature_in": 86.104,
+   "temperature_out": 86.104,
+   "flow_rate": 0.08333291036886882,
+   "flow_rate_m3h": 299.99847732792773,
+   "flow_resistance": 10.079974799980343,
+   "power_el": 0.0,
+   "power_th": 0.0,
+   "emission": 0.0
+  },
+  "heat_exchanger": {
+   "pressure_in": 4.0800067695186675,
+   "pressure_out": 4.0800067695186675,
+   "primary_temperature_out": 65.43588441529081,
+   "secondary_temperature_out": 81.02658409668443,
+   "primary_flow_rate": 0.08333291036886882,
+   "secondary_flow_rate": 0.08191222195646974,
+   "heat_duty": 7595493.925696703,
+   "power_el": 0.0,
+   "power_th": 7595493.925696703,
+   "emission": 0.0
+  },
+  "filter_b": {
+   "pressure_in": 4.0800067695186675,
+   "pressure_out": 4.000009986544374,
+   "pressure_out_pa": 400000.99865443737,
+   "temperature_in": 65.43588441529081,
+   "temperature_out": 65.43588441529081,
+   "flow_rate": 0.08333291036886882,
+   "flow_rate_m3h": 299.99847732792773,
+   "flow_resistance": 0.959966268070947,
+   "power_el": 0.0,
+   "power_th": 0.0,
+   "emission": 0.0
+  },
+  "boiler": {
+   "temperature_in": 81.02658409668443,
+   "temperature_out": 86.06500154667357,
+   "water_flow_rate": 0.08191222195646974,
+   "power_el": 0.0,
+   "power_th": 1820042.140965318,
+   "emission": 0.13161778429928142
+  },
+  "injector_well": {
+   "wellhead_pressure": 22.60095324062679,
+   "wellhead_pressure_pa": 2260095.324062679,
+   "flow_rate_m3s": 0.08333291036886882,
+   "power_el": 221438.6767098379,
+   "power_th": 0.0,
+   "emission": 0.018453223059153156
+  }
+ },
+ "warnings": [],
+ "seconds": 0.011,
+ "released": {
+  "ok": true,
+  "error": null,
+  "outputs": {
+   "producer_well": {
+    "flow_rate": 269.41962706446395,
+    "flow_rate_m3s": 0.07483878529568443,
+    "pressure_out": 5.0,
+    "temperature_out": 86.104,
+    "esp_power_el": 354461.51845897315,
+    "esp_intake_pressure": 48.04225596634326,
+    "esp_discharge_pressure": 83.59736010435579,
+    "power_el": 354461.51845897315,
+    "power_th": 0.0,
+    "emission": 0.0
+   },
+   "separator": {
+    "pressure_in": 5.0,
+    "pressure_out": 4.928154766116143,
+    "temperature_in": 86.104,
+    "temperature_out": 86.104,
+    "flow_rate": 0.07483878529568443,
+    "flow_rate_m3h": 269.41962706446395,
+    "gas_flow_rate": 0.059871028236547545,
+    "gas_mass_flow_rate": 0.05801502636121457,
+    "power_el": 0.0,
+    "power_th": 0.0,
+    "emission": 0.0
+   },
+   "filter_a": {
+    "pressure_in": 4.928154766116143,
+    "pressure_out": 4.173896536805456,
+    "pressure_out_pa": 417389.6536805456,
+    "temperature_in": 86.104,
+    "temperature_out": 86.104,
+    "flow_rate": 0.07483878529568443,
+    "flow_rate_m3h": 269.41962706446395,
+    "flow_resistance": 10.078440294436229,
+    "power_el": 0.0,
+    "power_th": 0.0,
+    "emission": 0.0
+   },
+   "heat_exchanger": {
+    "pressure_in": 4.173896536805456,
+    "pressure_out": 4.173896536805456,
+    "primary_temperature_out": 64.12837264685085,
+    "secondary_temperature_out": 80.07794707478814,
+    "primary_flow_rate": 0.07483878529568443,
+    "secondary_flow_rate": 0.08191222195646974,
+    "heat_duty": 7252815.024341518,
+    "power_el": 0.0,
+    "power_th": 7252815.024341518,
+    "emission": 0.0
+   },
+   "filter_b": {
+    "pressure_in": 4.173896536805456,
+    "pressure_out": 4.102161746670589,
+    "pressure_out_pa": 410216.1746670589,
+    "temperature_in": 64.12837264685085,
+    "temperature_out": 64.12837264685085,
+    "flow_rate": 0.07483878529568443,
+    "flow_rate_m3h": 269.41962706446395,
+    "flow_resistance": 0.9585242445003109,
+    "power_el": 0.0,
+    "power_th": 0.0,
+    "emission": 0.0
+   },
+   "boiler": {
+    "temperature_in": 80.07794707478814,
+    "temperature_out": 84.60279854224189,
+    "water_flow_rate": 0.08191222195646974,
+    "power_el": 0.0,
+    "power_th": 1634525.2123545895,
+    "emission": 0.11820198114606346
+   },
+   "injector_well": {
+    "wellhead_pressure": 6.572703442305029,
+    "wellhead_pressure_pa": 657270.3442305028,
+    "flow_rate_m3s": 0.07483878529568443,
+    "power_el": 26413.191360517423,
+    "power_th": 0.0,
+    "emission": 0.0022010992800431182
+   }
+  }
+ },
+ "patches": [
+  "01_heat_exchanger_signed_duty.diff",
+  "02_injection_friction_sign.diff",
+  "03_roughness_default_4p5e-5m.diff",
+  "04_heatpump_bracketed_root.diff",
+  "05_esp_affinity_flow_scaling.diff",
+  "06_compressor_k_factor.diff",
+  "07_dpdt_two_phase_usg_and_roughness_unit_comment.diff",
+  "08_heatpump_electricity_emission.diff",
+  "09_register_heatpump.diff",
+  "10_heatpump_carnot_source_outlet.diff",
+  "11_well_brine_properties.diff"
+ ]
+}

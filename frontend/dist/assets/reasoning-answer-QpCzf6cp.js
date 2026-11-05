@@ -1,0 +1,33 @@
+var e=`data: {"type": "RUN_STARTED", "timestamp": 1793260600000, "threadId": "v-design", "runId": "a8c0de5e08"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793260600001, "stepName": "intake", "metadata": {"label": "Read the request", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793260600403, "stepName": "intake", "metadata": {"tokens": 968, "relevant": true, "intent": "explain", "screened": false, "seconds": 0.402}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260600403, "name": "usage", "value": {"purpose": "intake", "model": "qwen3:1.7b", "prompt_tokens": 902, "output_tokens": 66, "seconds": 0.402, "load_seconds": 0.002, "prompt_seconds": 0.121, "output_seconds": 0.273, "ok": true, "error": ""}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793260600404, "stepName": "answer", "metadata": {"label": "Write the answer", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793260605024, "stepName": "answer", "metadata": {"decided_by": "model", "model": "qwen3.5:9b", "device": "gpu", "tokens": 3700, "understood": "You want to know why A1 costs less per MWh of heat than A2.", "kind": "answer", "scope": "project", "steps": ["The question compares the cost of heat of A1 and A2 from the design just simulated.", "A1 uses the 86 °C brine of the 2.5 km doublet directly; A2 lifts cooler brine with heat pumps.", "So the gap is mostly heat-pump electricity: 41 against 65.5 €/MWh."], "corrections": ["removed a sentence with an unsourced number (17)"], "seconds": 4.62}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260605024, "name": "usage", "value": {"purpose": "answer", "model": "qwen3.5:9b", "prompt_tokens": 3412, "output_tokens": 288, "seconds": 4.62, "load_seconds": 0.002, "prompt_seconds": 1.386, "output_seconds": 3.142, "ok": true, "error": ""}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793260605025, "messageId": "b9c0d1e288", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260605065, "messageId": "b9c0d1e288", "delta": "A1's 2.5 km doublet brings brine up at 86 °C, hot enough to heat the 70/40 °C network directly, so most of its "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260605105, "messageId": "b9c0d1e288", "delta": "heat needs no electricity. A2's 1.5 km doublet is cooler, so heat pumps lift every megawatt-hour and their electricity is most of its "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260605145, "messageId": "b9c0d1e288", "delta": "running cost. That is why A1 delivers heat at 41 €/MWh and A2 at 65.5 €/MWh, while the gas reference A4 sits at "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260605185, "messageId": "b9c0d1e288", "delta": "63.9 €/MWh."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793260605186, "messageId": "b9c0d1e288"}
+
+data: {"type": "CUSTOM", "timestamp": 1793260605187, "name": "answer", "value": {"understood": "You want to know why A1 costs less per MWh of heat than A2.", "kind": "answer", "scope": "project", "used": ["A1", "A2", "A4"], "model": "qwen3.5:9b", "device": "gpu", "fallback": false, "corrections": ["removed a sentence with an unsourced number (17)"]}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260605188, "name": "suggestions", "value": ["What if electricity were 30% cheaper?", "Compare a 3 km doublet with A1", "Explain the summer cascade"]}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793260605189, "threadId": "v-design", "runId": "a8c0de5e08", "outcome": {"type": "success"}, "usage": [{"model": "qwen3:1.7b", "provider": "ollama", "inputTokens": 902, "outputTokens": 66, "totalTokens": 968}, {"model": "qwen3.5:9b", "provider": "ollama", "inputTokens": 3412, "outputTokens": 288, "totalTokens": 3700}], "result": {"asked": [], "ungrounded": [], "dropped": [], "verified": null, "language": "en", "screened": false, "seconds": 5.188, "llm_calls": 2, "calls": ["intake: qwen3:1.7b", "answer: qwen3.5:9b"], "prompt_tokens": 4314, "output_tokens": 354, "load_seconds": 0.004, "prompt_seconds": 1.507, "output_seconds": 3.415, "tool_calls": 0, "cache_hits": 0, "tool_errors": 0, "left_out": [], "user_turns": 2, "model": "qwen3:1.7b", "prompt_version": "answer_v1", "behaviour": "answer", "answer": "A1's 2.5 km doublet brings brine up at 86 °C, hot enough to heat the 70/40 °C network directly, so most of its heat needs no electricity. A2's 1.5 km doublet is cooler, so heat pumps lift every megawatt-hour and their electricity is most of its running cost. That is why A1 delivers heat at 41 €/MWh and A2 at 65.5 €/MWh, while the gas reference A4 sits at 63.9 €/MWh.", "reasoning": true, "decided_by": {"answer": "model"}, "intent": "explain"}}
+
+`;export{e as default};

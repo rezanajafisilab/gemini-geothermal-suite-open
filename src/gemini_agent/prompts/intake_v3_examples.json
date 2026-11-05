@@ -1,0 +1,72 @@
+[
+  {
+    "message": "Compare a 2 km doublet with a 3 km one for 40 GWh of heat a year.",
+    "reply": {
+      "relevant": true,
+      "intent": "compare",
+      "asks_for": [],
+      "bypass": false,
+      "think": true,
+      "annual_heat_gwh": 40,
+      "annual_cool_gwh": null,
+      "reservoir_depth_m": null,
+      "reservoir_temp_c": null,
+      "depths_m": [
+        2000,
+        3000
+      ],
+      "reservoir_change_c": null
+    }
+  },
+  {
+    "message": "Size a system for the district with 80/50 C heating, meeting 90% of demand.",
+    "reply": {
+      "relevant": true,
+      "intent": "design",
+      "asks_for": [],
+      "bypass": false,
+      "think": false,
+      "annual_heat_gwh": null,
+      "annual_cool_gwh": null,
+      "reservoir_depth_m": null,
+      "reservoir_temp_c": null,
+      "depths_m": [],
+      "reservoir_change_c": null
+    }
+  },
+  {
+    "message": "How hot is the aquifer, and what does the heat cost?",
+    "reply": {
+      "relevant": true,
+      "intent": "question",
+      "asks_for": [
+        "reservoir_temp",
+        "lcoh"
+      ],
+      "bypass": false,
+      "think": false,
+      "annual_heat_gwh": null,
+      "annual_cool_gwh": null,
+      "reservoir_depth_m": null,
+      "reservoir_temp_c": null,
+      "depths_m": [],
+      "reservoir_change_c": null
+    }
+  },
+  {
+    "message": "What is the capital of France?",
+    "reply": {
+      "relevant": false,
+      "intent": "other",
+      "asks_for": [],
+      "bypass": false,
+      "think": false,
+      "annual_heat_gwh": null,
+      "annual_cool_gwh": null,
+      "reservoir_depth_m": null,
+      "reservoir_temp_c": null,
+      "depths_m": [],
+      "reservoir_change_c": null
+    }
+  }
+]

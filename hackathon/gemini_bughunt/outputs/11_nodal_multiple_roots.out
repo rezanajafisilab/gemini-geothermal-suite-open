@@ -1,0 +1,9 @@
+doublet_plant.json producer as shipped:
+   sign changes of residual on 0.01-700 m3/h at Q ~ [128.9]
+   brentq solution Q=129.0 m3/h; ESP head there=28.4 bar, eff=58 %, intake clamped to 0: False
+same, roughness_m=4.5e-5:
+   sign changes of residual on 0.01-700 m3/h at Q ~ [203.1, 395.0, 406.6]
+   brentq solution Q=203.3 m3/h; ESP head there=22.2 bar, eff=64 %, intake clamped to 0: False
+2500 m hydrostatic, ID 0.2 m, PI 15, k=4.5e-5:
+   sign changes of residual on 0.01-700 m3/h at Q ~ [213.6, 376.8, 598.5]
+   brentq solution Q=598.6 m3/h; ESP head there=3311.7 bar, eff=3230 %, intake clamped to 0: True

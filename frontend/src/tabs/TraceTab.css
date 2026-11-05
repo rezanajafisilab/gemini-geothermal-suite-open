@@ -1,0 +1,953 @@
+/* The Trace tab. Every rule is scoped under .tab-trace so nothing leaks into the other tabs;
+   tokens (colours, fonts, shadows) are the :root variables of src/styles.css. */
+
+.tab-trace {
+  --tr-card-shadow: 0 0 0 1px var(--line), 0 12px 32px -18px rgba(17, 24, 28, 0.18);
+}
+.tab-trace .tr-muted {
+  color: var(--ink-3);
+  font-size: 13px;
+}
+.tab-trace .tr-none {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--tile);
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.tab-trace .tr-export {
+  font-size: 14px;
+  padding: 8px 14px 8px 12px;
+}
+
+/* ------------------------------------------------------------------ layout */
+/* The runs as a strip across the top, the run picked below at the full width. */
+.tab-trace .tr-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  transition: opacity 0.2s ease;
+}
+.tab-trace .tr-layout.is-refreshing {
+  opacity: 0.7;
+}
+.tab-trace .tr-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.tab-trace .tr-card {
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: var(--tr-card-shadow);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.tab-trace .tr-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+.tab-trace .tr-card-head h2,
+.tab-trace .tr-runs-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 680;
+  letter-spacing: -0.01em;
+}
+.tab-trace .tr-head-link {
+  margin-left: auto;
+  font-size: 13px;
+}
+/* Model calls | Tokens by call: one row height, the totals level at the bottom. */
+.tab-trace .tr-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* ------------------------------------------------------------------ run strip */
+.tab-trace .tr-runs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.tab-trace .tr-runs-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  padding: 0 4px;
+}
+.tab-trace .tr-run-list {
+  list-style: none;
+  margin: 0;
+  padding: 2px 2px 8px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding: 2px;
+}
+.tab-trace .tr-run-list > li {
+  flex: 0 0 min(300px, 78vw);
+  display: flex;
+  scroll-snap-align: start;
+}
+.tab-trace .tr-run {
+  width: 100%;
+  height: 100%;
+  text-align: left;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: 0 0 0 1px var(--line);
+}
+.tab-trace .tr-run:hover {
+  box-shadow: 0 0 0 1px #c5d3d4;
+}
+.tab-trace .tr-run.is-on {
+  box-shadow: 0 0 0 2px var(--teal-2), 0 10px 24px -16px rgba(10, 111, 124, 0.45);
+  background: #fbfefe;
+}
+.tab-trace .tr-run-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tab-trace .tr-run-n {
+  flex: none;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 6px;
+  background: var(--soft);
+  color: var(--ink-2);
+  font-size: 11.5px;
+  font-weight: 650;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.tab-trace .tr-run.is-on .tr-run-n {
+  background: var(--ink);
+  color: #fff;
+}
+.tab-trace .tr-run-sec {
+  margin-left: auto;
+  color: var(--ink-2);
+}
+.tab-trace .tr-run-msg {
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 550;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.tab-trace .tr-run-msg em {
+  font-weight: 450;
+  color: var(--ink-3);
+}
+.tab-trace .tr-run-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  margin-top: auto;
+  font-size: 12.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ the message */
+.tab-trace .tr-ask {
+  gap: 10px;
+}
+.tab-trace .tr-ask-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+.tab-trace .tr-runid {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--ink-4);
+}
+.tab-trace .tr-bubble {
+  margin: 0;
+  align-self: flex-start;
+  max-width: min(100%, 720px);
+  padding: 10px 15px;
+  border-radius: 16px 16px 16px 6px;
+  background: var(--ink);
+  color: #f3f5f5;
+  font-size: 14.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------------ totals */
+.tab-trace .tr-tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.tab-trace .tr-tile {
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: var(--tr-card-shadow);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.tab-trace .tr-tile-label {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tab-trace .tr-tile-value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+.tab-trace .tr-tile-value strong {
+  font-size: 26px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.tab-trace .tr-tile-sub {
+  font-size: 12.5px;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+.tab-trace .tr-split {
+  display: flex;
+  gap: 2px;
+  height: 6px;
+  width: 100%;
+}
+.tab-trace .tr-split > span {
+  flex-basis: 0;
+  min-width: 3px;
+}
+.tab-trace .tr-split > span:first-child {
+  border-radius: 3px 0 0 3px;
+}
+.tab-trace .tr-split > span:last-child {
+  border-radius: 0 3px 3px 0;
+}
+.tab-trace .tr-split > span:only-child {
+  border-radius: 3px;
+}
+
+/* ------------------------------------------------------------------ kind filter */
+.tab-trace .tr-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tab-trace .tr-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: #fff;
+  font-size: 13px;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.tab-trace .tr-kind b {
+  font-weight: 650;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tab-trace .tr-kind:hover {
+  border-color: #9db4b6;
+}
+.tab-trace .tr-kind[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.tab-trace .tr-kind[aria-pressed="true"] b {
+  color: #c9d2d4;
+}
+.tab-trace .tr-swatch {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+/* ------------------------------------------------------------------ step timeline */
+.tab-trace .tr-tl {
+  --tr-cols: minmax(220px, 1.25fr) minmax(160px, 1fr) 60px;
+  display: flex;
+  flex-direction: column;
+}
+.tab-trace .tr-tl-axis {
+  display: grid;
+  grid-template-columns: var(--tr-cols);
+  gap: 14px;
+  padding: 0 10px 6px;
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  border-bottom: 1px solid #e7eded;
+}
+.tab-trace .tr-tl-ticks {
+  position: relative;
+  height: 16px;
+}
+.tab-trace .tr-tl-ticks > span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.tab-trace .tr-tl-ticks > span.start {
+  transform: none;
+}
+.tab-trace .tr-tl-ticks > span.end {
+  transform: translateX(-100%);
+}
+.tab-trace .tr-tl-unit {
+  text-align: right;
+}
+.tab-trace .tr-steps {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tab-trace .tr-step {
+  border-radius: 12px;
+}
+.tab-trace .tr-step.is-open {
+  background: var(--tile);
+}
+.tab-trace .tr-step-btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: var(--tr-cols);
+  gap: 14px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 12px;
+  transition: background-color 0.18s ease;
+}
+.tab-trace .tr-step-btn:hover {
+  background: var(--soft-2);
+}
+.tab-trace .tr-step-main {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.tab-trace .tr-step-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.tab-trace .tr-step-i {
+  flex: none;
+  width: 18px;
+  font-size: 12px;
+  color: var(--ink-3);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.tab-trace .tr-step-label {
+  font-size: 14.5px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.tab-trace .tr-step-tags,
+.tab-trace .tr-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  padding-left: 26px;
+  min-width: 0;
+}
+.tab-trace .tr-kind-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 8px 1px 6px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line-2);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.tab-trace .tr-kind-chip .tr-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+.tab-trace .tr-model {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--teal-bg);
+  color: var(--teal);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.tab-trace .tr-code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--soft-2);
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  min-width: 0;
+}
+.tab-trace .tr-facts .tag {
+  font-weight: 550;
+  font-size: 11.5px;
+}
+.tab-trace .tr-track {
+  position: relative;
+  height: 18px;
+  min-width: 0;
+}
+.tab-trace .tr-grid {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 1px;
+  background: #eef2f2;
+}
+.tab-trace .tr-bar {
+  position: absolute;
+  top: 4px;
+  height: 10px;
+  min-width: 3px;
+  border-radius: 0 4px 4px 0;
+  transform-origin: left center;
+  animation: tr-grow 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.tab-trace .tr-bar.is-dot {
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #fff;
+  animation: none;
+}
+@keyframes tr-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.tab-trace .tr-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  transform: translate(-50%, 2px);
+  width: max-content;
+  max-width: 240px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  z-index: 3;
+}
+.tab-trace .tr-step-btn:hover .tr-tip,
+.tab-trace .tr-step-btn:focus-visible .tr-tip {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.tab-trace .tr-step-sec {
+  text-align: right;
+  font-size: 13px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tab-trace .tr-step-detail {
+  padding: 2px 12px 14px 46px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.tab-trace .tr-step-when {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.tab-trace .tr-step-when code {
+  font-size: 12px;
+  padding: 0 5px;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line-2);
+}
+.tab-trace .tr-pre {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line);
+  font-size: 12.5px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------------ model calls */
+.tab-trace .tr-scroll {
+  overflow-x: auto;
+  margin: 0 -6px;
+  padding: 0 6px;
+}
+.tab-trace .tr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.tab-trace .tr-table th,
+.tab-trace .tr-table td {
+  padding: 7px 8px;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.tab-trace .tr-table thead th {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-2);
+  border-bottom: 1px solid #e7eded;
+}
+.tab-trace .tr-table tbody tr + tr td {
+  border-top: 1px solid #f0f4f4;
+}
+.tab-trace .tr-table tfoot th,
+.tab-trace .tr-table tfoot td {
+  border-top: 1px solid #e7eded;
+  font-weight: 650;
+}
+.tab-trace .tr-table .is-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.tab-trace .tr-table .ok {
+  width: 28px;
+  text-align: center;
+}
+.tab-trace .tr-table .ok > span {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+/* ------------------------------------------------------------------ tokens by call */
+.tab-trace .tr-legend {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.tab-trace .tr-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.tab-trace .tr-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+.tab-trace .tr-tok {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tab-trace .tr-tok-row,
+.tab-trace .tr-tok-total {
+  display: grid;
+  grid-template-columns: minmax(64px, 96px) minmax(0, 1fr) minmax(64px, auto);
+  gap: 10px;
+  align-items: center;
+}
+.tab-trace .tr-tok-name {
+  overflow-wrap: anywhere;
+}
+.tab-trace .tr-tok-total {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid #e7eded;
+}
+.tab-trace .tr-tok-total .tr-tok-name,
+.tab-trace .tr-tok-total strong {
+  font-weight: 650;
+}
+.tab-trace .tr-tok-name {
+  font-size: 13.5px;
+  font-weight: 550;
+}
+.tab-trace .tr-tok-track {
+  display: block;
+  height: 12px;
+  min-width: 0;
+}
+.tab-trace .tr-tok-bar {
+  display: flex;
+  gap: 2px;
+  height: 100%;
+  min-width: 6px;
+  transform-origin: left center;
+  animation: tr-grow 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.tab-trace .tr-tok-bar > span {
+  flex-basis: 0;
+  min-width: 2px;
+}
+.tab-trace .tr-tok-bar > span:last-child {
+  border-radius: 0 4px 4px 0;
+}
+.tab-trace .tr-tok-n {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  font-size: 13.5px;
+}
+.tab-trace .tr-tok-n .tr-muted {
+  font-size: 11.5px;
+}
+
+/* ------------------------------------------------------------------ tool calls */
+.tab-trace .tr-tool-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.tab-trace .tr-tool-group h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 650;
+}
+.tab-trace .tr-tool-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tab-trace .tr-tool {
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.tab-trace .tr-tool.is-open {
+  background: var(--tile);
+}
+.tab-trace .tr-tool-btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+.tab-trace .tr-tool-btn:hover {
+  background: var(--soft-2);
+}
+.tab-trace .tr-tool-sig {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  flex: 1 1 260px;
+}
+.tab-trace .tr-tool-sig b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.tab-trace .tr-tool-flags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.tab-trace .tr-tool-body {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 10px;
+  padding: 2px 12px 12px;
+}
+
+/* ------------------------------------------------------------------ JSON viewer */
+.tab-trace .tr-json {
+  min-width: 0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line-2);
+  overflow: hidden;
+}
+.tab-trace .tr-json-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 6px 12px;
+  border-bottom: 1px solid #eef2f2;
+}
+.tab-trace .tr-json-label {
+  font-size: 12.5px;
+  font-weight: 650;
+}
+.tab-trace .tr-json-size {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.tab-trace .tr-copy {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--soft);
+  font-size: 12px;
+  cursor: pointer;
+}
+.tab-trace .tr-json-body {
+  padding: 8px 10px 10px 6px;
+  max-height: 420px;
+  overflow: auto;
+  font-family: var(--mono);
+  font-variant-ligatures: none;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.tab-trace .j-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.tab-trace .j-toggle,
+.tab-trace .j-toggle-space {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  align-self: center;
+}
+.tab-trace .j-toggle {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+.tab-trace .j-toggle:hover {
+  background: var(--soft);
+  color: var(--ink);
+}
+.tab-trace .j-toggle svg {
+  transition: transform 0.15s ease;
+}
+.tab-trace .j-key {
+  color: #7a3e9d;
+}
+.tab-trace .j-str {
+  color: #0b6b3a;
+  white-space: pre-wrap;
+}
+.tab-trace .j-num {
+  color: #1f5fa8;
+}
+.tab-trace .j-bool {
+  color: #a3511c;
+}
+.tab-trace .j-null {
+  color: var(--ink-4);
+}
+.tab-trace .j-punc {
+  color: var(--ink-3);
+  white-space: pre;
+}
+.tab-trace .j-fold,
+.tab-trace .j-more {
+  border: 0;
+  margin: 0 2px;
+  padding: 0 6px;
+  border-radius: 5px;
+  background: var(--soft);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.tab-trace .j-fold:hover,
+.tab-trace .j-more:hover {
+  background: #e2eaea;
+}
+
+/* ------------------------------------------------------------------ narrow screens */
+@media (max-width: 1080px) {
+  .tab-trace .tr-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tab-trace .tr-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .tab-trace .tr-keys-hint {
+    display: none;
+  }
+  .tab-trace .tr-card {
+    padding: 16px 14px;
+    border-radius: 18px;
+  }
+  .tab-trace .tr-tile-value strong {
+    font-size: 22px;
+  }
+  .tab-trace .tr-tl-axis {
+    grid-template-columns: minmax(0, 1fr) 52px;
+    padding: 0 8px 6px 34px;
+  }
+  .tab-trace .tr-tl-axis > span:first-child {
+    display: none;
+  }
+  .tab-trace .tr-step-btn {
+    grid-template-columns: minmax(0, 1fr) 52px;
+    gap: 6px 10px;
+    padding: 8px;
+  }
+  .tab-trace .tr-step-main {
+    grid-column: 1 / -1;
+  }
+  .tab-trace .tr-track {
+    margin-left: 26px;
+  }
+  .tab-trace .tr-step-detail {
+    padding: 2px 8px 12px;
+  }
+  .tab-trace .tr-runid {
+    margin-left: 0;
+  }
+  .tab-trace .tr-table th,
+  .tab-trace .tr-table td {
+    padding: 7px 5px;
+  }
+  .tab-trace .tr-table {
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-trace .tr-bar,
+  .tab-trace .tr-tok-bar {
+    animation: none;
+  }
+  .tab-trace .tr-layout,
+  .tab-trace .tr-step-btn,
+  .tab-trace .j-toggle svg {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------ the reply (Markdown) */
+.tab-trace .tr-reply {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px 12px;
+  border-left: 3px solid var(--teal);
+  border-radius: 0 12px 12px 0;
+  background: rgba(10, 111, 124, 0.05);
+}
+.tab-trace .tr-reply .tr-md {
+  max-height: 360px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.tab-trace .tr-reply .tr-md > * + * {
+  margin-top: 8px;
+}
+/* Numbers read as figures, not as the chat's chips (there's no step to open here). */
+.tab-trace .tr-reply .num {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-weight: 650;
+}

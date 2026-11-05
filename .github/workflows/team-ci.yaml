@@ -1,0 +1,37 @@
+# Lean CI for the team repo: runs on PRs into main only, to save Actions minutes on a private
+# repo. Mirrors GEMINI's lint rules and runs the model/simulator(/agent) tests.
+name: Team CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]   # 3.11 = GEMINI CI parity, 3.12 = judge path
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: hackathon/requirements-dev.txt
+      - name: Install
+        run: pip install -r hackathon/requirements-dev.txt
+      - name: Lint (same rules as GEMINI CI)
+        run: |
+          flake8 src unit_test --count --show-source --max-line-length=100 --statistics
+          black --check --diff src unit_test
+          isort --check-only --diff src unit_test
+      - name: Test
+        env:
+          PYTHONPATH: src
+        run: |
+          paths="unit_test/gemini_model unit_test/gemini_simulator"
+          [ -d unit_test/dioscuri_plant ] && paths="$paths unit_test/dioscuri_plant"
+          [ -d unit_test/gemini_agent ] && paths="$paths unit_test/gemini_agent"
+          pytest -q -p no:faulthandler $paths

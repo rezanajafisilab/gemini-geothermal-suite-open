@@ -1,0 +1,17 @@
+=== 1. Sweep (primary hotter than secondary, normal heating duty)
+cases=600, violations=0
+
+=== 2. Near-balanced counter-flow (Cr -> 1) continuity check
+  Qs=149.0     eps=0.579115  Q=6.3422 MW
+  Qs=149.99    eps=0.576396  Q=6.3543 MW
+  Qs=149.9999  eps=0.576369  Q=6.3545 MW
+  Qs=150.0     eps=0.576369  Q=6.3545 MW
+  Qs=150.0001  eps=0.576369  Q=6.3545 MW
+  Qs=150.01    eps=0.576380  Q=6.3546 MW
+
+=== 3. Secondary inlet HOTTER than primary inlet (e.g. cooling / heat rejection)
+    expected: heat flows from secondary (hot) to primary (cold):
+    primary_out > primary_in, secondary_out < secondary_in
+  counter : Tp_in=20.0 -> Tp_out=-3.05 C;  Ts_in=60.0 -> Ts_out=83.05 C;  heat_duty=4.236 MW
+  parallel: Tp_in=20.0 -> Tp_out=1.32 C;  Ts_in=60.0 -> Ts_out=78.68 C;  heat_duty=3.433 MW
+  cooling case: chilled primary 6 C -> -0.71 C, building return 16 C -> 22.71 C  (should be ~>6 and <16)

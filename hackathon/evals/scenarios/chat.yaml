@@ -1,0 +1,632 @@
+# The chat suite (v1, 2 Nov 2026): questions about a design, each in three wordings.
+#
+# Run: python hackathon/evals/run_evals.py --suite chat --mode auto --device auto
+#
+# Every case starts from a snapshot (``after``): the challenge designed once (CH00), or designed
+# again with a 50 °C return (CH01, run B). Placeholders come from that snapshot's design, so the
+# suite follows the model when its numbers move: {lcoh} {lcoe} {lcoc} {capex} {boiler_mw}
+# {hp_mw} {hex_mw} {wellhead} {reinjection} {co2_saving} {boiler_share} {hp_cop} {depth}
+# {stop_from} {stop_to} {chosen}; the picks' handles {cheapest} {reliable} {co2} and their
+# figures ({co2_saving_cheapest}); any design's figure by its handle ({lcoh@A1}).
+#
+# Besides each case's own expectations, every case gets the automatic fails (run_evals.py
+# strict_checks): no claim of a run that did not happen, no calculation that does not add up,
+# no refusal when the design has the answer (``answerable: false`` turns it off), no cost called
+# by another's name, no design named that the question did not ask about (``may_name`` adds
+# some).
+#
+# Groups: provenance, premises, quoted, references, runs, units, languages, out_of_scope,
+# values, labels; options and needs (3 Nov: the plant options read from words, and what a reply
+# needs: another design, the search behind one, designs side by side).
+#
+# A question about "the design" in a chat with several is answered by a question back (which
+# design?); the runner picks the chosen design, as a user would, and judges the answer after.
+
+- id: CH00_base
+  prompt: Design a geothermal heating and cooling system for this district.
+  expect: {behaviour: design}
+  checks: [verifier_pass, hard_caps, known_totals]
+
+- id: CH01_second_run
+  after: CH00_base
+  prompt: Design it again with a 50 °C heating return.
+  expect: {behaviour: design}
+  checks: [verifier_pass, hard_caps, known_totals]
+
+# --- Where a number comes from: the working, not the figure again -----------------------------
+
+- id: P01_boiler_size
+  group: provenance
+  after: CH00_base
+  wordings:
+    - Where does the {boiler_mw} MW of boilers come from?
+    - How did you size the gas boilers at {boiler_mw} MW?
+    - Why {boiler_mw} MW of gas boilers, when a normal year never needs that much?
+  expect: {behaviour: answer, contains_any: [doublet]}
+  checks: [provenance_used]
+
+- id: P02_cost_of_heat
+  group: provenance
+  after: CH00_base
+  wordings:
+    - How was the {lcoh} €/MWh cost of heat calculated?
+    - Break the {lcoh} €/MWh down for me.
+    - What makes up the {lcoh}?
+  expect: {behaviour: answer, contains_any: [gas]}
+  checks: [provenance_used]
+
+- id: P03_capital
+  group: provenance
+  after: CH00_base
+  wordings:
+    - Where do the {capex} M€ of capital come from?
+    - What is in the {capex} M€ capex?
+    - "{capex} M€ seems a lot. What does it consist of?"
+  expect: {behaviour: answer, contains_any: [wells]}
+  checks: [provenance_used]
+
+- id: P04_reinjection
+  group: provenance
+  after: CH00_base
+  wordings:
+    - What is the {reinjection} °C reinjection temperature based on?
+    - Why does the brine go back at {reinjection} °C?
+    - How come the reinjection is {reinjection} °C?
+  expect: {behaviour: answer, contains_any: ["m³/h", "m3/h", "flow", "40 K", "cap", "heat pump"]}
+  checks: [provenance_used]
+
+- id: P05_exchanger
+  group: provenance
+  after: CH00_base
+  wordings:
+    - Can you explain how you got the {hex_mw} MW exchanger?
+    - Why is the heat exchanger {hex_mw} MW?
+    - How was the exchanger size of {hex_mw} MW worked out?
+  expect: {behaviour: answer, contains_any: ["m³/h", "m3/h", "flow", "brine"]}
+  checks: [provenance_used]
+
+- id: P06_cost_together
+  group: provenance
+  after: CH00_base
+  wordings:
+    - How is the {lcoe} €/MWh found?
+    - Where does {lcoe} come from?
+    - Explain the {lcoe} €/MWh figure.
+  expect: {behaviour: answer, contains: ["{lcoh}"]}
+  checks: [provenance_used]
+
+- id: P07_rock_temperature
+  group: provenance
+  after: CH00_base
+  wordings:
+    - Where does 87 °C come from?
+    - How did you get a reservoir temperature of 87 °C?
+    - 87 °C at {depth} m, based on what?
+  expect: {behaviour: answer, contains_any: ["30 °C/km", "°C/km", "gradient"]}
+
+- id: P08_co2_saving
+  group: provenance
+  after: CH00_base
+  wordings:
+    - How was the {co2_saving} CO2 saving calculated?
+    - Where does the {co2_saving} come from?
+    - What is the {co2_saving} saving based on?
+  expect: {behaviour: answer, contains_any: ["gas boiler", "electric chiller", " t "]}
+  checks: [provenance_used]
+
+# --- Premises: what the message states as given is checked first ----------------------------
+
+- id: R01_cost_of_heat_wrong
+  group: premises
+  after: CH00_base
+  wordings:
+    - The cost of heat is {lcoe} €/MWh, right?
+    - So heat costs {lcoe} a MWh?
+    - Given heat at {lcoe} €/MWh, is that competitive with gas?
+  expect: {behaviour: answer, contains: ["{lcoh}"]}
+
+- id: R02_doublet_count_wrong
+  group: premises
+  after: CH00_base
+  wordings:
+    - The plant uses 3 doublets, correct?
+    - Since you went with two doublets, how deep are they?
+    - With your 2 doublets, what flow does each run at?
+  expect: {behaviour: answer, contains_any: ["1 doublet", "one doublet", "only doublet", "single doublet", "a doublet"]}
+
+- id: R03_boiler_share_wrong
+  group: premises
+  after: CH00_base
+  wordings:
+    - The gas boiler gives about a quarter of the heat, doesn't it?
+    - So the boilers only cover around 25% of the heat?
+    - Since gas is only a tenth of the heat, why keep the boilers at all?
+  expect: {behaviour: answer, contains: ["{boiler_share}"]}
+
+- id: R04_runs_all_year_wrong
+  group: premises
+  after: CH00_base
+  wordings:
+    - The doublet runs all 365 days, right?
+    - As the doublet never stops, when is it maintained?
+    - With the doublet running every day of the year, is the ESP worn out sooner?
+  expect: {behaviour: answer, contains_any: ["330", "35 days", "{stop_from}"]}
+
+- id: R05_co2_saving_wrong
+  group: premises
+  after: CH00_base
+  wordings:
+    - The CO2 saving is 80%, isn't it?
+    - With an 80 % CO2 cut, do we meet the 2030 goals?
+    - You cut CO2 by 90 percent, correct?
+  expect: {behaviour: answer, contains: ["{co2_saving}"]}
+
+# --- Quoting the reply: the words of an earlier answer ----------------------------------------
+
+- id: Q01_spare_esp
+  group: quoted
+  after: CH00_base
+  wordings:
+    - You wrote "with a spare ESP". What does that mean?
+    - What is the spare ESP in your answer about?
+    - Explain “Failures cost about … a year with a spare ESP”.
+  expect: {behaviour: answer, contains_any: [pump, ESP, spare]}
+
+- id: Q02_n_minus_one
+  group: quoted
+  after: CH00_base
+  wordings:
+    - “sized so any one unit can be out (N-1)”, what does N-1 mean here?
+    - What do you mean by N-1?
+    - In your reply you said N-1. Explain it in plain words.
+  expect: {behaviour: answer, contains_any: ["one unit", "any one", "single unit", "a unit", "one piece", "one boiler", "one of"]}
+
+- id: Q03_together_lower
+  group: quoted
+  after: CH00_base
+  wordings:
+    - You wrote "{lcoe} €/MWh for heat and cold together". Why is that lower than the cost of heat?
+    - Why is the combined cost below the heat cost?
+    - How can heat and cold together cost less per MWh than heat alone?
+  expect: {behaviour: answer, contains_any: [cold, "{lcoc}"]}
+
+- id: Q04_stop_window
+  group: quoted
+  after: CH00_base
+  wordings:
+    - “stopping {stop_from} to {stop_to} for maintenance”, why then?
+    - Why does the doublet stop in summer?
+    - Why is the maintenance stop where it is?
+  expect: {behaviour: answer, contains_any: [least, lowest, low, summer, demand, quiet]}
+
+- id: Q05_against_gas
+  group: quoted
+  after: CH00_base
+  wordings:
+    - You said it saves {co2_saving} CO₂ against gas. Against what exactly?
+    - What is the "against gas" reference in your answer?
+    - Saves CO2 compared to what?
+  expect: {behaviour: answer, contains_any: ["gas boiler", "electric chiller"]}
+
+# --- Referring back: "it", "that one", the picks by name --------------------------------------
+
+- id: T01_is_it_reliable
+  group: references
+  after: CH00_base
+  wordings:
+    - Is that one reliable?
+    - Would that design survive a pump failure?
+    - Can it keep everyone warm if one unit fails?
+  expect: {behaviour: answer_or_design, contains_any: [N-1, "one unit", "any one", "spare"]}
+
+- id: T02_cheapest_co2
+  group: references
+  after: CH00_base
+  wordings:
+    - What about the cheapest one, how much CO2 does it save?
+    - And the cheapest design's CO2 saving?
+    - The cheapest plan, CO2 saving?
+  expect: {behaviour: answer, contains: ["{co2_saving_cheapest}"]}
+  may_name: ["{cheapest}"]
+
+- id: T03_versus_reliable
+  group: references
+  after: CH00_base
+  wordings:
+    - How does it compare with the most reliable one?
+    - Your design against the most reliable design, which is better?
+    - Is the most reliable one much dearer?
+  expect: {behaviour: answer_or_design}
+  may_name: ["{reliable}"]
+
+- id: T04_why_not_cheapest
+  group: references
+  after: CH00_base
+  wordings:
+    - Why didn't you pick the cheapest?
+    - The cheapest one is cheaper, why not choose it?
+    - Why not {cheapest}?
+  expect: {behaviour: answer, contains_any: [N-1, reliable, CO2, "one unit", "fails"]}
+  may_name: ["{cheapest}"]
+
+- id: T05_its_cost
+  group: references
+  after: CH00_base
+  wordings:
+    - What's its cost of heat?
+    - And the heat cost of this design?
+    - How much does heat cost with it?
+  expect: {behaviour: answer, contains: ["{lcoh}"]}
+
+# --- Several runs: picking a design (as with @), naming runs ---------------------------------
+
+- id: M01_picked_first_run
+  group: runs
+  after: CH01_second_run
+  designs: [A1]
+  wordings:
+    - What is the cost of heat?
+    - How much does heat cost?
+    - cost of heat?
+  expect: {behaviour: answer, contains: ["{lcoh@A1}"]}
+
+- id: M02_picked_second_run
+  group: runs
+  after: CH01_second_run
+  designs: [B1]
+  wordings:
+    - What is the cost of heat?
+    - How much does heat cost?
+    - cost of heat?
+  expect: {behaviour: answer, contains: ["{lcoh@B1}"]}
+
+- id: M03_two_picked
+  group: runs
+  after: CH01_second_run
+  designs: [A1, B1]
+  wordings:
+    - Which is cheaper?
+    - Which of these two would you build?
+    - How do they differ?
+  expect: {behaviour: answer_or_design}
+  checks: [compared]
+
+- id: M04_what_changed
+  group: runs
+  after: CH01_second_run
+  wordings:
+    - What changed between run A and run B?
+    - How is the new design different from the first one?
+    - Did the 50 °C return help?
+  expect: {behaviour: answer, contains_any: ["50 °C", "return"]}
+  may_name: [A1, B1]
+
+- id: M05_first_by_words
+  group: runs
+  after: CH01_second_run
+  wordings:
+    - What was the cost of heat of the first design?
+    - And A1, what did its heat cost?
+    - The base case's heat cost?
+  expect: {behaviour: answer, contains: ["{lcoh@A1}"]}
+  may_name: [A1, B1]
+
+# --- Units: what the message's units mean ----------------------------------------------------
+
+- id: U01_electricity_ct_kwh
+  group: units
+  after: CH00_base
+  wordings:
+    - What if electricity cost 12 ct/kWh?
+    - And with power at 0.12 €/kWh?
+    - Electricity at 120 euros a MWh, what then?
+  expect: {behaviour: design, changes: {electricity_eur_per_mwh: 120}}
+
+- id: U02_gas_ct_kwh
+  group: units
+  after: CH00_base
+  wordings:
+    - What if gas cost 4 ct/kWh?
+    - Gas at 40 euros per MWh, what changes?
+    - With gas at €0.04 per kWh?
+  expect: {behaviour: design, changes: {gas_eur_per_mwh: 40}}
+
+- id: U03_return_degrees
+  group: units
+  after: CH00_base
+  wordings:
+    - What if the heating return were 50 degrees?
+    - And a 50°C return?
+    - Return temperature 50 C, what happens?
+  expect: {behaviour: design, changes: {heat_return_c: 50}}
+
+- id: U04_colder_reservoir
+  group: units
+  after: CH00_base
+  wordings:
+    - What if the reservoir were 10 K colder?
+    - A reservoir 10 degrees colder, then what?
+    - What if the rock is at 77 °C instead of 87 °C?
+  expect: {behaviour: design, changes: {reservoir_change_k: -10}}
+
+- id: U05_demand_percent
+  group: units
+  after: CH00_base
+  wordings:
+    - What if the heat demand grew by 20%?
+    - And with a fifth more heat demand?
+    - Heat demand up 20 percent, still fine?
+  expect: {behaviour: design, changes: {heat_demand_scale: 1.2}}
+
+# --- Dutch and German ------------------------------------------------------------------------
+
+- id: L01_nl_cost
+  group: languages
+  after: CH00_base
+  wordings:
+    - Wat kost de warmte?
+    - Hoeveel kost warmte per MWh?
+    - Wat is de warmteprijs van dit ontwerp?
+  expect: {behaviour: answer, contains: ["{lcoh}"]}
+
+- id: L02_de_cost
+  group: languages
+  after: CH00_base
+  wordings:
+    - Was kostet die Wärme?
+    - Wie hoch sind die Wärmekosten pro MWh?
+    - Wärmepreis dieses Entwurfs?
+  expect: {behaviour: answer, contains: ["{lcoh}"]}
+
+- id: L03_nl_origin
+  group: languages
+  after: CH00_base
+  wordings:
+    - Waar komt de {boiler_mw} MW van de ketels vandaan?
+    - Hoe is het ketelvermogen van {boiler_mw} MW bepaald?
+    - Waarom {boiler_mw} MW aan gasketels?
+  expect: {behaviour: answer, contains_any: [doublet]}
+
+- id: L04_de_co2
+  group: languages
+  after: CH00_base
+  wordings:
+    - Wie viel CO2 spart das Design?
+    - Wie hoch ist die CO2-Einsparung gegenüber Gas?
+    - Wie viel weniger CO2 als Gaskessel?
+  expect: {behaviour: answer, contains: ["{co2_saving}"]}
+
+- id: L05_nl_gas_price
+  group: languages
+  after: CH00_base
+  wordings:
+    - Wat als de gasprijs 45 €/MWh is?
+    - Stel dat gas 45 euro per MWh kost?
+    - En met gas op 4,5 ct/kWh?
+  expect: {behaviour: design, changes: {gas_eur_per_mwh: 45}}
+
+- id: L06_de_failure
+  group: languages
+  after: CH00_base
+  wordings:
+    - Was passiert, wenn die Förderpumpe (ESP) ausfällt?
+    - Und wenn die ESP eine Woche lang ausfällt?
+    - Fällt die Förderpumpe aus, reicht die Wärme dann noch?
+  expect: {behaviour: design_or_answer}
+  checks: [failure_run]
+
+# --- Out of scope: declined, briefly, with what Dioscuri does --------------------------------
+
+- id: O01_weather
+  group: out_of_scope
+  answerable: false
+  after: CH00_base
+  wordings:
+    - What's the weather in Delft tomorrow?
+    - Will it rain this weekend?
+    - What is the temperature in Amsterdam right now?
+  expect: {behaviour: refuse}
+
+- id: O02_creative
+  group: out_of_scope
+  answerable: false
+  after: CH00_base
+  wordings:
+    - Write a haiku about rocks.
+    - Tell me a joke.
+    - Compose a song about pipes.
+  expect: {behaviour: refuse}
+
+- id: O03_trivia
+  group: out_of_scope
+  answerable: false
+  after: CH00_base
+  wordings:
+    - Who won the 2022 World Cup?
+    - What's the capital of Peru?
+    - Recommend me a film for tonight.
+  expect: {behaviour: refuse}
+
+- id: O04_finance
+  group: out_of_scope
+  answerable: false
+  after: CH00_base
+  wordings:
+    - What is Shell's share price?
+    - Should I buy bitcoin?
+    - Which bank has the best mortgage rate in the Netherlands?
+  expect: {behaviour: refuse}
+
+# --- Values the design has: answered, never refused ------------------------------------------
+
+- id: V01_stop_dates
+  group: values
+  after: CH00_base
+  wordings:
+    - When does the doublet stop?
+    - What are the maintenance dates?
+    - Which days is the doublet off?
+  expect: {behaviour: answer, contains: ["{stop_from}"]}
+
+- id: V02_gas_bought
+  group: values
+  after: CH00_base
+  wordings:
+    - How much gas does the plant buy a year?
+    - What's the yearly gas purchase?
+    - Gas bought per year?
+  expect: {behaviour: answer, contains_any: [GWh]}
+
+- id: V03_boiler_share
+  group: values
+  after: CH00_base
+  wordings:
+    - How much of the heat comes from the gas boiler?
+    - What share of the heat does the boiler give?
+    - Boiler share of the heat?
+  expect: {behaviour: answer, contains: ["{boiler_share}"]}
+
+- id: V04_depth
+  group: values
+  after: CH00_base
+  wordings:
+    - How deep are the wells?
+    - Well depth?
+    - To what depth do you drill?
+  expect: {behaviour: answer, contains: ["{depth}"]}
+
+- id: V05_gas_share_of_cost
+  group: values
+  after: CH00_base
+  wordings:
+    - What share of the yearly cost is gas?
+    - How much of the cost is gas?
+    - Gas as a share of the yearly cost?
+  expect: {behaviour: answer, contains_any: ["%"]}
+
+- id: V06_wellhead
+  group: values
+  after: CH00_base
+  wordings:
+    - How hot is the brine at the wellhead?
+    - Wellhead temperature?
+    - At what temperature does the brine reach the surface?
+  expect: {behaviour: answer, contains: ["{wellhead}"]}
+
+# --- Labels: each cost by its own name --------------------------------------------------------
+
+- id: B01_together
+  group: labels
+  after: CH00_base
+  wordings:
+    - What's the cost of heat and cold together?
+    - Combined cost per MWh of heat and cold?
+    - The overall cost per MWh delivered?
+  expect: {behaviour: answer, contains: ["{lcoe}"]}
+
+- id: B02_cold
+  group: labels
+  after: CH00_base
+  wordings:
+    - What does cold cost?
+    - Cost of cooling per MWh?
+    - How much is the cold per MWh?
+  expect: {behaviour: answer, contains: ["{lcoc}"]}
+
+- id: B03_heat_above_70
+  group: labels
+  after: CH00_base
+  wordings:
+    - Is the cost of heat above 70?
+    - Does heat cost more than 70 €/MWh?
+    - Heat under 70 euros a MWh?
+  expect: {behaviour: answer, contains: ["{lcoh}"]}
+
+# --- The plant options, read from words (3 Nov) ------------------------------------------------
+
+- id: O01_free_cooling
+  group: options
+  after: CH00_base
+  wordings:
+    - What if the cooling towers cooled the network directly when it is cold outside?
+    - Switch on free cooling and show me what it does to the cost of cold.
+    - Would cooling with outside air in winter, before the chillers, help?
+  expect: {behaviour: answer_or_design, contains_any: ["free cooling", "towers"]}
+
+- id: O02_solar
+  group: options
+  after: CH00_base
+  wordings:
+    - What if we put 5 MWp of solar panels at the plant?
+    - Add a 5 MWp PV field to the design and run it.
+    - How would 5 MWp of our own solar change the cost and the CO2?
+  expect: {behaviour: answer_or_design, contains_any: ["5 MWp", "solar"]}
+
+- id: O03_tank
+  group: options
+  after: CH00_base
+  wordings:
+    - What if we add a 2,000 MWh hot-water store?
+    - Give the plant a 2000 MWh heat storage tank.
+    - Would a 2 GWh buffer tank cut the boiler's gas?
+  expect: {behaviour: answer_or_design, contains_any: ["store", "tank", "MWh"]}
+
+- id: O04_ht_ates
+  group: options
+  after: CH00_base
+  wordings:
+    - What if we kept summer heat for winter in a 28,000 MWh aquifer store?
+    - Add a seasonal HT-ATES of 28,000 MWh.
+    - Could a high-temperature aquifer storage of 28 GWh replace some of the boiler?
+  expect: {behaviour: answer_or_design, contains_any: ["aquifer", "HT-ATES", "seasonal", "store"]}
+
+- id: O05_second_aquifer
+  group: options
+  after: CH00_base
+  wordings:
+    - What if there is a second aquifer at 3,200 m, 40 m thick with 400 mD?
+    - Try a second reservoir at 3200 m depth, 40 m and 400 millidarcy.
+    - Suppose another sandstone sits at 3,200 m (40 m, 400 mD). Does it help?
+  expect: {behaviour: answer_or_design, contains_any: ["3,200", "3200", "second aquifer"]}
+
+- id: O06_grid_by_month
+  group: options
+  after: CH00_base
+  wordings:
+    - Count the grid's CO2 month by month instead of one yearly figure.
+    - What changes if winter electricity is dirtier than summer's?
+    - Use a seasonal grid emission factor and show the CO2 again.
+  expect: {behaviour: answer_or_design, contains_any: ["CO2", "CO₂", "month"]}
+
+# --- What a reply needs (3 Nov) ----------------------------------------------------------------
+
+- id: N01_another_design
+  group: needs
+  after: CH00_base
+  confirm: false
+  wordings:
+    - I want to do another design.
+    - Let me set up a new design myself.
+    - Can we start over with different inputs?
+  expect: {behaviour: clarify}
+
+- id: N02_how_found
+  group: needs
+  after: CH00_base
+  may_name: ["{cheapest}", "{reliable}", "{co2}", "{chosen}"]
+  wordings:
+    - How did you arrive at this design?
+    - Show me the designs you tried before picking this one.
+    - What did the search go through to get here?
+  # Not "design" or "search": the question says them, and "I only ran one design" passed (4 Nov).
+  expect: {behaviour: answer, contains_any: ["layout", "candidate", "tried", "sizing", "compared", "evaluated"]}
+
+- id: N03_side_by_side
+  group: needs
+  after: CH00_base
+  may_name: ["{cheapest}", "{reliable}", "{co2}", "{chosen}"]
+  wordings:
+    - Put the picks side by side.
+    - Compare the cheapest with the most reliable design.
+    - Show me the designs next to each other.
+  expect: {behaviour: answer, contains_any: ["€/MWh", "cheapest", "reliable"]}

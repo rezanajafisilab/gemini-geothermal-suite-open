@@ -1,0 +1,1163 @@
+{
+  "schema": "cooling_parameter_handoff_v1",
+  "existing_app_ref": "rn/challenge@4c77016f1dd584a1ba01ac9d24b75247c7890a7a",
+  "existing_app_files": [
+    "frontend/src/tabs/sensitivity/params.ts",
+    "frontend/src/workbench/types.ts"
+  ],
+  "integration_status": "metadata only; no app writes or runner; binding adapter remains joint M5",
+  "parameters": [
+    {
+      "parameter_id": "CoolingSettings.option",
+      "binding_path": "CoolingSettings.option",
+      "unit": "1",
+      "base": "water",
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "supported categories",
+      "sensitivity": [
+        "water",
+        "air",
+        "absorption"
+      ],
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.electric.capacity_w",
+      "binding_path": "CoolingSettings.electric.capacity_w",
+      "unit": "W",
+      "base": 0.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": ">=0; installed capacity, supplier domain required",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.electric.cop",
+      "binding_path": "CoolingSettings.electric.cop",
+      "unit": "1",
+      "base": 6.0,
+      "source_id": "A006",
+      "status": "analyst_scenario",
+      "validity": ">0 compressor-only within declared envelope",
+      "sensitivity": {
+        "water": [
+          4,
+          8
+        ],
+        "air": [
+          3,
+          6
+        ]
+      },
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.electric.condenser",
+      "binding_path": "CoolingSettings.electric.condenser",
+      "unit": "1",
+      "base": "water",
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "must match nonhybrid option",
+      "sensitivity": [
+        "water",
+        "air"
+      ],
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.electric.cop_boundary",
+      "binding_path": "CoolingSettings.electric.cop_boundary",
+      "unit": "1",
+      "base": "compressor_only",
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "package COP requires reconciliation; currently unsupported",
+      "sensitivity": [
+        "compressor_only"
+      ],
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.electric.air_fan_ratio",
+      "binding_path": "CoolingSettings.electric.air_fan_ratio",
+      "unit": "W/W named duty",
+      "base": 0.02,
+      "source_id": "A007",
+      "status": "analyst_scenario",
+      "validity": ">=0; scope and heat destination must be retained",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.electric.sink_min_c",
+      "binding_path": "CoolingSettings.electric.sink_min_c",
+      "unit": "C",
+      "base": -10.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.electric.sink_max_c",
+      "binding_path": "CoolingSettings.electric.sink_max_c",
+      "unit": "C",
+      "base": 40.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.electric.supply_min_c",
+      "binding_path": "CoolingSettings.electric.supply_min_c",
+      "unit": "C",
+      "base": 5.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.electric.supply_max_c",
+      "binding_path": "CoolingSettings.electric.supply_max_c",
+      "unit": "C",
+      "base": 25.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.capacity_w",
+      "binding_path": "CoolingSettings.absorption.capacity_w",
+      "unit": "W",
+      "base": 0.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": ">=0; installed capacity, supplier domain required",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.cop_th",
+      "binding_path": "CoolingSettings.absorption.cop_th",
+      "unit": "1",
+      "base": 0.7,
+      "source_id": "A006",
+      "status": "analyst_scenario",
+      "validity": "(0,1]; single-effect envelope",
+      "sensitivity": [
+        0.55,
+        0.7,
+        0.75
+      ],
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.internal_ratio",
+      "binding_path": "CoolingSettings.absorption.internal_ratio",
+      "unit": "W/W named duty",
+      "base": 0.01,
+      "source_id": "A007",
+      "status": "analyst_scenario",
+      "validity": ">=0; scope and heat destination must be retained",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.hot_supply_c",
+      "binding_path": "CoolingSettings.absorption.hot_supply_c",
+      "unit": "C",
+      "base": 75.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.hot_min_c",
+      "binding_path": "CoolingSettings.absorption.hot_min_c",
+      "unit": "C",
+      "base": 70.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.hot_max_c",
+      "binding_path": "CoolingSettings.absorption.hot_max_c",
+      "unit": "C",
+      "base": 95.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.hot_return_min_c",
+      "binding_path": "CoolingSettings.absorption.hot_return_min_c",
+      "unit": "C",
+      "base": 65.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.sink_min_c",
+      "binding_path": "CoolingSettings.absorption.sink_min_c",
+      "unit": "C",
+      "base": 5.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.sink_max_c",
+      "binding_path": "CoolingSettings.absorption.sink_max_c",
+      "unit": "C",
+      "base": 35.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.supply_min_c",
+      "binding_path": "CoolingSettings.absorption.supply_min_c",
+      "unit": "C",
+      "base": 5.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.supply_max_c",
+      "binding_path": "CoolingSettings.absorption.supply_max_c",
+      "unit": "C",
+      "base": 25.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.hx_approach_k",
+      "binding_path": "CoolingSettings.absorption.hx_approach_k",
+      "unit": "K",
+      "base": 5.0,
+      "source_id": "A003",
+      "status": "analyst_scenario",
+      "validity": ">=0",
+      "sensitivity": [
+        3,
+        5,
+        8
+      ],
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.hx_ua_w_k",
+      "binding_path": "CoolingSettings.absorption.hx_ua_w_k",
+      "unit": "W/K",
+      "base": 0.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": ">=0; finite HX conductance",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.absorption.hot_pump_ratio",
+      "binding_path": "CoolingSettings.absorption.hot_pump_ratio",
+      "unit": "W/W named duty",
+      "base": 0.005,
+      "source_id": "A007",
+      "status": "analyst_scenario",
+      "validity": ">=0; scope and heat destination must be retained",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.tower.capacity_w",
+      "binding_path": "CoolingSettings.tower.capacity_w",
+      "unit": "W",
+      "base": 0.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": ">=0; installed capacity, supplier domain required",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.tower.circulation_m3s",
+      "binding_path": "CoolingSettings.tower.circulation_m3s",
+      "unit": "m3/s",
+      "base": 0.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": ">=0; actual supplied circuit flow",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.tower.approach_k",
+      "binding_path": "CoolingSettings.tower.approach_k",
+      "unit": "K",
+      "base": 3.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": ">=0",
+      "sensitivity": [
+        2,
+        3,
+        5
+      ],
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.tower.max_return_c",
+      "binding_path": "CoolingSettings.tower.max_return_c",
+      "unit": "C",
+      "base": 40.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "> -273.15; enforce declared paired temperature envelope",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.tower.fan_ratio",
+      "binding_path": "CoolingSettings.tower.fan_ratio",
+      "unit": "W/W named duty",
+      "base": 0.0126,
+      "source_id": "A007",
+      "status": "analyst_scenario",
+      "validity": ">=0; scope and heat destination must be retained",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.tower.pump_ratio",
+      "binding_path": "CoolingSettings.tower.pump_ratio",
+      "unit": "W/W named duty",
+      "base": 0.005,
+      "source_id": "A007",
+      "status": "analyst_scenario",
+      "validity": ">=0; scope and heat destination must be retained",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.tower.pump_heat_to_water",
+      "binding_path": "CoolingSettings.tower.pump_heat_to_water",
+      "unit": "1",
+      "base": 1.0,
+      "source_id": "A007",
+      "status": "analyst_scenario",
+      "validity": "[0,1]; heat fractions, not efficiency",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.water.cycles",
+      "binding_path": "CoolingSettings.water.cycles",
+      "unit": "1",
+      "base": 5.0,
+      "source_id": "A013",
+      "status": "analyst_scenario",
+      "validity": ">1; effective treatment assumed",
+      "sensitivity": [
+        3,
+        5,
+        6
+      ],
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.water.density_kg_m3",
+      "binding_path": "CoolingSettings.water.density_kg_m3",
+      "unit": "kg/m3",
+      "base": 1000.0,
+      "source_id": "A013",
+      "status": "analyst_scenario",
+      "validity": ">0; secondary water only",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.water.latent_heat_j_kg",
+      "binding_path": "CoolingSettings.water.latent_heat_j_kg",
+      "unit": "J/kg",
+      "base": 2450000.0,
+      "source_id": "A013",
+      "status": "analyst_scenario",
+      "validity": ">0",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.water.latent_fraction",
+      "binding_path": "CoolingSettings.water.latent_fraction",
+      "unit": "1",
+      "base": 0.8,
+      "source_id": "A013",
+      "status": "analyst_scenario",
+      "validity": "[0,1]; heat fractions, not efficiency",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.water.max_makeup_water_m3h",
+      "binding_path": "CoolingSettings.water.max_makeup_water_m3h",
+      "unit": "m3/h",
+      "base": null,
+      "source_id": "A013",
+      "status": "analyst_scenario",
+      "validity": "None unchecked; finite >=0; zero means unavailable",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.water.max_blowdown_m3h",
+      "binding_path": "CoolingSettings.water.max_blowdown_m3h",
+      "unit": "m3/h",
+      "base": null,
+      "source_id": "A013",
+      "status": "analyst_scenario",
+      "validity": "None unchecked; finite >=0; zero means unavailable",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.water_cp_j_kg_k",
+      "binding_path": "CoolingSettings.water_cp_j_kg_k",
+      "unit": "J/kg/K",
+      "base": 4180.0,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": ">0; secondary water, independent of brine Rules cp",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.chilled_pump_ratio",
+      "binding_path": "CoolingSettings.chilled_pump_ratio",
+      "unit": "W/W named duty",
+      "base": 0.01,
+      "source_id": "A007",
+      "status": "analyst_scenario",
+      "validity": ">=0; scope and heat destination must be retained",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.chilled_pump_heat_to_water",
+      "binding_path": "CoolingSettings.chilled_pump_heat_to_water",
+      "unit": "1",
+      "base": 1.0,
+      "source_id": "A007",
+      "status": "analyst_scenario",
+      "validity": "[0,1]; heat fractions, not efficiency",
+      "sensitivity": null,
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "CoolingSettings.free_cooling_enabled",
+      "binding_path": "CoolingSettings.free_cooling_enabled",
+      "unit": "1",
+      "base": false,
+      "source_id": "D018",
+      "status": "analyst_scenario",
+      "validity": "False only until optional M3 is implemented",
+      "sensitivity": [
+        false
+      ],
+      "bound_kind": "exploratory",
+      "applies_to": "all; tower/water only when wet equipment operates",
+      "restrictions": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated",
+      "outputs": [
+        "cooling",
+        "electricity",
+        "source heat",
+        "rejection",
+        "water",
+        "diagnostics"
+      ]
+    },
+    {
+      "parameter_id": "Prices.water_supply_eur_per_m3",
+      "binding_path": "Prices.water_supply_eur_per_m3",
+      "unit": "EUR-2025/m3",
+      "base": null,
+      "source_id": "user_input_required",
+      "status": "missing",
+      "validity": "None missing; explicit >=0 allowed",
+      "sensitivity": "0.5/1/2 x sourced/user base",
+      "bound_kind": "exploratory",
+      "applies_to": "installed wet tower",
+      "restrictions": "combined water tariffs and tower O&M scopes cannot overlap",
+      "outputs": [
+        "cooling direct cost"
+      ]
+    },
+    {
+      "parameter_id": "Prices.water_treatment_eur_per_m3",
+      "binding_path": "Prices.water_treatment_eur_per_m3",
+      "unit": "EUR-2025/m3",
+      "base": null,
+      "source_id": "user_input_required",
+      "status": "missing",
+      "validity": "None missing; explicit >=0 allowed",
+      "sensitivity": "0.5/1/2 x sourced/user base",
+      "bound_kind": "exploratory",
+      "applies_to": "installed wet tower",
+      "restrictions": "combined water tariffs and tower O&M scopes cannot overlap",
+      "outputs": [
+        "cooling direct cost"
+      ]
+    },
+    {
+      "parameter_id": "Prices.blowdown_disposal_eur_per_m3",
+      "binding_path": "Prices.blowdown_disposal_eur_per_m3",
+      "unit": "EUR-2025/m3",
+      "base": null,
+      "source_id": "user_input_required",
+      "status": "missing",
+      "validity": "None missing; explicit >=0 allowed",
+      "sensitivity": "0.5/1/2 x sourced/user base",
+      "bound_kind": "exploratory",
+      "applies_to": "installed wet tower",
+      "restrictions": "combined water tariffs and tower O&M scopes cannot overlap",
+      "outputs": [
+        "cooling direct cost"
+      ]
+    },
+    {
+      "parameter_id": "Prices.water_fixed_eur_per_year",
+      "binding_path": "Prices.water_fixed_eur_per_year",
+      "unit": "EUR-2025/year",
+      "base": null,
+      "source_id": "user_input_required",
+      "status": "missing",
+      "validity": "None missing; explicit >=0 allowed",
+      "sensitivity": "0.5/1/2 x sourced/user base",
+      "bound_kind": "exploratory",
+      "applies_to": "installed wet tower",
+      "restrictions": "combined water tariffs and tower O&M scopes cannot overlap",
+      "outputs": [
+        "cooling direct cost"
+      ]
+    },
+    {
+      "parameter_id": "Rules.brine_cp_j_kg_k",
+      "binding_path": "Rules.brine_cp_j_kg_k",
+      "binding_status": "legacy START_HERE or proposed Prices mapping; joint M5 owner must confirm",
+      "unit": "J/kg/K",
+      "base": 3990,
+      "sensitivity": [
+        3990
+      ],
+      "source_id": "D009/A001",
+      "status": "team_assumption",
+      "validity": "fixed challenge constraints remain fixed",
+      "restrictions": "single Rules owner; at_most active days; all 365 demand days retained",
+      "outputs": [
+        "plant and cooling inventories"
+      ]
+    },
+    {
+      "parameter_id": "Rules.operating_days",
+      "binding_path": "Rules.operating_days",
+      "binding_status": "legacy START_HERE or proposed Prices mapping; joint M5 owner must confirm",
+      "unit": "days/year/doublet",
+      "base": 330,
+      "sensitivity": [
+        330
+      ],
+      "source_id": "D004",
+      "status": "team_assumption",
+      "validity": "fixed challenge constraints remain fixed",
+      "restrictions": "single Rules owner; at_most active days; all 365 demand days retained",
+      "outputs": [
+        "plant and cooling inventories"
+      ]
+    },
+    {
+      "parameter_id": "Rules.cool_supply_c",
+      "binding_path": "Rules.cool_supply_c",
+      "binding_status": "legacy START_HERE or proposed Prices mapping; joint M5 owner must confirm",
+      "unit": "C",
+      "base": 20,
+      "sensitivity": [
+        20
+      ],
+      "source_id": "challenge",
+      "status": "challenge",
+      "validity": "fixed challenge constraints remain fixed",
+      "restrictions": "single Rules owner; at_most active days; all 365 demand days retained",
+      "outputs": [
+        "plant and cooling inventories"
+      ]
+    },
+    {
+      "parameter_id": "Rules.cool_return_c",
+      "binding_path": "Rules.cool_return_c",
+      "binding_status": "legacy START_HERE or proposed Prices mapping; joint M5 owner must confirm",
+      "unit": "C",
+      "base": 25,
+      "sensitivity": [
+        23,
+        25,
+        28
+      ],
+      "source_id": "A002",
+      "status": "team_assumption",
+      "validity": "fixed challenge constraints remain fixed",
+      "restrictions": "single Rules owner; at_most active days; all 365 demand days retained",
+      "outputs": [
+        "plant and cooling inventories"
+      ]
+    },
+    {
+      "parameter_id": "Rules.heat_return_c",
+      "binding_path": "Rules.heat_return_c",
+      "binding_status": "legacy START_HERE or proposed Prices mapping; joint M5 owner must confirm",
+      "unit": "C",
+      "base": 60,
+      "sensitivity": [
+        50,
+        60,
+        70
+      ],
+      "source_id": "A002",
+      "status": "team_assumption",
+      "validity": "fixed challenge constraints remain fixed",
+      "restrictions": "single Rules owner; at_most active days; all 365 demand days retained",
+      "outputs": [
+        "plant and cooling inventories"
+      ]
+    },
+    {
+      "parameter_id": "Prices.discount_rate",
+      "binding_path": "Prices.discount_rate",
+      "binding_status": "legacy START_HERE or proposed Prices mapping; joint M5 owner must confirm",
+      "unit": "real fraction/year",
+      "base": 0.052,
+      "sensitivity": [
+        0.03,
+        0.052,
+        0.08
+      ],
+      "source_id": "D015",
+      "status": "team_assumption",
+      "validity": "fixed challenge constraints remain fixed",
+      "restrictions": "single Rules owner; at_most active days; all 365 demand days retained",
+      "outputs": [
+        "plant and cooling inventories"
+      ]
+    }
+  ],
+  "proposed_app_parameters": [
+    {
+      "key": "CoolingSettings.electric.cop",
+      "label": "CoolingSettings.electric.cop",
+      "unit": "1",
+      "group": "equipment",
+      "low": 4,
+      "high": 8,
+      "kind": "absolute",
+      "description": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated"
+    },
+    {
+      "key": "CoolingSettings.absorption.cop_th",
+      "label": "CoolingSettings.absorption.cop_th",
+      "unit": "1",
+      "group": "equipment",
+      "low": 0.55,
+      "high": 0.75,
+      "kind": "absolute",
+      "description": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated"
+    },
+    {
+      "key": "CoolingSettings.absorption.hx_approach_k",
+      "label": "CoolingSettings.absorption.hx_approach_k",
+      "unit": "K",
+      "group": "equipment",
+      "low": 3,
+      "high": 8,
+      "kind": "absolute",
+      "description": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated"
+    },
+    {
+      "key": "CoolingSettings.tower.approach_k",
+      "label": "CoolingSettings.tower.approach_k",
+      "unit": "K",
+      "group": "equipment",
+      "low": 2,
+      "high": 5,
+      "kind": "absolute",
+      "description": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated"
+    },
+    {
+      "key": "CoolingSettings.water.cycles",
+      "label": "CoolingSettings.water.cycles",
+      "unit": "1",
+      "group": "equipment",
+      "low": 3,
+      "high": 6,
+      "kind": "absolute",
+      "description": "fixed challenge supply and caps cannot be relaxed; supplier envelopes unvalidated"
+    },
+    {
+      "key": "Rules.cool_return_c",
+      "label": "Rules.cool_return_c",
+      "unit": "C",
+      "group": "equipment",
+      "low": 23,
+      "high": 28,
+      "kind": "absolute",
+      "description": "single Rules owner; at_most active days; all 365 demand days retained"
+    },
+    {
+      "key": "Rules.heat_return_c",
+      "label": "Rules.heat_return_c",
+      "unit": "C",
+      "group": "equipment",
+      "low": 50,
+      "high": 70,
+      "kind": "absolute",
+      "description": "single Rules owner; at_most active days; all 365 demand days retained"
+    },
+    {
+      "key": "Prices.discount_rate",
+      "label": "Prices.discount_rate",
+      "unit": "real fraction/year",
+      "group": "prices",
+      "low": 0.03,
+      "high": 0.08,
+      "kind": "absolute",
+      "description": "single Rules owner; at_most active days; all 365 demand days retained"
+    }
+  ],
+  "app_schema_note": "Matches inspected SensParam shape; new keys require Reza server binding. Categories/missing-price bases are metadata only. Default water COP bounds apply to water configurations; use air bounds for air cases."
+}

@@ -1,0 +1,11 @@
+--- a/src/gemini_simulator/nodal_solver.py
++++ b/src/gemini_simulator/nodal_solver.py
+@@ -147,7 +147,7 @@
+         "pressure": wellhead_pressure,
+         "temperature": wellhead_temperature,
+         "temperature_ambient": wellhead_temperature,
+-        "flowrate": flow_rate,
++        "flowrate": -flow_rate,  # DPDT: +Q = upward flow; injection is downward
+         "direction": "down",
+     }
+     dpdt.calculate_output(u, None)

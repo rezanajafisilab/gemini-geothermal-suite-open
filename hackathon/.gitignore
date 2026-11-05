@@ -1,0 +1,22 @@
+# organiser data stays local unless we decide otherwise (check sharing terms)
+data/raw/*
+!data/raw/.gitkeep
+# LaTeX build artefacts in document folders (keep the .tex and the final .pdf)
+docs/**/*.aux
+docs/**/*.log
+docs/**/*.out
+docs/**/*.toc
+docs/**/*.fls
+docs/**/*.fdb_latexmk
+docs/**/*.synctex.gz
+docs/**/build.log
+report/**/*.aux
+report/**/*.log
+report/**/*.out
+report/**/*.toc
+report/**/*.fls
+report/**/*.fdb_latexmk
+report/**/*.synctex.gz
+# notebooks checkpoints and eval scratch
+.ipynb_checkpoints/
+evals/runs/tmp/

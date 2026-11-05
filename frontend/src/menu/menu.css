@@ -1,0 +1,472 @@
+/* The context menu, its "⋯" buttons and its toast. Tokens from src/styles.css (:root). */
+
+.cm {
+  position: fixed;
+  z-index: 1000;
+  min-width: 248px;
+  max-width: min(380px, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.97);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(17, 24, 28, 0.08), 0 2px 6px rgba(17, 24, 28, 0.05), 0 22px 44px -16px rgba(17, 24, 28, 0.34);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.3;
+  color: var(--ink);
+  outline: none;
+  animation: cm-in 0.14s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+/* The menu itself takes focus when opened with the mouse: no ring round the whole menu. */
+.cm:focus,
+.cm:focus-visible {
+  outline: none;
+}
+@keyframes cm-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px) scale(0.98);
+  }
+}
+.cm-head {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 10px 8px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--line-2);
+  min-width: 0;
+}
+.cm-title {
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cm-sub {
+  font-size: 12px;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cm-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: var(--line-2);
+}
+.cm-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.cm-item .cm-icon {
+  flex: none;
+  color: var(--ink-3);
+}
+.cm-item.is-active,
+.cm-item:focus-visible {
+  outline: none;
+  background: var(--teal-bg);
+  color: var(--teal);
+}
+.cm-item.is-active .cm-icon,
+.cm-item:focus-visible .cm-icon {
+  color: var(--teal);
+}
+.cm-item[aria-disabled="true"] {
+  color: var(--ink-4);
+  cursor: default;
+}
+.cm-item[aria-disabled="true"] .cm-icon {
+  color: var(--ink-4);
+}
+.cm-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cm-why {
+  flex: none;
+  font-size: 11.5px;
+  color: var(--ink-4);
+}
+.cm-hint {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--soft-2);
+  color: var(--ink-3);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 17px;
+  white-space: nowrap;
+}
+.cm-hint.is-chat {
+  background: var(--teal-num);
+  color: var(--teal);
+}
+.cm-hint.is-key {
+  min-width: 18px;
+  justify-content: center;
+  padding: 0 5px;
+  border-radius: 5px;
+  border: 1px solid var(--line-3);
+  background: #fff;
+  font-family: var(--mono);
+  font-weight: 500;
+}
+.cm-foot {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 7px 10px 3px;
+  border-top: 1px solid var(--line-2);
+  font-size: 11.5px;
+  color: var(--ink-4);
+  white-space: nowrap;
+}
+.cm-foot span {
+  margin-right: 6px;
+}
+.cm-foot kbd {
+  min-width: 17px;
+  padding: 0 4px;
+  border-radius: 4px;
+  border: 1px solid var(--line-3);
+  background: #fff;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 16px;
+  text-align: center;
+  color: var(--ink-3);
+}
+
+/* The "⋯" button: quiet until hovered, focused or open. */
+.cm-more {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+.cm-more.small {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+.cm-more:hover,
+.cm-more[aria-expanded="true"] {
+  background: var(--soft-2);
+  border-color: var(--line-2);
+  color: var(--ink);
+}
+
+/* The toast an item leaves ("Link copied"). */
+/* At the top, under the header: clear of the chat's composer and the Compare tray. */
+.cm-toast-live {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  top: 116px;
+  z-index: 1001;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.cm-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(640px, calc(100vw - 32px));
+  width: max-content;
+  padding: 9px 16px;
+  border-radius: 18px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.35;
+  box-shadow: 0 14px 30px -12px rgba(17, 24, 28, 0.5);
+  animation: cm-toast 0.22s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.cm-toast.bad {
+  background: var(--red);
+}
+@keyframes cm-toast {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cm,
+  .cm-toast {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ the ⋯ buttons in the chat */
+/* Beside your message, at its left: shown while the message is hovered or the button has focus. */
+.user-row .msg-more {
+  align-self: center;
+  margin-right: 6px;
+  opacity: 0;
+}
+.user-row:hover .msg-more,
+.user-row .msg-more:focus-visible,
+.user-row .msg-more[aria-expanded="true"] {
+  opacity: 1;
+}
+/* Under an answer's text: a quiet row, brighter while the answer is hovered. */
+.answer-actions {
+  display: flex;
+  margin-top: -12px;
+  height: 22px;
+}
+.answer-actions .cm-more {
+  opacity: 0.35;
+}
+.answer:hover .answer-actions .cm-more,
+.answer-actions .cm-more:focus-visible,
+.answer-actions .cm-more[aria-expanded="true"] {
+  opacity: 1;
+}
+/* At the right end of a card's links (Open in Design · Economics · …). */
+.card-links .cm-more {
+  margin-left: auto;
+}
+@media (hover: none) {
+  .user-row .msg-more,
+  .answer-actions .cm-more {
+    opacity: 1;
+  }
+}
+
+/* The quick-ask box: "Ask about this" typed where the menu was, sent to the chat. */
+.qa {
+  position: fixed;
+  z-index: 1001;
+  width: min(460px, calc(100vw - 24px));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: var(--card);
+  border-radius: 18px;
+  box-shadow: 0 0 0 1px rgba(17, 24, 28, 0.08), 0 2px 6px rgba(17, 24, 28, 0.05), 0 26px 52px -18px rgba(17, 24, 28, 0.38);
+  font-family: var(--sans);
+  color: var(--ink);
+  animation: cm-in 0.16s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.qa-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.qa-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--teal-bg);
+  color: var(--teal);
+  flex: none;
+}
+.qa-title {
+  font-size: 13.5px;
+  font-weight: 650;
+  flex: none;
+}
+.qa-about {
+  min-width: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.qa-close {
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  flex: none;
+}
+.qa-close:hover {
+  background: var(--soft);
+  color: var(--ink);
+}
+/* The input and the @ list of designs, which opens below it (above it low on the screen). */
+.qa-field {
+  position: relative;
+}
+.qa-field .mention-pop {
+  left: 0;
+  right: 0;
+  top: calc(100% + 6px);
+  bottom: auto;
+  max-height: min(40vh, 320px);
+}
+.qa-field.up .mention-pop {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+.qa .picked-row {
+  margin: 0;
+}
+.qa-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 56px;
+  resize: none;
+  padding: 10px 12px;
+  border: 1px solid var(--line-3);
+  border-radius: 12px;
+  background: var(--tile);
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.12s, box-shadow 0.12s, background 0.12s;
+}
+.qa-input:focus-visible,
+.qa-input:focus {
+  background: var(--card);
+  border-color: var(--teal-2);
+  box-shadow: 0 0 0 3px var(--teal-bg);
+}
+.qa-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.qa-keys {
+  margin-right: auto;
+  font-size: 11.5px;
+  color: var(--ink-4);
+  white-space: nowrap;
+}
+.qa-keys kbd {
+  font-family: var(--sans);
+  font-size: 10.5px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--soft);
+  color: var(--ink-3);
+}
+.qa-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.qa-btn.ghost {
+  background: transparent;
+  color: var(--ink-2);
+}
+.qa-btn.ghost:hover {
+  background: var(--soft);
+  color: var(--ink);
+}
+.qa-btn.primary {
+  background: var(--ink);
+  color: #fff;
+}
+.qa-btn.primary:hover {
+  background: #26323a;
+}
+.qa-btn.primary:disabled {
+  background: var(--soft);
+  color: var(--ink-4);
+  cursor: default;
+}
+.qa-btn:focus-visible,
+.qa-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--teal-2);
+}
+@media (max-width: 520px) {
+  .qa-keys {
+    display: none;
+  }
+}
+
+/* The name box: a design's own name, typed where its menu was. */
+.qa.nb {
+  width: min(360px, calc(100vw - 24px));
+  gap: 8px;
+}
+.nb-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 650;
+}
+.nb-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--teal-2);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  box-shadow: 0 0 0 3px var(--teal-bg);
+}
+.nb-hint {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+

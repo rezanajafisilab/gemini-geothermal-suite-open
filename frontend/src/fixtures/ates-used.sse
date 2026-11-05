@@ -1,0 +1,40 @@
+data: {"type": "RUN_STARTED", "timestamp": 1793188262345, "threadId": "k3", "runId": "7d40fdc015"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793188262346, "stepName": "register", "metadata": {"label": "Save the approved model", "kind": "tool", "code": "registry.save('ates')"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793188262384, "toolCallId": "7d57299cea", "toolCallName": "register_model"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793188262384, "toolCallId": "7d57299cea", "delta": "{\"component\": \"ates\", \"approved_by\": \"user\", \"model\": \"qwen3.5:4b\"}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793188262384, "toolCallId": "7d57299cea"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793188262384, "messageId": "7d57299cea-result", "toolCallId": "7d57299cea", "content": "{\"cached\": false, \"result\": \"/tmp/claude-1978995908/-home-rn2038-Projects-GEOHACKATHON/b6915066-9ab1-4789-b907-6d653b215277/scratchpad/agent-ui/models_r5/ates.py\"}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793188262385, "stepName": "register", "metadata": {"saved": true, "seconds": 0.039}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793188262385, "stepName": "use_model", "metadata": {"label": "Run the aquifer thermal energy storage model at this design's conditions", "kind": "tool", "code": "ates(1 case(s), sandboxed)"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793188262417, "toolCallId": "7849a44e45", "toolCallName": "evaluate_ates"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793188262417, "toolCallId": "7849a44e45", "delta": "{\"model\": \"ates\", \"sha256\": \"59ccc8f76da4293cd4bdd4d0695c865e479b26e9e0c32af930e23f1773b5f7da\", \"cases\": [{}]}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793188262417, "toolCallId": "7849a44e45"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793188262417, "messageId": "7849a44e45-result", "toolCallId": "7849a44e45", "content": "{\"cached\": false, \"result\": {\"name\": \"ates\", \"cases\": [{\"heat_stored_mwh\": 5000.0, \"cold_stored_mwh\": 4000.0, \"warm_temp_c\": 18.0, \"cold_temp_c\": 7.0, \"aquifer_temp_c\": 12.0, \"thickness_m\": 40.0}], \"assumed\": [[\"heat_stored_mwh\", \"cold_stored_mwh\", \"warm_temp_c\", \"cold_temp_c\", \"aquifer_temp_c\", \"thickness_m\"]], \"outputs\": [{\"heat_recovered_mwh\": 3638.464867162081, \"heat_loss_mwh\": 1361.5351328379188, \"heat_recovery\": 0.7276929734324162, \"cold_recovered_mwh\": 2903.9829711062016, \"cold_loss_mwh\": 1096.0170288937984, \"cold_recovery\": 0.7259957427765504, \"warm_radius_m\": 92.33719546118591, \"cold_radius_m\": 90.47160526381613}], \"checks\": [{\"name\": \"Returns every output as a finite number\", \"passed\": true, \"detail\": \"holds in all 1 cases\", \"requirement\": false}, {\"name\": \"No negative outputs\", \"passed\": true, \"detail\": \"holds in all 1 cases\", \"requirement\": false}, {\"name\": \"Recovers no more than was stored\", \"passed\": true, \"detail\": \"holds in all 1 cases\", \"requirement\": false}, {\"name\": \"Recovery between 0 and 0.9\", \"passed\": true, \"detail\": \"holds in all 1 cases\", \"requirement\": false}, {\"name\": \"Losses not negative\", \"passed\": true, \"detail\": \"holds in all 1 cases\", \"requirement\": false}, {\"name\": \"Stored = recovered + lost\", \"passed\": true, \"detail\": \"holds in all 1 cases\", \"requirement\": false}, {\"name\": \"Thermal radius from the stored volume\", \"passed\": true, \"detail\": \"holds in all 1 cases\", \"requirement\": false}], \"warnings\": [], \"seconds\": 0.03}}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793188262419, "stepName": "use_model", "metadata": {"passed": true, "cases": 1, "seconds": 0.033}}
+
+data: {"type": "CUSTOM", "timestamp": 1793188262419, "name": "model_result", "value": {"component": "ates", "title": "Aquifer thermal energy storage", "cases": [{"heat_stored_mwh": 5000.0, "cold_stored_mwh": 4000.0, "warm_temp_c": 18.0, "cold_temp_c": 7.0, "aquifer_temp_c": 12.0, "thickness_m": 40.0}], "outputs": [{"heat_recovered_mwh": 3638.464867162081, "heat_loss_mwh": 1361.5351328379188, "heat_recovery": 0.7276929734324162, "cold_recovered_mwh": 2903.9829711062016, "cold_loss_mwh": 1096.0170288937984, "cold_recovery": 0.7259957427765504, "warm_radius_m": 92.33719546118591, "cold_radius_m": 90.47160526381613}], "assumed": [["heat_stored_mwh", "cold_stored_mwh", "warm_temp_c", "cold_temp_c", "aquifer_temp_c", "thickness_m"]], "units": {"heat_stored_mwh": "MWh", "cold_stored_mwh": "MWh", "warm_temp_c": "°C", "cold_temp_c": "°C", "aquifer_temp_c": "°C", "thickness_m": "m", "heat_recovered_mwh": "MWh", "heat_loss_mwh": "MWh", "heat_recovery": "-", "cold_recovered_mwh": "MWh", "cold_loss_mwh": "MWh", "cold_recovery": "-", "warm_radius_m": "m", "cold_radius_m": "m"}, "checks": [{"name": "Returns every output as a finite number", "passed": true, "detail": "holds in all 1 cases", "requirement": false}, {"name": "No negative outputs", "passed": true, "detail": "holds in all 1 cases", "requirement": false}, {"name": "Recovers no more than was stored", "passed": true, "detail": "holds in all 1 cases", "requirement": false}, {"name": "Recovery between 0 and 0.9", "passed": true, "detail": "holds in all 1 cases", "requirement": false}, {"name": "Losses not negative", "passed": true, "detail": "holds in all 1 cases", "requirement": false}, {"name": "Stored = recovered + lost", "passed": true, "detail": "holds in all 1 cases", "requirement": false}, {"name": "Thermal radius from the stored volume", "passed": true, "detail": "holds in all 1 cases", "requirement": false}], "warnings": []}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793188262419, "stepName": "report", "metadata": {"label": "Write the answer", "kind": "report", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793188262420, "stepName": "report", "metadata": {"ungrounded": [], "seconds": 0.0}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793188262420, "messageId": "b77e5019ca", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793188262420, "messageId": "b77e5019ca", "delta": "With the aquifer thermal energy storage model you approved, at its default inputs: heat recovered 3,638.46 MWh, heat loss 1,361.54 MWh, heat recovery 0.73, cold recovered 2,903.98 MWh, cold loss 1,096.02 MWh, cold recovery 0.73, warm radius 92.34 m, cold radius 90.47 m. Assumed from the spec's defaults: aquifer temp 12 °C, cold stored 4,000 MWh, cold temp 7 °C, heat stored 5,000 MWh, thickness 40 m, warm temp 18 °C. All 7 per-case checks pass. Source: the generated model, run in the sandbox (not a GEMINI model)."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793188262420, "messageId": "b77e5019ca"}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793188262421, "threadId": "k3", "runId": "7d40fdc015", "outcome": {"type": "success"}, "usage": [], "result": {"behaviour": "answer", "asked": [], "answer": "With the aquifer thermal energy storage model you approved, at its default inputs: heat recovered 3,638.46 MWh, heat loss 1,361.54 MWh, heat recovery 0.73, cold recovered 2,903.98 MWh, cold loss 1,096.02 MWh, cold recovery 0.73, warm radius 92.34 m, cold radius 90.47 m. Assumed from the spec's defaults: aquifer temp 12 °C, cold stored 4,000 MWh, cold temp 7 °C, heat stored 5,000 MWh, thickness 40 m, warm temp 18 °C. All 7 per-case checks pass. Source: the generated model, run in the sandbox (not a GEMINI model).", "ungrounded": [], "dropped": [], "verified": null, "reasoning": false, "decided_by": {}, "intent": "question", "language": "en", "answered": ["approval"], "generated_model": "ates", "seconds": 0.075, "llm_calls": 0, "calls": [], "prompt_tokens": 0, "output_tokens": 0, "load_seconds": 0, "prompt_seconds": 0, "output_seconds": 0, "tool_calls": 2, "cache_hits": 0, "tool_errors": 0, "left_out": [], "user_turns": 4, "model": "qwen3:1.7b", "prompt_version": "intake_v2"}}
+

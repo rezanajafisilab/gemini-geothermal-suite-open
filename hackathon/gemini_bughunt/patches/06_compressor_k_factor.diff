@@ -1,0 +1,11 @@
+--- a/src/gemini_model/compressor/compressor.py
++++ b/src/gemini_model/compressor/compressor.py
+@@ -80,7 +80,7 @@
+         n = self.parameters["number_of_stages"]
+         stage_pressure_ratio = (p2 / p1) ** (1 / n)
+ 
+-        compressor_power = (n * mass_flow * gas_constant * t1 / (k - 1)) * (
++        compressor_power = (n * mass_flow * gas_constant * t1 * k / (k - 1)) * (
+             stage_pressure_ratio ** ((k - 1) / k) - 1
+         )
+ 

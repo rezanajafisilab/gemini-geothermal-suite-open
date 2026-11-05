@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-31",
+  "base_main": "5294e1590831474f2ce3352b95fb77d575055915",
+  "branch": "ali/cooling-components",
+  "python": "3.12.16",
+  "platform": "Windows-11-10.0.26100-SP0",
+  "commands": [
+    {
+      "command": ".venv/Scripts/python.exe -m pytest -q unit_test/gemini_model unit_test/gemini_simulator unit_test/dioscuri_plant",
+      "exit_code": 0,
+      "output": "........................................................................ [ 46%]\n........................................................................ [ 93%]\n..........                                                               [100%]\n154 passed in 3.42s"
+    },
+    {
+      "command": ".venv311/Scripts/python.exe -m pytest -q unit_test/gemini_model unit_test/gemini_simulator unit_test/dioscuri_plant",
+      "exit_code": 0,
+      "output": "........................................................................ [ 46%]\n........................................................................ [ 93%]\n..........                                                               [100%]\n154 passed in 3.52s"
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m flake8 src unit_test --jobs=1 --max-line-length=100",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m black --check --workers 2 src unit_test",
+      "exit_code": 0,
+      "output": "All done! \\u2728 \\U0001f370 \\u2728\n141 files would be left unchanged."
+    },
+    {
+      "command": ".venv/Scripts/python.exe -m isort --check-only src unit_test",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": ".venv/Scripts/python.exe hackathon/scripts/verify_cooling_sources.py",
+      "exit_code": 0,
+      "output": "{'heating_demand_MWth': 111667.68, 'cooling_demand_MWcool': 23742.528000000002} [8760, 365]"
+    },
+    {
+      "command": ".venv/Scripts/python.exe hackathon/scripts/export_cooling_handoff.py",
+      "exit_code": 0,
+      "output": "Exported 51 parameter records and legacy field inventory"
+    },
+    {
+      "command": "pytest clean raw-free copied checkout",
+      "exit_code": 0,
+      "output": "........................................................................ [ 46%]\n......................................................................s. [ 93%]\n.......sss                                                               [100%]\n150 passed, 4 skipped in 4.59s"
+    }
+  ],
+  "corrected_check_failures": [
+    "Initial flake8 automatic worker count hit the Windows 63-handle limit; rerun with --jobs=1 passed.",
+    "Intermediate lint found long strings/unused imports; corrected and final checks passed.",
+    "First raw-free verification copy omitted existing simulator_examples/projects fixtures: 7 existing simulator tests failed with FileNotFoundError. Copied the unchanged fixtures and reran the clean-copy check.",
+    "Initial legacy Rules inventory test expected 18 fields; actual unchanged START_HERE has 15. Corrected to its exact field list; source hash preserved."
+  ],
+  "limits": [
+    "screening components, not a coupled plant or supplier-calibrated design",
+    "joint M5 annual/heating/return-hydraulic/330-day checks deferred",
+    "exact annual integration/cost_sources.md ref unavailable on inspected refs",
+    "comparable installed EUR-2025 package/tower quotes and conversion factors remain missing",
+    "optional M3 free cooling disabled; no maps, new dispatcher or sensitivity runner",
+    "local checkout contains model/simulator/CI subset of main; lint checks materialised files; remote CI owns full-repository check"
+  ],
+  "hosted_ci": {
+    "run_id": 41251968252,
+    "url": "https://github.com/rezanajafisilab/dioscuri/actions/runs/41251968252",
+    "commit": "bf753c96f956319a4bb1117cc4badab667b91e41",
+    "conclusion": "failure",
+    "failed_job": "lint-and-test (3.11)",
+    "error": "src/gemini_interface/blueprint/routes.py:32:1 D202 No blank lines allowed after function docstring",
+    "source_status": "unchanged main file; read-only main inspection confirms the blank line",
+    "tests": "not run by hosted CI; lint failed first, 3.12 job cancelled by matrix fail-fast",
+    "action": "preserved unrelated UI file and unchanged lint rules per task; Reza owns UI fix"
+  },
+  "implementation_checkpoint": "bf753c96f956319a4bb1117cc4badab667b91e41",
+  "cost_source_snapshot": {
+    "path": "hackathon/docs/challenge/cost_sources.md",
+    "sha256": "599a1a880149e5fa279074082b81a294fd65c2a6ec42d09a4850a8900031c128",
+    "status": "read-only local untracked source appeared during final checks; EUR references normalised, scopes/lives/tower 2025 basis still partial"
+  }
+}

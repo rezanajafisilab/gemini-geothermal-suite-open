@@ -1,0 +1,21 @@
+# Dioscuri: what the app needs to run (the agent, the plant model, the server and the UI).
+# Versions as tested on Python 3.12; Python 3.13 and newer get newer releases that have wheels for
+# them (tested 3 Nov 2026 on 3.14 and 3.15). The UI is prebuilt in frontend/dist: no Node.js needed.
+numpy==2.2.6; python_version < "3.13"
+numpy==2.5.4; python_version >= "3.13"
+scipy==1.13.1; python_version < "3.13"
+scipy==1.18.1; python_version >= "3.13"
+matplotlib==3.10.7; python_version < "3.13"
+matplotlib==3.11.2; python_version >= "3.13"
+pillow==12.3.0
+ollama==0.5.4
+pydantic==2.14.1
+PyYAML==6.0.3
+fastapi==0.162.0
+uvicorn==0.54.0
+python-multipart==0.0.32
+httpx==0.28.1
+pypdf==6.21.3
+openpyxl==3.1.5
+# Optional, for semantic document search (GEMINI's own RAG): pip install -r
+# requirements-search.txt. Without it the document search uses keywords (BM25).

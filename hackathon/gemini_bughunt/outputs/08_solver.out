@@ -1,0 +1,25 @@
+=== 1. Closed secondary loop: HEX secondary out -> 'consumer' (Filter used as fixed 15 K temperature drop)
+       -> back to HEX secondary inlet. Seed return temperature 40 C.
+  run(time_vector of   1 steps): last step T_sec_in= 48.05 C, T_sec_out= 66.47 C, duty= 3.383 MW, loop residual (T_out-15 - T_in)=+3.412 K
+  run(time_vector of   2 steps): last step T_sec_in= 51.47 C, T_sec_out= 67.91 C, duty= 3.022 MW, loop residual (T_out-15 - T_in)=+1.446 K
+  run(time_vector of   5 steps): last step T_sec_in= 53.78 C, T_sec_out= 68.89 C, duty= 2.776 MW, loop residual (T_out-15 - T_in)=+0.110 K
+  run(time_vector of  20 steps): last step T_sec_in= 53.97 C, T_sec_out= 68.97 C, duty= 2.756 MW, loop residual (T_out-15 - T_in)=+0.000 K
+  run(time_vector of 100 steps): last step T_sec_in= 53.97 C, T_sec_out= 68.97 C, duty= 2.756 MW, loop residual (T_out-15 - T_in)=+0.000 K
+  -> a single steady-state run() returns the first sweep; nothing warns that the loop is not closed.
+
+=== 2. doublet_plant.json with connections shuffled (same physics, different declared order)
+  declared order: T_s_out=53.967 C
+   9 x KeyError: 'pressure'
+   8 x KeyError: 'pressure_in'
+   7 x KeyError: 'input'
+   4 x KeyError: 'gas_volumetric_flow_rate'
+   2 x KeyError: 'water_flow_rate'
+  shuffled, run(time_vector=range(5)) (stale inputs from previous sweep are re-used):
+   9 x KeyError: 'pressure'
+   8 x KeyError: 'pressure_in'
+   7 x KeyError: 'input'
+   4 x KeyError: 'gas_volumetric_flow_rate'
+   2 x KeyError: 'water_flow_rate'
+
+=== 3. Producer wellhead pressure too high for the ESP/reservoir (no root in bracket)
+  ValueError: f(a) and f(b) must have different signs

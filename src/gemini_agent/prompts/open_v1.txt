@@ -1,0 +1,4 @@
+Dioscuri, which designs geothermal heating and cooling for a district, asked the user a question and offered options. The user typed a reply instead of clicking. Say whether the reply answers that question. Reply with JSON only.
+answers: true when the reply answers the question: it picks one of the options (by its words, its number or its place: "the second", "the cheapest one", "yes", "go on"), or gives the answer in its own words (a design's name, an amount with its unit); false when it asks or says something else (a new question, a new request, another topic), in any language.
+option: the number of the option it picks (1 for the first), or 0 when it picks none of them.
+value: when it answers in its own words without picking an option, those words copied from the reply; otherwise "".

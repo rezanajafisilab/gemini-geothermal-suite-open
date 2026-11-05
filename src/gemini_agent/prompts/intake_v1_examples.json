@@ -1,0 +1,47 @@
+[
+  {
+    "message": "Compare a 2 km doublet with a 3 km one for 40 GWh of heat a year.",
+    "reply": {
+      "annual_heat_gwh": 40,
+      "annual_cool_gwh": null,
+      "reservoir_depth_m": null,
+      "reservoir_temp_c": null,
+      "depths_m": [
+        2000,
+        3000
+      ],
+      "reservoir_change_c": null,
+      "relevant": true,
+      "intent": "compare",
+      "bypass": false
+    }
+  },
+  {
+    "message": "Size a system for the district with 80/50 C heating, meeting 90% of demand.",
+    "reply": {
+      "annual_heat_gwh": null,
+      "annual_cool_gwh": null,
+      "reservoir_depth_m": null,
+      "reservoir_temp_c": null,
+      "depths_m": [],
+      "reservoir_change_c": null,
+      "relevant": true,
+      "intent": "design",
+      "bypass": false
+    }
+  },
+  {
+    "message": "What is the capital of France?",
+    "reply": {
+      "annual_heat_gwh": null,
+      "annual_cool_gwh": null,
+      "reservoir_depth_m": null,
+      "reservoir_temp_c": null,
+      "depths_m": [],
+      "reservoir_change_c": null,
+      "relevant": false,
+      "intent": "other",
+      "bypass": false
+    }
+  }
+]

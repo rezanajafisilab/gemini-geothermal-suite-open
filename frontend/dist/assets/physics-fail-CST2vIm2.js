@@ -1,0 +1,99 @@
+var e=`data: {"type": "RUN_STARTED", "timestamp": 1793182839050, "threadId": "u-pf", "runId": "e262365000"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182839050, "stepName": "plan", "metadata": {"label": "Plan the study", "kind": "plan", "code": "plan(A1, A2, A4)"}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182839050, "stepName": "plan", "metadata": {"alternatives": ["Deep doublet with absorption cascade", "Shallow doublet with heat pumps", "Gas boiler and electric chillers (reference)"], "not_modelled": ["A3: Doublet with aquifer storage (ATES model not built yet)"], "seconds": 0.0}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182839050, "stepName": "doublet", "metadata": {"label": "Solve the doublet", "kind": "tool", "code": "solve_doublet(depth_m=2500, 1500)"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793182839051, "toolCallId": "dac3857b77", "toolCallName": "solve_doublet"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793182839051, "toolCallId": "dac3857b77", "delta": "{\\"depth_m\\": 2500.0, \\"reservoir_delta_c\\": 0.0}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793182839051, "toolCallId": "dac3857b77"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793182839051, "messageId": "dac3857b77-result", "toolCallId": "dac3857b77", "content": "{\\"cached\\": true, \\"result\\": {\\"source\\": \\"mock\\", \\"depth_m\\": 2500.0, \\"reservoir_c\\": 87.0, \\"wellhead_c\\": 86.0, \\"flow_mw_per_k\\": 0.1974, \\"available_heat_mw\\": 11.05}}", "role": "tool"}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793182839051, "toolCallId": "a14e3623a0", "toolCallName": "solve_doublet"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793182839051, "toolCallId": "a14e3623a0", "delta": "{\\"depth_m\\": 1500.0, \\"reservoir_delta_c\\": 0.0}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793182839051, "toolCallId": "a14e3623a0"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793182839051, "messageId": "a14e3623a0-result", "toolCallId": "a14e3623a0", "content": "{\\"cached\\": true, \\"result\\": {\\"source\\": \\"mock\\", \\"depth_m\\": 1500.0, \\"reservoir_c\\": 56.2, \\"wellhead_c\\": 55.2, \\"flow_mw_per_k\\": 0.1974, \\"available_heat_mw\\": 4.97}}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182839052, "stepName": "doublet", "metadata": {"calls": 2, "failed": 0, "seconds": 0.001}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182839052, "stepName": "simulate", "metadata": {"label": "Simulate the year", "kind": "tool", "code": "simulate_year(A1, A2, A4)"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793182839054, "toolCallId": "f30bce9166", "toolCallName": "simulate_year"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793182839054, "toolCallId": "f30bce9166", "delta": "{\\"alternative\\": {\\"code\\": \\"A1\\", \\"name\\": \\"Deep doublet with absorption cascade\\", \\"depth_m\\": 2500.0, \\"heat_pump\\": true, \\"boiler\\": true, \\"absorption\\": true, \\"chillers\\": true}, \\"brief\\": {\\"site\\": null, \\"heating\\": {\\"supply_c\\": 30.0, \\"return_c\\": 70.0}, \\"cooling\\": {\\"supply_c\\": 12.0, \\"return_c\\": 6.0}, \\"annual_heat_gwh\\": null, \\"annual_cool_gwh\\": null, \\"reservoir_depth_m\\": 2500.0, \\"reservoir_temp_c\\": 87.0, \\"transmissivity_dm\\": null, \\"min_heat_coverage\\": 0.95, \\"min_cool_coverage\\": 0.95, \\"excluded\\": [], \\"doublet_depths_m\\": [], \\"reservoir_delta_c\\": 0.0, \\"wants_cooling\\": true}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793182839054, "toolCallId": "f30bce9166"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793182839054, "messageId": "f30bce9166-result", "toolCallId": "f30bce9166", "content": "{\\"cached\\": false, \\"result\\": {\\"alternative\\": \\"A1\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 87.0, \\"wellhead_c\\": 86.0, \\"hex_outlet_c\\": 75.0, \\"reinjection_c\\": 30.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": 17.01, \\"hp\\": 40.96, \\"boiler\\": 3.79}, \\"cool_split_gwh\\": {\\"abs\\": 7.32, \\"chill\\": 6.36}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": 2.17, \\"heat_pump_mw\\": 8.95, \\"boiler_mw\\": 3.0, \\"absorption_mw\\": 2.0, \\"chiller_mw\\": 2.5, \\"heat_pump_cop\\": 127.32, \\"heat_pump_carnot_cop\\": 303.15, \\"full_load_hours\\": 6147.0, \\"cooling_gain\\": 0.179, \\"heat_pump_electricity_gwh\\": 0.32, \\"brine_heat_gwh\\": 67.96, \\"brine_capacity_mw\\": 11.05}}", "role": "tool"}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793182839056, "toolCallId": "bf600e6683", "toolCallName": "simulate_year"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793182839056, "toolCallId": "bf600e6683", "delta": "{\\"alternative\\": {\\"code\\": \\"A2\\", \\"name\\": \\"Shallow doublet with heat pumps\\", \\"depth_m\\": 1500.0, \\"heat_pump\\": true, \\"boiler\\": true, \\"absorption\\": false, \\"chillers\\": true}, \\"brief\\": {\\"site\\": null, \\"heating\\": {\\"supply_c\\": 30.0, \\"return_c\\": 70.0}, \\"cooling\\": {\\"supply_c\\": 12.0, \\"return_c\\": 6.0}, \\"annual_heat_gwh\\": null, \\"annual_cool_gwh\\": null, \\"reservoir_depth_m\\": 2500.0, \\"reservoir_temp_c\\": 87.0, \\"transmissivity_dm\\": null, \\"min_heat_coverage\\": 0.95, \\"min_cool_coverage\\": 0.95, \\"excluded\\": [], \\"doublet_depths_m\\": [], \\"reservoir_delta_c\\": 0.0, \\"wants_cooling\\": true}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793182839056, "toolCallId": "bf600e6683"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793182839056, "messageId": "bf600e6683-result", "toolCallId": "bf600e6683", "content": "{\\"cached\\": false, \\"result\\": {\\"alternative\\": \\"A2\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 56.2, \\"wellhead_c\\": 55.2, \\"hex_outlet_c\\": 75.0, \\"reinjection_c\\": 30.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": -34.24, \\"hp\\": 68.46, \\"boiler\\": 27.54}, \\"cool_split_gwh\\": {\\"abs\\": 0.0, \\"chill\\": 13.67}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": -3.91, \\"heat_pump_mw\\": 8.95, \\"boiler_mw\\": 9.0, \\"absorption_mw\\": 0.0, \\"chiller_mw\\": 4.5, \\"heat_pump_cop\\": 127.32, \\"heat_pump_carnot_cop\\": 303.15, \\"full_load_hours\\": 6772.0, \\"cooling_gain\\": 0.0, \\"heat_pump_electricity_gwh\\": 0.54, \\"brine_heat_gwh\\": 33.68, \\"brine_capacity_mw\\": 4.97}}", "role": "tool"}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793182839058, "toolCallId": "97c308db61", "toolCallName": "simulate_year"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793182839058, "toolCallId": "97c308db61", "delta": "{\\"alternative\\": {\\"code\\": \\"A4\\", \\"name\\": \\"Gas boiler and electric chillers (reference)\\", \\"depth_m\\": 0.0, \\"heat_pump\\": false, \\"boiler\\": true, \\"absorption\\": false, \\"chillers\\": true}, \\"brief\\": {\\"site\\": null, \\"heating\\": {\\"supply_c\\": 30.0, \\"return_c\\": 70.0}, \\"cooling\\": {\\"supply_c\\": 12.0, \\"return_c\\": 6.0}, \\"annual_heat_gwh\\": null, \\"annual_cool_gwh\\": null, \\"reservoir_depth_m\\": 2500.0, \\"reservoir_temp_c\\": 87.0, \\"transmissivity_dm\\": null, \\"min_heat_coverage\\": 0.95, \\"min_cool_coverage\\": 0.95, \\"excluded\\": [], \\"doublet_depths_m\\": [], \\"reservoir_delta_c\\": 0.0, \\"wants_cooling\\": true}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793182839058, "toolCallId": "97c308db61"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793182839058, "messageId": "97c308db61-result", "toolCallId": "97c308db61", "content": "{\\"cached\\": false, \\"result\\": {\\"alternative\\": \\"A4\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 10.0, \\"wellhead_c\\": 10.0, \\"hex_outlet_c\\": 10.0, \\"reinjection_c\\": 10.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": 0.0, \\"hp\\": 0.0, \\"boiler\\": 61.76}, \\"cool_split_gwh\\": {\\"abs\\": 0.0, \\"chill\\": 13.67}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": 0.0, \\"heat_pump_mw\\": 0.0, \\"boiler_mw\\": 14.0, \\"absorption_mw\\": 0.0, \\"chiller_mw\\": 4.5, \\"heat_pump_cop\\": 127.32, \\"heat_pump_carnot_cop\\": 303.15, \\"full_load_hours\\": 0.0, \\"cooling_gain\\": 0.0, \\"heat_pump_electricity_gwh\\": 0.0, \\"brine_heat_gwh\\": 0.0, \\"brine_capacity_mw\\": 0.0}}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182839059, "stepName": "simulate", "metadata": {"calls": 3, "failed": 0, "seconds": 0.007}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182839059, "stepName": "economics", "metadata": {"label": "Cost and CO₂", "kind": "tool", "code": "economics(A1, A2, A4)"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793182839059, "toolCallId": "faad34d45c", "toolCallName": "economics"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793182839059, "toolCallId": "faad34d45c", "delta": "{\\"alternative\\": \\"A1\\", \\"year\\": {\\"alternative\\": \\"A1\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 87.0, \\"wellhead_c\\": 86.0, \\"hex_outlet_c\\": 75.0, \\"reinjection_c\\": 30.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": 17.01, \\"hp\\": 40.96, \\"boiler\\": 3.79}, \\"cool_split_gwh\\": {\\"abs\\": 7.32, \\"chill\\": 6.36}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": 2.17, \\"heat_pump_mw\\": 8.95, \\"boiler_mw\\": 3.0, \\"absorption_mw\\": 2.0, \\"chiller_mw\\": 2.5, \\"heat_pump_cop\\": 127.32, \\"heat_pump_carnot_cop\\": 303.15, \\"full_load_hours\\": 6147.0, \\"cooling_gain\\": 0.179, \\"heat_pump_electricity_gwh\\": 0.32, \\"brine_heat_gwh\\": 67.96, \\"brine_capacity_mw\\": 11.05}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793182839059, "toolCallId": "faad34d45c"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793182839059, "messageId": "faad34d45c-result", "toolCallId": "faad34d45c", "content": "{\\"cached\\": false, \\"result\\": {\\"alternative\\": \\"A1\\", \\"source\\": \\"mock\\", \\"lcoh_eur_per_mwh\\": 42.5, \\"lcoc_eur_per_mwh\\": 58.0, \\"capex_meur\\": 27.7, \\"co2_saving_vs_gas\\": 0.861}}", "role": "tool"}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793182839060, "toolCallId": "07d78dbbf7", "toolCallName": "economics"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793182839060, "toolCallId": "07d78dbbf7", "delta": "{\\"alternative\\": \\"A2\\", \\"year\\": {\\"alternative\\": \\"A2\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 56.2, \\"wellhead_c\\": 55.2, \\"hex_outlet_c\\": 75.0, \\"reinjection_c\\": 30.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": -34.24, \\"hp\\": 68.46, \\"boiler\\": 27.54}, \\"cool_split_gwh\\": {\\"abs\\": 0.0, \\"chill\\": 13.67}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": -3.91, \\"heat_pump_mw\\": 8.95, \\"boiler_mw\\": 9.0, \\"absorption_mw\\": 0.0, \\"chiller_mw\\": 4.5, \\"heat_pump_cop\\": 127.32, \\"heat_pump_carnot_cop\\": 303.15, \\"full_load_hours\\": 6772.0, \\"cooling_gain\\": 0.0, \\"heat_pump_electricity_gwh\\": 0.54, \\"brine_heat_gwh\\": 33.68, \\"brine_capacity_mw\\": 4.97}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793182839060, "toolCallId": "07d78dbbf7"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793182839060, "messageId": "07d78dbbf7-result", "toolCallId": "07d78dbbf7", "content": "{\\"cached\\": false, \\"result\\": {\\"alternative\\": \\"A2\\", \\"source\\": \\"mock\\", \\"lcoh_eur_per_mwh\\": 58.3, \\"lcoc_eur_per_mwh\\": 59.0, \\"capex_meur\\": 20.9, \\"co2_saving_vs_gas\\": 0.467}}", "role": "tool"}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793182839061, "toolCallId": "e80d3c92ed", "toolCallName": "economics"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793182839061, "toolCallId": "e80d3c92ed", "delta": "{\\"alternative\\": \\"A4\\", \\"year\\": {\\"alternative\\": \\"A4\\", \\"source\\": \\"mock\\", \\"reservoir_c\\": 10.0, \\"wellhead_c\\": 10.0, \\"hex_outlet_c\\": 10.0, \\"reinjection_c\\": 10.0, \\"heat_demand_gwh\\": 61.76, \\"cool_demand_gwh\\": 13.67, \\"heat_delivered_gwh\\": 61.76, \\"cool_delivered_gwh\\": 13.67, \\"heat_coverage\\": 1.0, \\"cool_coverage\\": 1.0, \\"heat_split_gwh\\": {\\"geo\\": 0.0, \\"hp\\": 0.0, \\"boiler\\": 61.76}, \\"cool_split_gwh\\": {\\"abs\\": 0.0, \\"chill\\": 13.67}, \\"peak_heat_mw\\": 13.88, \\"peak_cool_mw\\": 4.16, \\"hex_mw\\": 0.0, \\"heat_pump_mw\\": 0.0, \\"boiler_mw\\": 14.0, \\"absorption_mw\\": 0.0, \\"chiller_mw\\": 4.5, \\"heat_pump_cop\\": 127.32, \\"heat_pump_carnot_cop\\": 303.15, \\"full_load_hours\\": 0.0, \\"cooling_gain\\": 0.0, \\"heat_pump_electricity_gwh\\": 0.0, \\"brine_heat_gwh\\": 0.0, \\"brine_capacity_mw\\": 0.0}}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793182839061, "toolCallId": "e80d3c92ed"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793182839061, "messageId": "e80d3c92ed-result", "toolCallId": "e80d3c92ed", "content": "{\\"cached\\": false, \\"result\\": {\\"alternative\\": \\"A4\\", \\"source\\": \\"mock\\", \\"lcoh_eur_per_mwh\\": 63.9, \\"lcoc_eur_per_mwh\\": 59.0, \\"capex_meur\\": 3.8, \\"co2_saving_vs_gas\\": 0.0}}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182839062, "stepName": "economics", "metadata": {"calls": 3, "failed": 0, "seconds": 0.002}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182839062, "stepName": "verify", "metadata": {"label": "Check the physics", "kind": "check", "code": "verify_design(A1, A2, A4)"}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182839062, "stepName": "verify", "metadata": {"passed": 0, "total": 3, "seconds": 0.0}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793182839063, "stepName": "report", "metadata": {"label": "Write the answer", "kind": "report", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793182839063, "stepName": "report", "metadata": {"ungrounded": [], "seconds": 0.0}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793182839063, "messageId": "0d7876a646", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793182839063, "messageId": "0d7876a646", "delta": "No design could be checked and reported, so I won't give one. Left out: A1 (failed Heating supply above return; Cooling return above supply); A2 (failed Brine cools along its path; Heating supply above return; Cooling return above supply); A4 (failed Heating supply above return; Cooling return above supply)."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793182839063, "messageId": "0d7876a646"}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793182839064, "threadId": "u-pf", "runId": "e262365000", "outcome": {"type": "success"}, "usage": [], "result": {"behaviour": "error", "asked": [], "answer": "No design could be checked and reported, so I won't give one. Left out: A1 (failed Heating supply above return; Cooling return above supply); A2 (failed Brine cools along its path; Heating supply above return; Cooling return above supply); A4 (failed Heating supply above return; Cooling return above supply).", "ungrounded": [], "dropped": [], "verified": false, "intent": "design", "language": "en", "answered": ["dc_supply_return_c", "dh_supply_return_c"], "seconds": 0.014, "llm_calls": 0, "prompt_tokens": 0, "output_tokens": 0, "load_seconds": 0, "prompt_seconds": 0, "output_seconds": 0, "tool_calls": 8, "cache_hits": 2, "tool_errors": 0, "left_out": ["A1: failed Heating supply above return; Cooling return above supply", "A2: failed Brine cools along its path; Heating supply above return; Cooling return above supply", "A4: failed Heating supply above return; Cooling return above supply"], "user_turns": 2, "model": "qwen3:1.7b", "prompt_version": "intake_v1"}}
+
+`;export{e as default};

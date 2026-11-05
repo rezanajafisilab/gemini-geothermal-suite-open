@@ -1,0 +1,20 @@
+--- a/src/gemini_model/well/pressure_drop.py
++++ b/src/gemini_model/well/pressure_drop.py
+@@ -52,7 +52,7 @@
+         Lcel = self.parameters["length"]  # Length of 1 cell (m)
+         Dtube = self.parameters["diameter"]  # diameter of cells (m)
+         Atube = np.pi / 4 * Dtube**2  # area of cells (m2)
+-        Krough = self.parameters["roughness"]  # roughness of cells (mm)
++        Krough = self.parameters["roughness"]  # roughness of cells (m)
+         SAtube = np.pi * Dtube * Lcel  # surface area of cell (m2)
+         Uvalue = 10 * np.ones(Ngrid)  # Heat transfer coefficient (W/m2.K)
+         correlation = self.parameters["friction_correlation"]
+@@ -102,7 +102,7 @@
+                     model = 2  # using  beggsbrill model
+ 
+                 us_l = ml / rho_l / Atube[k - 1]  # superficial liquid velocity [m/s]
+-                us_g = gmf / rho_g / Atube[k - 1]  # superficial gas velocity [m/s]
++                us_g = mg / rho_g / Atube[k - 1]  # superficial gas velocity [m/s]
+ 
+                 if model == 1:
+ 

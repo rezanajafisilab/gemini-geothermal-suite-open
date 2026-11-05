@@ -1,0 +1,15 @@
+Efficiency at the 60 Hz best-efficiency flow (code as-is):
+  f=40 Hz, Q=200 m3/h: eff=105.8 %
+  f=50 Hz, Q=200 m3/h: eff=84.6 %
+  f=60 Hz, Q=200 m3/h: eff=70.5 %
+  f=70 Hz, Q=200 m3/h: eff=60.5 %
+
+Producer nodal solve (doublet_plant.json, Pwh=3 bar), code vs affinity-correct ESP:
+  f Hz | Q_code m3/h  P_code kW | Q_affine m3/h  P_affine kW | dQ %   dP %
+   40  |      89.5       33.3 |        90.4         41.6 |   -0.9  -19.9
+   45  |      96.6       49.5 |        97.4         58.1 |   -0.8  -14.8
+   50  |     104.2       70.8 |       104.8         78.4 |   -0.6   -9.7
+   55  |     112.2       98.2 |       112.5        103.0 |   -0.3   -4.7
+   60  |     120.5      132.4 |       120.5        132.4 |   +0.0   +0.0
+   65  |     129.0      174.4 |       128.7        167.1 |   +0.2   +4.3
+   70  |     137.6      224.6 |       137.2        207.6 |   +0.3   +8.2

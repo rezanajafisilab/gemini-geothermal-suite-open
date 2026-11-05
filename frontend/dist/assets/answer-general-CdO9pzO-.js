@@ -1,0 +1,47 @@
+var e=`data: {"type": "RUN_STARTED", "timestamp": 1793260100000, "threadId": "w-gen", "runId": "b2c0de5e02"}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793260100001, "stepName": "intake", "metadata": {"label": "Read the request", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793260100389, "stepName": "intake", "metadata": {"tokens": 884, "relevant": true, "intent": "explain", "screened": false, "seconds": 0.388}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260100389, "name": "usage", "value": {"purpose": "intake", "model": "qwen3:1.7b", "prompt_tokens": 820, "output_tokens": 64, "seconds": 0.388, "load_seconds": 0.002, "prompt_seconds": 0.116, "output_seconds": 0.264, "ok": true, "error": ""}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793260100390, "stepName": "docs", "metadata": {"label": "Search the documents", "kind": "tool", "code": "search_docs('What is geothermal energy?')"}}
+
+data: {"type": "TOOL_CALL_START", "timestamp": 1793260100530, "toolCallId": "d0c5e4a1b2", "toolCallName": "search_docs"}
+
+data: {"type": "TOOL_CALL_ARGS", "timestamp": 1793260100530, "toolCallId": "d0c5e4a1b2", "delta": "{\\"query\\": \\"What is geothermal energy?\\", \\"threadId\\": \\"w-gen\\", \\"only_attached\\": false}"}
+
+data: {"type": "TOOL_CALL_END", "timestamp": 1793260100530, "toolCallId": "d0c5e4a1b2"}
+
+data: {"type": "TOOL_CALL_RESULT", "timestamp": 1793260100530, "messageId": "d0c5e4a1b2-result", "toolCallId": "d0c5e4a1b2", "content": "{\\"backend\\": \\"gemini-chroma\\", \\"passages\\": [{\\"source\\": \\"src/gemini_documentation/source/glossary.rst\\", \\"section\\": \\"Glossary > Plant\\", \\"text\\": \\"Plant: The entirety of all assets/units in a system combined. A geothermal doublet would be considered a plant.\\", \\"score\\": 0.7412, \\"suspicious\\": false}, {\\"source\\": \\"src/gemini_documentation/source/about_gemini_overview.rst\\", \\"section\\": \\"GEMINI architecture\\", \\"text\\": \\"GEMINI is a software framework for modeling and real-time monitoring of geothermal assets. This page gives a high-level overview of the platform architecture.\\", \\"score\\": 0.7208, \\"suspicious\\": false}, {\\"source\\": \\"src/gemini_documentation/source/model_reservoir.rst\\", \\"section\\": \\"Reservoir Performance Models > Description\\", \\"text\\": \\"The gemini_model.reservoir package groups models used to characterize reservoir performance from production/injection data: inflow performance, injectivity/productivity indices, reservoir pressure estimation, and bottomhole pressure-drop with skin.\\", \\"score\\": 0.6931, \\"suspicious\\": false}]}", "role": "tool"}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793260100532, "stepName": "docs", "metadata": {"passages": 3, "suspicious": 0, "backend": "gemini-chroma", "seconds": 0.002}}
+
+data: {"type": "STEP_STARTED", "timestamp": 1793260100533, "stepName": "answer", "metadata": {"label": "Write the answer", "kind": "model", "code": null}}
+
+data: {"type": "STEP_FINISHED", "timestamp": 1793260102843, "stepName": "answer", "metadata": {"decided_by": "model", "model": "qwen3.5:9b", "device": "gpu", "tokens": 2786, "understood": "You want a plain explanation of geothermal energy.", "kind": "answer", "scope": "general", "seconds": 2.31}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260102843, "name": "usage", "value": {"purpose": "answer", "model": "qwen3.5:9b", "prompt_tokens": 2655, "output_tokens": 131, "seconds": 2.31, "load_seconds": 0.002, "prompt_seconds": 0.693, "output_seconds": 1.571, "ok": true, "error": ""}}
+
+data: {"type": "TEXT_MESSAGE_START", "timestamp": 1793260102844, "messageId": "9e0c1a7d33", "role": "assistant"}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260102884, "messageId": "9e0c1a7d33", "delta": "Geothermal energy is the heat stored in the ground. A few kilometres down, rock and the water in it are much warmer than at the surface. A doublet taps it with "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260102924, "messageId": "9e0c1a7d33", "delta": "two wells: one pumps hot water up, a heat exchanger passes its heat to a district network, and the other well returns the cooled water to the same layer. The documentation "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260102964, "messageId": "9e0c1a7d33", "delta": "counts the wells and everything on the surface as one plant (glossary.rst). The heat is steady through the year, so it suits heating, and with an absorption chiller it can drive "}
+
+data: {"type": "TEXT_MESSAGE_CONTENT", "timestamp": 1793260103004, "messageId": "9e0c1a7d33", "delta": "cooling too."}
+
+data: {"type": "TEXT_MESSAGE_END", "timestamp": 1793260103005, "messageId": "9e0c1a7d33"}
+
+data: {"type": "CUSTOM", "timestamp": 1793260103006, "name": "answer", "value": {"understood": "You want a plain explanation of geothermal energy.", "kind": "answer", "scope": "general", "used": ["doc1"], "model": "qwen3.5:9b", "device": "gpu", "fallback": false, "corrections": []}}
+
+data: {"type": "CUSTOM", "timestamp": 1793260103007, "name": "sources", "value": [{"source": "src/gemini_documentation/source/glossary.rst", "section": "Glossary > Plant", "text": "Plant: The entirety of all assets/units in a system combined. A geothermal doublet would be considered a plant.", "score": 0.7412, "suspicious": false}]}
+
+data: {"type": "CUSTOM", "timestamp": 1793260103008, "name": "suggestions", "value": ["How deep would the wells be for this district?", "Can geothermal heat also cool buildings?", "Design heating and cooling for this district"]}
+
+data: {"type": "RUN_FINISHED", "timestamp": 1793260103009, "threadId": "w-gen", "runId": "b2c0de5e02", "outcome": {"type": "success"}, "usage": [{"model": "qwen3:1.7b", "provider": "ollama", "inputTokens": 820, "outputTokens": 64, "totalTokens": 884}, {"model": "qwen3.5:9b", "provider": "ollama", "inputTokens": 2655, "outputTokens": 131, "totalTokens": 2786}], "result": {"asked": [], "ungrounded": [], "dropped": [], "verified": null, "language": "en", "screened": false, "seconds": 3.008, "llm_calls": 2, "calls": ["intake: qwen3:1.7b", "answer: qwen3.5:9b"], "prompt_tokens": 3475, "output_tokens": 195, "load_seconds": 0.004, "prompt_seconds": 0.809, "output_seconds": 1.835, "tool_calls": 1, "cache_hits": 0, "tool_errors": 0, "left_out": [], "user_turns": 1, "model": "qwen3:1.7b", "prompt_version": "answer_v1", "behaviour": "answer", "answer": "Geothermal energy is the heat stored in the ground. A few kilometres down, rock and the water in it are much warmer than at the surface. A doublet taps it with two wells: one pumps hot water up, a heat exchanger passes its heat to a district network, and the other well returns the cooled water to the same layer. The documentation counts the wells and everything on the surface as one plant (glossary.rst). The heat is steady through the year, so it suits heating, and with an absorption chiller it can drive cooling too.", "reasoning": false, "decided_by": {"answer": "model"}, "intent": "explain", "sources": ["src/gemini_documentation/source/glossary.rst (Glossary > Plant)"]}}
+
+`;export{e as default};

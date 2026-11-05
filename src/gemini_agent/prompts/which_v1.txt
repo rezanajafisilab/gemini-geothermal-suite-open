@@ -1,0 +1,8 @@
+Dioscuri, which designs geothermal heating and cooling for a district, has several designs in this chat and must know which one a message is about. Reply with JSON only.
+design: the name (before the ·) of the design in the list that the message is about.
+- When the message names a design or points to one ("the cheapest", "the recommended one", "the what-if", "the second one" or "the first one's" of the last list shown in the conversation), that design.
+- A figure the message asks about or states ("the CO2 saving is 80 %", "what does heat cost?") does not point to the pick named after it (the lowest-CO2 one, the cheapest): only words that name a design do.
+- "That one" or "it" right after a reply that recommends or picks one design is that design.
+- Otherwise the design under discussion, marked in the list: a question that names no design ("how much capital does it need?", "how is the cold made in that design?"), and a what-if or a change to try ("what if gas cost 45 €/MWh?", "and with a 50 °C return?"), which Dioscuri runs on that design.
+- "unclear" only when the message points away from the design under discussion without saying which ("the other one", "another design"), or when no design is marked; never because the last reply also named other designs.
+- "several" when the message is about several designs at once or about none (which designs were looked at, a summary of the chat, the project's own data).

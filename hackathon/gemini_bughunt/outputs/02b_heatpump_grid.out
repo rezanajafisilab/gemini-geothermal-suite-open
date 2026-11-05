@@ -1,0 +1,20 @@
+cases: {'carnot': 1440, ('carnot', 'source-limited'): 557, ('carnot', 'unconstrained'): 705, 'lorenz': 1440, ('lorenz', 'source-limited'): 695, ('lorenz', 'unconstrained'): 745}
+exceptions: {('carnot', 'ZeroDivisionError'): 48}
+non-physical flags: {('carnot', 'Th_out>target'): 586, ('carnot', 'COP>Carnot(Th_out,Ts_out)'): 122, ('carnot', 'COP>reversible(log-mean) bound'): 6, ('lorenz', 'Th_out>target'): 829, ('lorenz', 'balance>1%'): 434, ('lorenz', 'COP>Carnot(Th_out,Ts_out)'): 83, ('lorenz', 'COP<=0'): 153}
+('carnot', 'source-limited', 'COP'): n=557 max_rel_err=0.991 median=0.838 frac>10%=0.82
+('carnot', 'source-limited', 'Q'): n=557 max_rel_err=980 median=33.1 frac>10%=0.82
+('carnot', 'source-limited', 'W'): n=557 max_rel_err=9.81e+03 median=280 frac>10%=0.82
+('carnot', 'unconstrained', 'COP'): n=705 max_rel_err=0.711 median=2.77e-06 frac>10%=0.00
+('carnot', 'unconstrained', 'Q'): n=705 max_rel_err=0 median=0 frac>10%=0.00
+('carnot', 'unconstrained', 'W'): n=705 max_rel_err=2.46 median=2.77e-06 frac>10%=0.00
+('lorenz', 'source-limited', 'COP'): n=695 max_rel_err=1.02 median=0.842 frac>10%=0.87
+('lorenz', 'source-limited', 'Q'): n=695 max_rel_err=2.33e+03 median=77.8 frac>10%=0.87
+('lorenz', 'source-limited', 'W'): n=695 max_rel_err=5.65e+11 median=683 frac>10%=0.87
+('lorenz', 'unconstrained', 'COP'): n=745 max_rel_err=1.05 median=0.536 frac>10%=0.54
+('lorenz', 'unconstrained', 'Q'): n=745 max_rel_err=67.6 median=0 frac>10%=0.38
+('lorenz', 'unconstrained', 'W'): n=745 max_rel_err=2.98e+21 median=2.77 frac>10%=0.54
+example per regime (Th_in, Th_t, Ts_in, qh, qs, COP_model, COP_ref, Th_out_model, Th_out_ref, Q_model MW, Q_ref MW, W_model MW, W_ref MW):
+  ('carnot', 'source-limited') (30.0, 60.0, 15.0, 0.005, 0.005, np.float64(1.019), 7.434, np.float64(292.373), 35.777, np.float64(5.485), 0.121, np.float64(5.38), 0.016)
+  ('carnot', 'unconstrained') (30.0, 60.0, 45.0, 0.005, 0.005, np.float64(11.105), 11.105, 60.0, 60.0, 0.627, 0.627, np.float64(0.056), 0.056)
+  ('lorenz', 'source-limited') (30.0, 60.0, 15.0, 0.005, 0.005, np.float64(1.008), 7.507, np.float64(678.583), 35.768, np.float64(13.559), 0.121, np.float64(13.454), 0.016)
+  ('lorenz', 'unconstrained') (30.0, 60.0, 15.0, 0.005, 0.05, np.float64(2.104), 5.132, np.float64(54.789), 60.0, np.float64(0.518), 0.627, np.float64(0.246), 0.122)
