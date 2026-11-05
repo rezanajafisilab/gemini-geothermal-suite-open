@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.erosion.correlation.DNV &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.erosion.correlation.DNV</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.erosion.correlation.DNV</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""DNV RP O501 erosive wear correlation."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.erosion.correlation._common</span><span class="w"> </span><span class="kn">import</span> <span class="n">mass_flow_and_velocity</span>
+
+
+<div class="viewcode-block" id="ErosionDNV">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_model.erosion.correlation.DNV.html#gemini_model.erosion.correlation.DNV.ErosionDNV">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ErosionDNV</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Class for DNV erosion model.</span>
+
+<span class="sd">    source: https://wiki.pengtools.com/images/9/91/RP_O501_EROSIVE_WEAR_IN_PIPING_SYSTEMS.pdf</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="ErosionDNV.calculate_erosion_rate">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_model.erosion.correlation.DNV.html#gemini_model.erosion.correlation.DNV.ErosionDNV.calculate_erosion_rate">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_erosion_rate</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate maximum erosion rate per year.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        alpha: float</span>
+<span class="sd">            particle impact angle (deg)</span>
+<span class="sd">        mater: string</span>
+<span class="sd">            material (steel, titanium, GRP, Vinyl Ester)</span>
+<span class="sd">        rho_fluid: float</span>
+<span class="sd">            mixture density of fluid (kg/m3)</span>
+<span class="sd">        diameter: float</span>
+<span class="sd">            inner diameter of the pipe (m)</span>
+<span class="sd">        flowRate: float</span>
+<span class="sd">            fluid flow rate (m3/h)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        EL: float</span>
+<span class="sd">            erosion rate (mm/y or mpy)</span>
+<span class="sd">        """</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="s2">"alpha"</span><span class="p">]</span>
+        <span class="n">material</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="s2">"mater"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">material</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"steel"</span><span class="p">:</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="mf">2e-9</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="mf">2.6</span>
+            <span class="n">rho_pipe</span> <span class="o">=</span> <span class="mi">7800</span>
+        <span class="k">elif</span> <span class="n">material</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"titanium"</span><span class="p">:</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="mf">2e-9</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="mf">2.6</span>
+            <span class="n">rho_pipe</span> <span class="o">=</span> <span class="mi">4500</span>
+        <span class="k">elif</span> <span class="n">material</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"grp/epoxy"</span><span class="p">:</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="mf">0.3e-9</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="mf">3.6</span>
+            <span class="n">rho_pipe</span> <span class="o">=</span> <span class="mi">1800</span>
+        <span class="k">elif</span> <span class="n">material</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"grp/vinyl ester"</span><span class="p">:</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="mf">0.6e-9</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="mf">3.6</span>
+            <span class="n">rho_pipe</span> <span class="o">=</span> <span class="mi">1800</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown mater '</span><span class="si">{</span><span class="n">material</span><span class="si">}</span><span class="s2">' for DNV erosion."</span><span class="p">)</span>
+
+        <span class="n">D</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="s2">"diameter"</span><span class="p">]</span>
+        <span class="n">dens_liq</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="s2">"rho_fluid"</span><span class="p">]</span>
+        <span class="c1"># mp [kg/s], Up [m/s] (mixture velocity in multiphase), A_pipe [m2]</span>
+        <span class="n">mp</span><span class="p">,</span> <span class="n">Up</span><span class="p">,</span> <span class="n">A_pipe</span> <span class="o">=</span> <span class="n">mass_flow_and_velocity</span><span class="p">(</span><span class="nb">input</span><span class="p">[</span><span class="s2">"flowRate"</span><span class="p">],</span> <span class="n">dens_liq</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+        <span class="n">aa</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">180</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="n">aa</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mf">9.37</span>
+            <span class="o">+</span> <span class="n">aa</span>
+            <span class="o">*</span> <span class="p">(</span>
+                <span class="o">-</span><span class="mf">42.295</span>
+                <span class="o">+</span> <span class="n">aa</span>
+                <span class="o">*</span> <span class="p">(</span>
+                    <span class="mf">110.864</span>
+                    <span class="o">+</span> <span class="n">aa</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">175.804</span> <span class="o">+</span> <span class="n">aa</span> <span class="o">*</span> <span class="p">(</span><span class="mf">170.137</span> <span class="o">+</span> <span class="n">aa</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">98.398</span> <span class="o">+</span> <span class="n">aa</span> <span class="o">*</span> <span class="p">(</span><span class="mf">31.211</span> <span class="o">-</span> <span class="mf">4.17</span> <span class="o">*</span> <span class="n">aa</span><span class="p">))))</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">A_t</span> <span class="o">=</span> <span class="n">A_pipe</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">aa</span><span class="p">)</span>  <span class="c1"># m2</span>
+        <span class="n">C_unit</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="p">(</span><span class="mi">3600</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mf">365.25</span><span class="p">)</span>  <span class="c1"># conversion m/s --&gt; mm/yr</span>
+
+        <span class="n">EL</span> <span class="o">=</span> <span class="n">C_unit</span> <span class="o">*</span> <span class="n">mp</span> <span class="o">*</span> <span class="n">K</span> <span class="o">*</span> <span class="n">Up</span><span class="o">**</span><span class="n">n</span> <span class="o">*</span> <span class="n">F</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho_pipe</span> <span class="o">*</span> <span class="n">A_t</span><span class="p">)</span>  <span class="c1"># [mm/yr]</span>
+
+        <span class="k">return</span> <span class="n">EL</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

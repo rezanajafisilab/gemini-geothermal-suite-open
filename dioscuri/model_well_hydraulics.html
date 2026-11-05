@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.2. Well: Pressure and Temperature Hydraulics &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5.3. Fluid: PVT Properties" href="model_fluid_pvt.html" />
+    <link rel="prev" title="5.1. Pump: Electrical Submersible Pump (ESP)" href="model_well_esp.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_applications.html">4. Applications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_models.html">5. Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="model_well_esp.html">5.1. Pump: Electrical Submersible Pump (ESP)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.2. Well: Pressure and Temperature Hydraulics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">5.2.1. Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">5.2.2. Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inputs">5.2.3. Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#outputs">5.2.4. Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#correlations">5.2.5. Correlations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#darcy-weisbach-single-phase">5.2.5.1. Darcy-Weisbach (single-phase)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#beggs-brill-two-phase">5.2.5.2. Beggs-Brill (two-phase)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#temperature-drop">5.2.5.3. Temperature Drop</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="model_fluid_pvt.html">5.3. Fluid: PVT Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_reservoir.html">5.4. Reservoir Performance Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_corrosion.html">5.5. Corrosion: CO2 Corrosion Rate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_erosion.html">5.6. Erosion: Erosional Velocity/Rate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_surface_equipment.html">5.7. Surface Equipment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_models.html"><span class="section-number">5. </span>Models</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">5.2. </span>Well: Pressure and Temperature Hydraulics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/model_well_hydraulics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="well-pressure-and-temperature-hydraulics">
+<h1><span class="section-number">5.2. </span>Well: Pressure and Temperature Hydraulics<a class="headerlink" href="#well-pressure-and-temperature-hydraulics" title="Link to this heading"></a></h1>
+<section id="description">
+<h2><span class="section-number">5.2.1. </span>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">gemini_model.well.pressure_drop.DPDT</span></code> model computes the pressure and
+temperature profile along a multi-section wellbore, for single- or two-phase
+flow, in either the production (upward) or injection (downward) direction.</p>
+<p>The well is discretized into a series of cells (with length, diameter,
+inclination, and roughness defined per cell). For each cell, the model
+selects a friction-pressure-drop correlation depending on whether the flow is
+single-phase liquid or a gas/liquid mixture, and adds a hydrostatic pressure
+term and a heat-loss-driven temperature change. Results are accumulated along
+the well to give the total pressure drop and the outlet (wellhead or
+bottomhole) pressure/temperature.</p>
+<p>This model underpins the <a class="reference internal" href="application_production_well_performance.html"><span class="doc">Production well performance</span></a>
+application (VLP calculations) and the ESP model’s inlet/outlet pressure
+estimates in <a class="reference internal" href="application_esp.html"><span class="doc">ESP Performance</span></a>.</p>
+<p>Fluid properties (density, viscosity, gas mass fraction, etc.) required for
+these calculations are obtained from a PVT model, see <a class="reference internal" href="model_fluid_pvt.html"><span class="doc">Fluid: PVT Properties</span></a>.</p>
+</section>
+<section id="parameters">
+<h2><span class="section-number">5.2.2. </span>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">length</span></code></p></td>
+<td><p>Length of each well cell (m), array</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">angle</span></code></p></td>
+<td><p>Inclination of each cell (rad), array</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diameter</span></code></p></td>
+<td><p>Diameter of each cell (m), array</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">roughness</span></code></p></td>
+<td><p>Pipe roughness of each cell (mm), array</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">friction_correlation</span></code></p></td>
+<td><p>Single-phase correlation name (<code class="docutils literal notranslate"><span class="pre">&quot;darcy_weisbach&quot;</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">friction_correlation_2p</span></code></p></td>
+<td><p>Two-phase correlation name (<code class="docutils literal notranslate"><span class="pre">&quot;BeggsBrill&quot;</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">correction_factors</span></code></p></td>
+<td><p>2-element list <code class="docutils literal notranslate"><span class="pre">[gain,</span> <span class="pre">offset]</span></code> applied to the final outlet pressure</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs">
+<h2><span class="section-number">5.2.3. </span>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">direction</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;up&quot;</span></code> (production) or <code class="docutils literal notranslate"><span class="pre">&quot;down&quot;</span></code> (injection)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pressure</span></code></p></td>
+<td><p>Inlet pressure (Pa)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></td>
+<td><p>Inlet temperature (K)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">flowrate</span></code></p></td>
+<td><p>Volumetric flow rate (m³/s)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">temperature_ambient</span></code></p></td>
+<td><p>Ambient/formation temperature (K)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs">
+<h2><span class="section-number">5.2.4. </span>Outputs<a class="headerlink" href="#outputs" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pressure_output</span></code></p></td>
+<td><p>Outlet pressure (Pa), after applying correction factors</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temperature_output</span></code></p></td>
+<td><p>Outlet temperature (K)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pressuredrop_fric_output</span></code></p></td>
+<td><p>Total frictional pressure drop (Pa)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pressuredrop_grav_output</span></code></p></td>
+<td><p>Total gravitational (hydrostatic) pressure drop (Pa)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">section_pressure_output</span></code></p></td>
+<td><p>Pressure at each cell along the well (Pa)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">section_temperature_output</span></code></p></td>
+<td><p>Temperature at each cell along the well (K)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="correlations">
+<h2><span class="section-number">5.2.5. </span>Correlations<a class="headerlink" href="#correlations" title="Link to this heading"></a></h2>
+<p>For each well cell, <code class="docutils literal notranslate"><span class="pre">DPDT</span></code> computes the fluid mixture properties with the
+PVT model (see <a class="reference internal" href="model_fluid_pvt.html"><span class="doc">Fluid: PVT Properties</span></a>), then selects between two
+friction/gravity correlations depending on whether a gas phase is present
+(<code class="docutils literal notranslate"><span class="pre">gemini_model.well.correlation</span></code>), plus a separate temperature-drop
+correlation:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Correlation</p></th>
+<th class="head"><p>Used for</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DarcyWeisbach</span></code></p></td>
+<td><p>Single-phase friction pressure drop and hydrostatic pressure change,
+used when no gas phase is present (<span class="math notranslate nohighlight">\(m_g = 0\)</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BeggsBrill</span></code></p></td>
+<td><p>Two-phase (gas/liquid) friction and hydrostatic pressure drop,
+used when a gas phase is present</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TemperatureDrop</span></code></p></td>
+<td><p>Along-well temperature change due to heat transfer with the
+surrounding formation, based on cell heat-transfer coefficient and
+surface area</p></td>
+</tr>
+</tbody>
+</table>
+<section id="darcy-weisbach-single-phase">
+<h3><span class="section-number">5.2.5.1. </span>Darcy-Weisbach (single-phase)<a class="headerlink" href="#darcy-weisbach-single-phase" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.well.correlation.darcyweisbach.DarcyWeisbach</span></code> computes the
+friction and gravity pressure-drop terms for single-phase liquid flow, using
+the Swamee-Jain explicit approximation of the Colebrook-White friction
+factor.</p>
+<p>Reference: Swamee, P. K., &amp; Jain, A. K. (1976). <em>Explicit equations for
+pipe-flow problems</em>. Journal of the Hydraulics Division, 102(5), 657-664.</p>
+<div class="math notranslate nohighlight">
+\[Re = \frac{|u_{s,l}| \, \rho_l \, D}{\eta_l}\]</div>
+<div class="math notranslate nohighlight">
+\[f = \frac{0.25}{\left[\log_{10}\left(\dfrac{K}{3.7 D} +
+    \dfrac{5.74}{Re^{0.9}}\right)\right]^2}\]</div>
+<div class="math notranslate nohighlight">
+\[\Delta p_{fric} = f \, \frac{\rho_l \, L}{D} \, \frac{|u_{s,l}| \, u_{s,l}}{2}
+\qquad
+\Delta p_{grav} = \rho_l \, g \, L \, \sin(\theta)\]</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(u_{s,l}\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Superficial liquid velocity (m/s)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\rho_l\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Liquid density (kg/m³)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\theta\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">angle</span></code></p></td>
+<td><p>Cell inclination (rad)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\eta_l\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Liquid viscosity (Pa.s)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(D\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">diameter</span></code></p></td>
+<td><p>Cell (pipe) diameter (m)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(K\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">roughness</span></code></p></td>
+<td><p>Cell roughness (m)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(L\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">length</span></code></p></td>
+<td><p>Cell length (m)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(Re\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Reynolds number (-)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(f\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Darcy friction factor (-)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\Delta p_{fric}\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Frictional pressure drop (Pa)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta p_{grav}\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Gravitational pressure drop (Pa)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="beggs-brill-two-phase">
+<h3><span class="section-number">5.2.5.2. </span>Beggs-Brill (two-phase)<a class="headerlink" href="#beggs-brill-two-phase" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.well.correlation.beggsbrill.BeggsBrill</span></code> computes the
+friction and gravity pressure-drop terms for two-phase (gas/liquid) flow,
+following the Beggs-Brill correlation as presented in Shoham, O. (2006),
+<em>Mechanistic Modeling of Gas-Liquid Two-Phase Flow in Pipes</em>, p. 59.
+Internally, inputs are converted to US field units for the correlation and
+results are converted back to SI.</p>
+<p>Reference: Shoham, O. (2006), <em>Mechanistic Modeling of Gas-Liquid Two-Phase
+Flow in Pipes</em>, Society of Petroleum Engineers, p. 59.</p>
+<p><strong>Step 1 — Flow parameters.</strong> The superficial gas/liquid velocities
+<span class="math notranslate nohighlight">\(u_{s,g}\)</span>, <span class="math notranslate nohighlight">\(u_{s,l}\)</span> give the mixture velocity, no-slip liquid
+holdup, liquid velocity number, and mixture Froude number:</p>
+<div class="math notranslate nohighlight">
+\[u_m = u_{s,l} + u_{s,g}
+\qquad
+\lambda_l = \frac{u_{s,l}}{u_m}\]</div>
+<div class="math notranslate nohighlight">
+\[N_{Lv} = 1.938\, u_{s,l} \left(\frac{\rho_l}{\sigma}\right)^{0.25}
+\qquad
+Fr_m^2 = \frac{u_m^2}{g \, D}\]</div>
+<p><strong>Step 2 — Flow-regime boundaries.</strong> Regime boundaries <span class="math notranslate nohighlight">\(L_1\)</span>-<span class="math notranslate nohighlight">\(L_4\)</span>
+are functions of <span class="math notranslate nohighlight">\(\lambda_l\)</span> only:</p>
+<div class="math notranslate nohighlight">
+\[L_1 = 316\,\lambda_l^{0.302}
+\qquad
+L_2 = 0.0009252\,\lambda_l^{-2.4684}\]</div>
+<div class="math notranslate nohighlight">
+\[L_3 = 0.10\,\lambda_l^{-1.4516}
+\qquad
+L_4 = 0.5\,\lambda_l^{-6.738}\]</div>
+<p>Comparing <span class="math notranslate nohighlight">\(\lambda_l\)</span> and <span class="math notranslate nohighlight">\(Fr_m^2\)</span> against <span class="math notranslate nohighlight">\(L_1\)</span>-<span class="math notranslate nohighlight">\(L_4\)</span>
+classifies the flow into one of four regimes: <strong>segregated</strong>,
+<strong>intermittent</strong>, <strong>distributed</strong>, or <strong>transition</strong> (interpolated between
+segregated and intermittent).</p>
+<p><strong>Step 3 — Liquid holdup.</strong> A horizontal-flow holdup <span class="math notranslate nohighlight">\(H_{l,0}\)</span> is
+first computed with regime-dependent coefficients <span class="math notranslate nohighlight">\((a, b, c)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[H_{l,0} = a\,\frac{\lambda_l^{\,b}}{Fr_m^{2c}}\]</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Regime</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(a\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(b\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(c\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Segregated</p></td>
+<td><p>0.98</p></td>
+<td><p>0.4846</p></td>
+<td><p>0.0868</p></td>
+</tr>
+<tr class="row-odd"><td><p>Intermittent</p></td>
+<td><p>0.845</p></td>
+<td><p>0.5351</p></td>
+<td><p>0.0173</p></td>
+</tr>
+<tr class="row-even"><td><p>Distributed</p></td>
+<td><p>1.065</p></td>
+<td><p>0.5824</p></td>
+<td><p>0.0609</p></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math notranslate nohighlight">\(H_{l,0}\)</span> is then corrected for pipe inclination:</p>
+<div class="math notranslate nohighlight">
+\[C = \max\!\big(0,\ (1-\lambda_l)\ln(d\,\lambda_l^{\,e}\,N_{Lv}^{\,f}\,Fr_m^{2h})\big)\]</div>
+<div class="math notranslate nohighlight">
+\[\psi = 1 + C\left[\sin(1.8\theta) - \tfrac{1}{3}\sin^3(1.8\theta)\right]
+\qquad
+H_l = H_{l,0}\,\psi\]</div>
+<p>with regime- and flow-direction-dependent coefficients <span class="math notranslate nohighlight">\((d,e,f,h)\)</span>
+(distributed flow uses <span class="math notranslate nohighlight">\(\psi = 1\)</span>, i.e. no inclination correction; for
+the transition regime, <span class="math notranslate nohighlight">\(H_l\)</span> is interpolated between the segregated
+and intermittent values using the same weighting factor as the regime
+boundaries). <span class="math notranslate nohighlight">\(H_l\)</span> is clamped to <span class="math notranslate nohighlight">\([0, 1]\)</span>.</p>
+<p><strong>Step 4 — Two-phase friction factor ratio.</strong> With
+<span class="math notranslate nohighlight">\(y = \lambda_l/H_l^2\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}s = \begin{cases}
+    \ln(2.2y - 1.2) &amp; 1 &lt; y &lt; 1.2 \\[4pt]
+    \dfrac{\ln y}{-0.0523 + 3.182\ln y - 0.8725(\ln y)^2 + 0.01853(\ln y)^4}
+        &amp; \text{otherwise}
+\end{cases}
+\qquad f_{tp}/f_n = e^s\end{split}\]</div>
+<p><strong>Step 5 — Pressure gradients.</strong> Mixture properties use the no-slip holdup
+<span class="math notranslate nohighlight">\(\lambda_l\)</span> for the friction term and the (slip) liquid holdup
+<span class="math notranslate nohighlight">\(H_l\)</span> for the gravity term:</p>
+<div class="math notranslate nohighlight">
+\[\rho_m = \lambda_l \rho_l + (1-\lambda_l)\rho_g
+\qquad
+\eta_m = \lambda_l \eta_l + (1-\lambda_l)\eta_g
+\qquad
+Re_m = \frac{u_m \rho_m D}{\eta_m}\]</div>
+<div class="math notranslate nohighlight">
+\[\lambda_{fric} = \left[-0.8685\ln\!\left(\frac{1.964\ln(Re_m) - 3.8215}{Re_m}
+    + \frac{\varepsilon}{3.71 D}\right)\right]^{-2}\]</div>
+<div class="math notranslate nohighlight">
+\[\Delta p_{fric} = \tfrac{1}{2}\rho_m\,u_m|u_m|\;\lambda_{fric}\;
+    (f_{tp}/f_n)\;\frac{L}{D}\]</div>
+<div class="math notranslate nohighlight">
+\[\Delta p_{grav} = \big[H_l\rho_l + (1-H_l)\rho_g\big]\,g\,L\,\sin(\theta)\]</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(u_{s,g}\)</span>, <span class="math notranslate nohighlight">\(u_{s,l}\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Superficial gas / liquid velocity (m/s)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\rho_g\)</span>, <span class="math notranslate nohighlight">\(\rho_l\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Gas / liquid density (kg/m³)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\theta\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">angle</span></code></p></td>
+<td><p>Cell inclination (rad)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\eta_g\)</span>, <span class="math notranslate nohighlight">\(\eta_l\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Gas / liquid viscosity (Pa.s)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\sigma\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Gas-liquid surface tension (N/m)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(D\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">diameter</span></code></p></td>
+<td><p>Cell (pipe) diameter (m)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\varepsilon\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">roughness</span></code></p></td>
+<td><p>Cell roughness (m)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(L\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">length</span></code></p></td>
+<td><p>Cell length (m)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\lambda_l\)</span>, <span class="math notranslate nohighlight">\(H_l\)</span></p></td>
+<td><p>–</p></td>
+<td><p>No-slip / slip liquid holdup (-)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\Delta p_{fric}\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Frictional pressure drop (Pa)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta p_{grav}\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Gravitational pressure drop (Pa)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="temperature-drop">
+<h3><span class="section-number">5.2.5.3. </span>Temperature Drop<a class="headerlink" href="#temperature-drop" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.well.correlation.temperaturedrop.TemperatureDrop</span></code> computes
+the along-cell temperature change from heat exchange with the surrounding
+formation/ambient, using a lumped heat-transfer coefficient and the mixture
+heat capacity:</p>
+<div class="math notranslate nohighlight">
+\[c_{p,mix} = \frac{m_l}{m_l+m_g}\,c_{p,l} + \frac{m_g}{m_l+m_g}\,c_{p,g}\]</div>
+<div class="math notranslate nohighlight">
+\[\dot{Q} = U \, A \, (T_{in} - T_{ambient})
+\qquad
+\Delta T = \frac{\dot{Q}}{(m_l + m_g)\,c_{p,mix}}\]</div>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(T_{in}\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></td>
+<td><p>Cell inlet temperature (K)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(U\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Heat transfer coefficient (W/m².K)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(m_l\)</span>, <span class="math notranslate nohighlight">\(m_g\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Liquid / gas mass flow rate (kg/s)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(c_{p,l}\)</span>, <span class="math notranslate nohighlight">\(c_{p,g}\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Liquid / gas heat capacity (J/kg.K)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(A\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Cell surface area (m²)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(T_{ambient}\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">temperature_ambient</span></code></p></td>
+<td><p>Ambient/formation temperature (K)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\Delta T\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Cell temperature change (K)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="model_well_esp.html" class="btn btn-neutral float-left" title="5.1. Pump: Electrical Submersible Pump (ESP)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="model_fluid_pvt.html" class="btn btn-neutral float-right" title="5.3. Fluid: PVT Properties" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

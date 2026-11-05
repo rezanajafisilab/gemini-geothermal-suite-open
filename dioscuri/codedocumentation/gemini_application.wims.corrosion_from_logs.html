@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.3.8.2. gemini_application.wims.corrosion_from_logs &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.3.8.3. gemini_application.wims.corrosion_from_prod_data" href="gemini_application.wims.corrosion_from_prod_data.html" />
+    <link rel="prev" title="6.3.8.1. gemini_application.wims.common" href="gemini_application.wims.common.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.application_abstract.html">6.3.1. gemini_application.application_abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.chatpopup.html">6.3.2. gemini_application.chatpopup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.esp.html">6.3.3. gemini_application.esp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.injectionwell.html">6.3.4. gemini_application.injectionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.productionwell.html">6.3.5. gemini_application.productionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.reportgenerator.html">6.3.6. gemini_application.reportgenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.tagbrowser.html">6.3.7. gemini_application.tagbrowser</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_application.wims.html">6.3.8. gemini_application.wims</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.common.html">6.3.8.1. gemini_application.wims.common</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">6.3.8.2. gemini_application.wims.corrosion_from_logs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_prod_data.html">6.3.8.3. gemini_application.wims.corrosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_model.html">6.3.8.4. gemini_application.wims.corrosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_prod_data.html">6.3.8.5. gemini_application.wims.erosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_tally.html">6.3.8.6. gemini_application.wims.erosion_from_tally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_model.html">6.3.8.7. gemini_application.wims.erosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.model_optimization.html">6.3.8.8. gemini_application.wims.model_optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.html"><span class="section-number">6.3. </span>gemini_application</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.wims.html"><span class="section-number">6.3.8. </span>gemini_application.wims</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.3.8.2. </span>gemini_application.wims.corrosion_from_logs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_application.wims.corrosion_from_logs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_application.wims.corrosion_from_logs">
+<span id="gemini-application-wims-corrosion-from-logs"></span><h1><span class="section-number">6.3.8.2. </span>gemini_application.wims.corrosion_from_logs<a class="headerlink" href="#module-gemini_application.wims.corrosion_from_logs" title="Link to this heading"></a></h1>
+<p>Utilities for processing caliper logs and deriving measured corrosion outputs.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.add_corrosion_columns" title="gemini_application.wims.corrosion_from_logs.add_corrosion_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_corrosion_columns</span></code></a>(df)</p></td>
+<td><p>Add corrosion-related output columns to a DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.candidates_to_joint_boundaries" title="gemini_application.wims.corrosion_from_logs.candidates_to_joint_boundaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">candidates_to_joint_boundaries</span></code></a>(candidates)</p></td>
+<td><p>Convert approved candidate dicts to joint boundary records.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.detect_joints" title="gemini_application.wims.corrosion_from_logs.detect_joints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_joints</span></code></a>(uploaded_logs, well_tally[, ...])</p></td>
+<td><p>Detect raw boundary candidates for each uploaded log (QA/QC step).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.detect_joints_from_ccl" title="gemini_application.wims.corrosion_from_logs.detect_joints_from_ccl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_joints_from_ccl</span></code></a>(caliper_df[, ...])</p></td>
+<td><p>Detect joint boundaries from a CCL (Casing Collar Locator) column.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.detect_joints_from_log_markers" title="gemini_application.wims.corrosion_from_logs.detect_joints_from_log_markers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_joints_from_log_markers</span></code></a>(caliper_df, ...)</p></td>
+<td><p>Detect joint boundaries from caliper average-column markers.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.get_measured_corrosion_rate_from_logs" title="gemini_application.wims.corrosion_from_logs.get_measured_corrosion_rate_from_logs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measured_corrosion_rate_from_logs</span></code></a>(...)</p></td>
+<td><p>Compute measured corrosion rate and corroded thickness from processed logs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.get_remaining_days_to_min_thickness" title="gemini_application.wims.corrosion_from_logs.get_remaining_days_to_min_thickness"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_remaining_days_to_min_thickness</span></code></a>(...)</p></td>
+<td><p>Compute remaining days until remaining thickness reaches a minimum.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.get_remaining_thickness_at_log_dates" title="gemini_application.wims.corrosion_from_logs.get_remaining_thickness_at_log_dates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_remaining_thickness_at_log_dates</span></code></a>(...)</p></td>
+<td><p>Compute remaining wall thickness [mm] at each log date.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.match_joints_to_tally" title="gemini_application.wims.corrosion_from_logs.match_joints_to_tally"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_joints_to_tally</span></code></a>(detected_joints, ...)</p></td>
+<td><p>Match detected joint boundaries to well tally entries by length fingerprint.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.process_caliper_logs" title="gemini_application.wims.corrosion_from_logs.process_caliper_logs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_caliper_logs</span></code></a>(uploaded_logs, well_tally)</p></td>
+<td><p>Build processed caliper logs for each uploaded log.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.wall_thickness_change_col" title="gemini_application.wims.corrosion_from_logs.wall_thickness_change_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wall_thickness_change_col</span></code></a>(start_str, end_str)</p></td>
+<td><p>Interval column label for signed wall thickness change [mm].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_logs.wall_thickness_change_rate_col" title="gemini_application.wims.corrosion_from_logs.wall_thickness_change_rate_col"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wall_thickness_change_rate_col</span></code></a>(start_str, ...)</p></td>
+<td><p>Interval column label for wall thickness change rate [mm/year].</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.add_corrosion_columns">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">add_corrosion_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#add_corrosion_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.add_corrosion_columns" title="Link to this definition"></a></dt>
+<dd><p>Add corrosion-related output columns to a DataFrame.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.candidates_to_joint_boundaries">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">candidates_to_joint_boundaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#candidates_to_joint_boundaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.candidates_to_joint_boundaries" title="Link to this definition"></a></dt>
+<dd><p>Convert approved candidate dicts to joint boundary records.</p>
+<p>Each joint spans consecutive candidate depths (sorted by <code class="docutils literal notranslate"><span class="pre">depth</span></code>).
+Returns dicts with <code class="docutils literal notranslate"><span class="pre">top</span></code> and <code class="docutils literal notranslate"><span class="pre">bottom</span></code> [m], <code class="docutils literal notranslate"><span class="pre">length</span></code> = bottom − top,
+and <code class="docutils literal notranslate"><span class="pre">top_kind</span></code> / <code class="docutils literal notranslate"><span class="pre">bottom_kind</span></code> from the boundary candidates.</p>
+<p>This is what the user’s QA/QC approval produces before passing to
+<code class="docutils literal notranslate"><span class="pre">process_caliper_logs</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.detect_joints">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">detect_joints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uploaded_logs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#detect_joints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.detect_joints" title="Link to this definition"></a></dt>
+<dd><p>Detect raw boundary candidates for each uploaded log (QA/QC step).</p>
+<p>Returns a list (one entry per log) of dicts, each containing:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">method</span></code>      – detection method (<code class="docutils literal notranslate"><span class="pre">'ccl'</span></code>, <code class="docutils literal notranslate"><span class="pre">'log_markers'</span></code>, or <code class="docutils literal notranslate"><span class="pre">'tally'</span></code>)</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">candidates</span></code>  – list of raw candidate dicts with <code class="docutils literal notranslate"><span class="pre">depth</span></code>, <code class="docutils literal notranslate"><span class="pre">kind</span></code>,</dt><dd><p><code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">idx</span></code></p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chart_depths</span></code>  – depth array for plotting the caliper curve</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chart_values</span></code>  – signal array (avg caliper or CCL) for plotting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">joint_boundaries</span></code> – derived boundaries [(top, bottom), …] for preview</p></li>
+</ul>
+<p>The candidates are the raw boundary markers <strong>before</strong> matching to tally.
+The user reviews/excludes candidates; approved ones are later converted to
+boundaries in <code class="docutils literal notranslate"><span class="pre">process_caliper_logs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>detection_params</strong> (<em>list</em><em>[</em><em>dict</em><em>] </em><em>| </em><em>None</em>) – Per-log detection parameters (parallel to <code class="docutils literal notranslate"><span class="pre">uploaded_logs[&quot;data&quot;]</span></code>).
+Recognised keys: <code class="docutils literal notranslate"><span class="pre">min_marker_score</span></code>, <code class="docutils literal notranslate"><span class="pre">min_gradient_score</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.detect_joints_from_ccl">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">detect_joints_from_ccl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caliper_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">joint_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_candidates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#detect_joints_from_ccl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.detect_joints_from_ccl" title="Link to this definition"></a></dt>
+<dd><p>Detect joint boundaries from a CCL (Casing Collar Locator) column.</p>
+<p>Finds peaks in the absolute CCL signal that correspond to collar/coupling
+positions, then returns depth intervals between consecutive peaks.  Each
+peak position is used as the separation point between two joints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>caliper_df</strong> (<em>DataFrame</em>) – Caliper log data with depth index.</p></li>
+<li><p><strong>joint_length</strong> (<em>float</em>) – Expected joint length in metres (default 12 m).  Used to set the
+minimum distance between consecutive collar peaks (half the joint
+length to allow for some variation).</p></li>
+<li><p><strong>return_candidates</strong> (<em>bool</em>) – If True, return (boundaries, candidates, depths, signal_values) tuple.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.detect_joints_from_log_markers">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">detect_joints_from_log_markers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caliper_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">avg_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">joint_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_joint_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_marker_score</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_gradient_score</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_candidates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#detect_joints_from_log_markers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.detect_joints_from_log_markers" title="Link to this definition"></a></dt>
+<dd><p>Detect joint boundaries from caliper average-column markers.</p>
+<p>The average caliper curve contains two useful marker types:</p>
+<ul class="simple">
+<li><p>short collar/coupling spikes in the high-pass average curve;</p></li>
+<li><p>sharp casing-size changes in the smoothed first derivative.</p></li>
+</ul>
+<p>The detector builds both candidate sets, merges detections that point to
+the same physical boundary, and validates the resulting spacing.  Normal
+joints are expected around <code class="docutils literal notranslate"><span class="pre">joint_length</span></code> metres, but short accessories
+down to <code class="docutils literal notranslate"><span class="pre">min_joint_length</span></code> metres are allowed when the marker is strong.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>caliper_df</strong> (<em>DataFrame</em>) – Caliper log data with depth index.</p></li>
+<li><p><strong>max_col</strong> (<em>str</em>) – Column names for the max, min, and average summary curves.  The
+average curve drives candidate detection; max/min confirm and refine
+sustained size-change steps when available.</p></li>
+<li><p><strong>min_col</strong> (<em>str</em>) – Column names for the max, min, and average summary curves.  The
+average curve drives candidate detection; max/min confirm and refine
+sustained size-change steps when available.</p></li>
+<li><p><strong>avg_col</strong> (<em>str</em>) – Column names for the max, min, and average summary curves.  The
+average curve drives candidate detection; max/min confirm and refine
+sustained size-change steps when available.</p></li>
+<li><p><strong>joint_length</strong> (<em>float</em>) – Expected joint length in metres (default 12 m).  Used as the normal
+spacing prior during candidate validation.</p></li>
+<li><p><strong>min_joint_length</strong> (<em>float</em>) – Shortest expected accessory/sub-joint interval in metres.  Boundaries
+closer than roughly 60% of this are treated as duplicate detections.</p></li>
+<li><p><strong>min_marker_score</strong> (<em>float</em>) – Minimum spike score kept after raw peak detection.</p></li>
+<li><p><strong>min_gradient_score</strong> (<em>float</em>) – Minimum gradient score kept after raw gradient detection.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.get_measured_corrosion_rate_from_logs">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">get_measured_corrosion_rate_from_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logs_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_log_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processed_logs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#get_measured_corrosion_rate_from_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.get_measured_corrosion_rate_from_logs" title="Link to this definition"></a></dt>
+<dd><p>Compute measured corrosion rate and corroded thickness from processed logs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>well_tally</strong> (<em>list</em><em>[</em><em>dict</em><em>]</em>) – Well tally entries with at least <code class="docutils literal notranslate"><span class="pre">ID</span></code>, <code class="docutils literal notranslate"><span class="pre">OD</span></code>, and <code class="docutils literal notranslate"><span class="pre">Joint</span></code>.</p></li>
+<li><p><strong>logs_metadata</strong> (<em>- If a log is marked is_baseline in</em>) – Per-log metadata dict (from <code class="docutils literal notranslate"><span class="pre">logs_information.json</span></code>).  Keys are log
+names; values are dicts with <code class="docutils literal notranslate"><span class="pre">&quot;date&quot;</span></code> (YYYY-MM-DD) and optionally
+<code class="docutils literal notranslate"><span class="pre">&quot;is_baseline&quot;</span></code> (bool).</p></li>
+<li><p><strong>selected_log_names</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Ordered list of log names corresponding 1:1 to <em>processed_logs</em>.</p></li>
+<li><p><strong>processed_logs</strong> (<em>list</em><em>[</em><em>DataFrame</em><em>]</em>) – Processed log DataFrames (same order as <em>selected_log_names</em>).</p></li>
+<li><p><strong>start_time</strong> (<em>str</em>) – Fallback baseline date (<code class="docutils literal notranslate"><span class="pre">&quot;%Y-%m-%d</span> <span class="pre">%H:%M:%S&quot;</span></code>), used when no log is
+marked as baseline.</p></li>
+<li><p><strong>selection</strong> (<em>Baseline</em>)</p></li>
+<li><p><strong>logs_metadata</strong> – processed measurements are used as the baseline (time-zero reference).</p></li>
+<li><p><strong>log's</strong> (<em>that</em>) – processed measurements are used as the baseline (time-zero reference).</p></li>
+<li><p><strong>Else</strong> (<em>-</em>) – baseline so corrosion is measured forward from a real survey.</p></li>
+<li><p><strong>exist</strong> (<em>if at least two logs</em>) – baseline so corrosion is measured forward from a real survey.</p></li>
+<li><p><strong>the</strong> (<em>the baseline inner radius is</em>) – baseline so corrosion is measured forward from a real survey.</p></li>
+<li><p><strong>log</strong><strong>)</strong> (<em>- Otherwise</em><em> (</em><em>a single unmarked</em>) – nominal inner radius adjusted for -12.5% wall thickness (API
+manufacturing tolerance): <code class="docutils literal notranslate"><span class="pre">baseline_ir</span> <span class="pre">=</span> <span class="pre">(OD</span> <span class="pre">-</span> <span class="pre">0.875</span> <span class="pre">*</span> <span class="pre">(OD</span> <span class="pre">-</span> <span class="pre">ID))</span> <span class="pre">/</span> <span class="pre">2</span></code>
+per joint.</p></li>
+<li><p><strong>the</strong> – nominal inner radius adjusted for -12.5% wall thickness (API
+manufacturing tolerance): <code class="docutils literal notranslate"><span class="pre">baseline_ir</span> <span class="pre">=</span> <span class="pre">(OD</span> <span class="pre">-</span> <span class="pre">0.875</span> <span class="pre">*</span> <span class="pre">(OD</span> <span class="pre">-</span> <span class="pre">ID))</span> <span class="pre">/</span> <span class="pre">2</span></code>
+per joint.</p></li>
+<li><p><strong>radii</strong> (<em>Bore quantities are inner</em>)</p></li>
+<li><p><strong>one-sided</strong> (<em>which is a</em>)</p></li>
+<li><p><strong>output</strong> (<em>(</em><em>radial</em><em>) </em><em>wall loss -- matching the DLD model</em>)</p></li>
+<li><p><strong>one-sided</strong></p></li>
+<li><p><strong>rate.</strong> (<em>penetration</em>)</p></li>
+<li><p><strong>and</strong> (<em>Returns a DataFrame with 'Joint No.'</em>)</p></li>
+<li><p><strong>interval</strong> (<em>for each</em>)</p></li>
+<li><p><strong>a</strong> (<em>'Corrosion rate</em><em> [</em><em>mm/year</em><em>] </em><em>(</em><em>date1 -&gt; date2</em><em>)</em><em>' column and</em>)</p></li>
+<li><p><strong>a</strong></p></li>
+<li><p><strong>(</strong><strong>later</strong> (<em>'Corroded</em><em> [</em><em>mm</em><em>] </em><em>(</em><em>date1 -&gt; date2</em><em>)</em><em>' column.  Both are signed</em>)</p></li>
+<li><p><strong>earlier</strong><strong>)</strong> (<em>survey minus</em>)</p></li>
+<li><p><strong>(</strong><strong>scale/deposit</strong> (<em>corrosion</em><em>)</em><em>; negative means the bore shrank</em>)</p></li>
+<li><p><strong>/</strong> (<em>or tool</em>)</p></li>
+<li><p><strong>surveys</strong><strong>)</strong><strong>.</strong> (<em>calibration differences between</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.get_remaining_days_to_min_thickness">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">get_remaining_days_to_min_thickness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measured</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remaining</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_remaining_thickness_mm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#get_remaining_days_to_min_thickness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.get_remaining_days_to_min_thickness" title="Link to this definition"></a></dt>
+<dd><p>Compute remaining days until remaining thickness reaches a minimum.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.get_remaining_thickness_at_log_dates">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">get_remaining_thickness_at_log_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uploaded_logs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processed_logs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#get_remaining_thickness_at_log_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.get_remaining_thickness_at_log_dates" title="Link to this definition"></a></dt>
+<dd><p>Compute remaining wall thickness [mm] at each log date.</p>
+<p>Uses the deepest pit (<code class="docutils literal notranslate"><span class="pre">Max.</span> <span class="pre">Radius</span></code>) as the inner radius, so the reported
+wall is the worst-case (thinnest) remaining wall.  This matches the
+prediction path and the measured corrosion rate, which both key off
+<code class="docutils literal notranslate"><span class="pre">Max.</span> <span class="pre">Radius</span></code>; using <code class="docutils literal notranslate"><span class="pre">Min.</span> <span class="pre">Radius</span></code> here would mix a best-case wall with
+a worst-case rate in the remaining-life projection.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.match_joints_to_tally">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">match_joints_to_tally</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detected_joints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overlap_penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_penalty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_merge_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_merge_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_split_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_match_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qa_log_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#match_joints_to_tally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.match_joints_to_tally" title="Link to this definition"></a></dt>
+<dd><p>Match detected joint boundaries to well tally entries by length fingerprint.</p>
+<p>Uses a sliding-window approach first (fast, O(N*M)).  If the residual
+exceeds <em>length_tol</em>, a dynamic-programming alignment is run that can
+handle extra boundaries (N:1 merge up to <em>max_merge_width</em>, capped at
+<em>max_merge_error</em>), missed boundaries (1:2 split, capped at
+<em>max_split_error</em>), and noise (skip detected joints).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>detected_joints</strong> (<em>list</em><em>[</em><em>dict</em><em> | </em><em>tuple</em><em>]</em>) – Each entry is a dict with <code class="docutils literal notranslate"><span class="pre">top</span></code>, <code class="docutils literal notranslate"><span class="pre">bottom</span></code>, <code class="docutils literal notranslate"><span class="pre">length</span></code> (from
+<code class="docutils literal notranslate"><span class="pre">candidates_to_joint_boundaries</span></code>) or a <code class="docutils literal notranslate"><span class="pre">(top,</span> <span class="pre">bottom)</span></code> tuple.</p></li>
+<li><p><strong>well_tally</strong> (<em>list</em><em>[</em><em>dict</em><em>]</em>) – Tally entries with at least <code class="docutils literal notranslate"><span class="pre">TopMD</span></code>, <code class="docutils literal notranslate"><span class="pre">BottomMD</span></code>, <code class="docutils literal notranslate"><span class="pre">ID</span></code>, <code class="docutils literal notranslate"><span class="pre">OD</span></code>.</p></li>
+<li><p><strong>length_tol</strong> (<em>float</em>) – Mean normalised length error above which the DP path is triggered
+and/or a warning is logged.</p></li>
+<li><p><strong>overlap_penalty</strong> (<em>float</em>) – Weight applied to penalise low-overlap alignments in the sliding
+window so that it prefers offsets that match more detected joints.</p></li>
+<li><p><strong>merge_penalty</strong> (<em>float</em>) – DP penalty for merging two detected joints into one tally entry.</p></li>
+<li><p><strong>split_penalty</strong> (<em>float</em>) – DP penalty for splitting one detected joint across two tally entries.</p></li>
+<li><p><strong>skip_penalty</strong> (<em>float</em>) – DP penalty for skipping a detected joint (treating it as noise).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(joint_boundary,</span> <span class="pre">tally_entry,</span> <span class="pre">match_error)</span></code> triples for the best
+alignment.  <em>match_error</em> is the normalised length difference (0.0 =
+perfect match, 0.1 = 10 % length mismatch).  For merged entries the
+boundary dict has a <code class="docutils literal notranslate"><span class="pre">&quot;merged&quot;:</span> <span class="pre">True</span></code> flag and combined depth range.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[tuple[dict|tuple, dict, float]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.process_caliper_logs">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">process_caliper_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uploaded_logs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approved_joints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qa_log_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#process_caliper_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.process_caliper_logs" title="Link to this definition"></a></dt>
+<dd><p>Build processed caliper logs for each uploaded log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uploaded_logs</strong> (<em>dict</em>) – Structure with <code class="docutils literal notranslate"><span class="pre">&quot;data&quot;</span></code> list of DataFrames and parallel metadata lists.</p></li>
+<li><p><strong>well_tally</strong> (<em>list</em><em>[</em><em>dict</em><em>]</em>) – Well tally entries with at least TopMD, BottomMD, ID, OD.</p></li>
+<li><p><strong>approved_joints</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>dict</em><em>]</em><em>] or </em><em>None</em>) – Optional pre-approved candidate list (one list per log).  Each entry is
+a list of candidate dicts with at least <code class="docutils literal notranslate"><span class="pre">depth</span></code>.  These are converted
+to joint boundary dicts (<code class="docutils literal notranslate"><span class="pre">top</span></code>, <code class="docutils literal notranslate"><span class="pre">bottom</span></code>, <code class="docutils literal notranslate"><span class="pre">length</span></code>) via
+<code class="docutils literal notranslate"><span class="pre">candidates_to_joint_boundaries</span></code> and then matched to tally.</p></li>
+<li><p><strong>qa_log_dir</strong> (<em>str</em><em> or </em><em>Path</em><em> or </em><em>None</em>) – Directory to write per-log QA JSON files for joint-to-tally matching.
+Files are named <code class="docutils literal notranslate"><span class="pre">&lt;log_name&gt;_qa_match.json</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.wall_thickness_change_col">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">wall_thickness_change_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#wall_thickness_change_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.wall_thickness_change_col" title="Link to this definition"></a></dt>
+<dd><p>Interval column label for signed wall thickness change [mm].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_logs.wall_thickness_change_rate_col">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_logs.</span></span><span class="sig-name descname"><span class="pre">wall_thickness_change_rate_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_logs.html#wall_thickness_change_rate_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_logs.wall_thickness_change_rate_col" title="Link to this definition"></a></dt>
+<dd><p>Interval column label for wall thickness change rate [mm/year].</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_application.wims.common.html" class="btn btn-neutral float-left" title="6.3.8.1. gemini_application.wims.common" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_application.wims.corrosion_from_prod_data.html" class="btn btn-neutral float-right" title="6.3.8.3. gemini_application.wims.corrosion_from_prod_data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.1. Time Series Viewer &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4.2. Production well performance" href="application_production_well_performance.html" />
+    <link rel="prev" title="4. Applications" href="index_applications.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_applications.html">4. Applications</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.1. Time Series Viewer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#set-up-the-influxdb-data-source">4.1.1. Set up the InfluxDB data source</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-an-influxdb-token">4.1.1.1. Create an InfluxDB token</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-dashboard">4.1.2. Create a dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#export-a-dashboard">4.1.3. Export a dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-a-dashboard">4.1.4. Import a dashboard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="application_production_well_performance.html">4.2. Production well performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_injectivity.html">4.3. Injectivity Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_parameters_overview.html">4.4. Parameters overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_esp.html">4.5. ESP Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_well_schematics.html">4.6. Well Schematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_wellintegrity.html">4.7. Well Integrity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_rag.html">4.8. Chat Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_report_generator.html">4.9. Report Generator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_applications.html"><span class="section-number">4. </span>Applications</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4.1. </span>Time Series Viewer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/application_grafana.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="time-series-viewer">
+<h1><span class="section-number">4.1. </span>Time Series Viewer<a class="headerlink" href="#time-series-viewer" title="Link to this heading"></a></h1>
+<p>The Time Series Viewer integrates Grafana in GEMINI for real-time and
+historical trend analysis.</p>
+<section id="set-up-the-influxdb-data-source">
+<h2><span class="section-number">4.1.1. </span>Set up the InfluxDB data source<a class="headerlink" href="#set-up-the-influxdb-data-source" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Open <strong>Connections</strong> in Grafana.</p></li>
+<li><p>Click <strong>Add new connection</strong>.</p></li>
+<li><p>Search for <code class="docutils literal notranslate"><span class="pre">influxdb</span></code> and select <strong>Data Source InfluxDB</strong>.</p></li>
+<li><p>Click <strong>Add new data source</strong>.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/database_setup_connection_1.JPG"><img alt="_images/database_setup_connection_1.JPG" src="_images/database_setup_connection_1.JPG" style="width: 100%;" /></a>
+<ol class="arabic simple" start="5">
+<li><p>Configure the connection:</p>
+<ul class="simple">
+<li><p>Database name: choose a clear name (for example <code class="docutils literal notranslate"><span class="pre">gemini-influxdb</span></code>)</p></li>
+<li><p>Query language: <code class="docutils literal notranslate"><span class="pre">Flux</span></code></p></li>
+<li><p>URL: <code class="docutils literal notranslate"><span class="pre">http://influxdb:8086</span></code></p></li>
+<li><p>Enable <strong>Basic auth</strong></p></li>
+</ul>
+</li>
+</ol>
+<a class="reference internal image-reference" href="_images/database_setup_connection_2.JPG"><img alt="_images/database_setup_connection_2.JPG" src="_images/database_setup_connection_2.JPG" style="width: 100%;" /></a>
+<ol class="arabic" start="6">
+<li><p>Fill <strong>Basic Auth</strong> credentials:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Username: &lt;you can find in your .env file&gt;</p></li>
+<li><p>Password: &lt;you can find in your .env file&gt;</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Fill <strong>InfluxDB Details</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Organization: &lt;you can find in your .env file&gt;</p></li>
+<li><p>Token: &lt;create token InfluxDB&gt; (Follow the steps below to create a token)</p></li>
+<li><p>Default Bucket: &lt;you can find in your .env file&gt;</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Click <strong>Save &amp; test</strong>.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/database_setup_connection_3.JPG"><img alt="_images/database_setup_connection_3.JPG" src="_images/database_setup_connection_3.JPG" style="width: 100%;" /></a>
+<section id="create-an-influxdb-token">
+<h3><span class="section-number">4.1.1.1. </span>Create an InfluxDB token<a class="headerlink" href="#create-an-influxdb-token" title="Link to this heading"></a></h3>
+<p>If you do not have a token yet:</p>
+<ol class="arabic simple">
+<li><p>Open <code class="docutils literal notranslate"><span class="pre">&lt;yourdomain&gt;:8086</span></code> in a browser.</p></li>
+<li><p>Sign in with the same credentials used for basic authentication.</p></li>
+<li><p>Create an API token (for example <strong>All Access API Token</strong>).</p></li>
+<li><p>Copy the token and paste it into Grafana.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/database_setup_connection_4.JPG"><img alt="_images/database_setup_connection_4.JPG" src="_images/database_setup_connection_4.JPG" style="width: 100%;" /></a>
+</section>
+</section>
+<section id="create-a-dashboard">
+<h2><span class="section-number">4.1.2. </span>Create a dashboard<a class="headerlink" href="#create-a-dashboard" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Click <strong>New</strong>.</p></li>
+<li><p>Click <strong>Add visualization</strong>.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/create_dashboard_1.JPG"><img alt="_images/create_dashboard_1.JPG" src="_images/create_dashboard_1.JPG" style="width: 100%;" /></a>
+<ol class="arabic simple" start="3">
+<li><p>Select your InfluxDB data source.
+If no data source is available, complete the setup section above first.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/create_dashboard_2.JPG"><img alt="_images/create_dashboard_2.JPG" src="_images/create_dashboard_2.JPG" style="width: 100%;" /></a>
+<ol class="arabic simple" start="4">
+<li><p>Choose a panel type (for example <strong>Time Series</strong>).</p></li>
+<li><p>Set a panel title.</p></li>
+<li><p>Enter a Flux query in query box <code class="docutils literal notranslate"><span class="pre">A</span></code>.</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">from</span><span class="p">(</span><span class="n">bucket</span><span class="p">:</span> <span class="s2">"gemini-project"</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">timeRangeStart</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">timeRangeStop</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="nb">filter</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">r</span><span class="p">[</span><span class="s2">"_measurement"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"HAL"</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="nb">filter</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">r</span><span class="p">[</span><span class="s2">"asset_name"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"esp_e74b"</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="nb">filter</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">r</span><span class="p">[</span><span class="s2">"_field"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"esp_inlet_pressure.measured"</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="n">aggregateWindow</span><span class="p">(</span><span class="n">every</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">windowPeriod</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span> <span class="n">createEmpty</span><span class="p">:</span> <span class="n">false</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="k">yield</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="s2">"mean"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Query parameter meaning:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_measurement</span></code>: project name</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">asset_name</span></code>: component/asset name</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_field</span></code>: tag to visualize</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/create_dashboard_3.JPG"><img alt="_images/create_dashboard_3.JPG" src="_images/create_dashboard_3.JPG" style="width: 100%;" /></a>
+</section>
+<section id="export-a-dashboard">
+<h2><span class="section-number">4.1.3. </span>Export a dashboard<a class="headerlink" href="#export-a-dashboard" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Click <strong>Share</strong>.</p></li>
+<li><p>Open the <strong>Export</strong> tab.</p></li>
+<li><p>Click <strong>Save to file</strong>.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/save_dashboard.JPG"><img alt="_images/save_dashboard.JPG" src="_images/save_dashboard.JPG" style="width: 100%;" /></a>
+</section>
+<section id="import-a-dashboard">
+<h2><span class="section-number">4.1.4. </span>Import a dashboard<a class="headerlink" href="#import-a-dashboard" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Click <strong>New</strong>.</p></li>
+<li><p>Click <strong>Import</strong>.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/import_dashboard.JPG"><img alt="_images/import_dashboard.JPG" src="_images/import_dashboard.JPG" style="width: 100%;" /></a>
+<ol class="arabic simple" start="3">
+<li><p>Upload a JSON file from
+<code class="docutils literal notranslate"><span class="pre">gemini-project/_template/grafana_template</span></code>,
+or paste JSON text directly.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/import_dashboard_2.JPG"><img alt="_images/import_dashboard_2.JPG" src="_images/import_dashboard_2.JPG" style="width: 100%;" /></a>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index_applications.html" class="btn btn-neutral float-left" title="4. Applications" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="application_production_well_performance.html" class="btn btn-neutral float-right" title="4.2. Production well performance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

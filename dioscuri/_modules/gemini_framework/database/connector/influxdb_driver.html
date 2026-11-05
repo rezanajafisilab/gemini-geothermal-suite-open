@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_framework.database.connector.influxdb_driver &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_framework.database.connector.influxdb_driver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_framework.database.connector.influxdb_driver</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""InfluxDB connector used as the framework's internal time-series store."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">influxdb_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">InfluxDBClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">influxdb_client.client.write_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">SYNCHRONOUS</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_framework.abstract.database_driver_abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseDriverAbstract</span>
+
+
+<div class="viewcode-block" id="InfluxdbDriver">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_framework.database.connector.influxdb_driver.html#gemini_framework.database.connector.influxdb_driver.InfluxdbDriver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InfluxdbDriver</span><span class="p">(</span><span class="n">DatabaseDriverAbstract</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Time-series database connector for InfluxDB."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Establish connection to InfluxDB internal database."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="InfluxdbDriver.connect">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_framework.database.connector.influxdb_driver.html#gemini_framework.database.connector.influxdb_driver.InfluxdbDriver.connect">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Connect to InfluxDB."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">InfluxDBClient</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"url"</span><span class="p">],</span>
+            <span class="n">org</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"org"</span><span class="p">],</span>
+            <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"username"</span><span class="p">],</span>
+            <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"password"</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InfluxdbDriver.read_data">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_framework.database.connector.influxdb_driver.html#gemini_framework.database.connector.influxdb_driver.InfluxdbDriver.read_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant_name</span><span class="p">,</span> <span class="n">asset_name</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">aggregate</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Read data from internal database."""</span>
+        <span class="n">query_api</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">query_api</span><span class="p">()</span>
+
+        <span class="n">start_time_unix</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">end_time_unix</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">end_time</span><span class="p">)</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">aggregate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s1">'from(bucket: "'</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"bucket"</span><span class="p">]</span>
+                <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; range(start:'</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_time_unix</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">",stop:"</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">end_time_unix</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s1">')</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r._measurement == "'</span>
+                <span class="o">+</span> <span class="n">plant_name</span>
+                <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r._field == "'</span>
+                <span class="o">+</span> <span class="n">tag_name</span>
+                <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r.asset_name == "'</span>
+                <span class="o">+</span> <span class="n">asset_name</span>
+                <span class="o">+</span> <span class="s1">'")'</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s1">'from(bucket: "'</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"bucket"</span><span class="p">]</span>
+                <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; range(start:'</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">start_time_unix</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">",stop:"</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">end_time_unix</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s1">')</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r._measurement == "'</span>
+                <span class="o">+</span> <span class="n">plant_name</span>
+                <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r._field == "'</span>
+                <span class="o">+</span> <span class="n">tag_name</span>
+                <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r.asset_name == "'</span>
+                <span class="o">+</span> <span class="n">asset_name</span>
+                <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; aggregateWindow(every:'</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">aggregate</span><span class="p">)</span>
+                <span class="o">+</span> <span class="s2">"s, fn: mean)"</span>
+            <span class="p">)</span>
+
+        <span class="n">query_result</span> <span class="o">=</span> <span class="n">query_api</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"org"</span><span class="p">],</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">timestamps</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">query_result</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">records</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span>
+                <span class="n">timestamps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">aggregate</span><span class="p">:</span>  <span class="c1"># fixing aggregation timestamps and values</span>
+            <span class="n">timestamps</span> <span class="o">=</span> <span class="n">timestamps</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+        <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">timestamps</span></div>
+
+
+<div class="viewcode-block" id="InfluxdbDriver.write_data">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_framework.database.connector.influxdb_driver.html#gemini_framework.database.connector.influxdb_driver.InfluxdbDriver.write_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">plant_name</span><span class="p">,</span>
+        <span class="n">asset_name</span><span class="p">,</span>
+        <span class="n">tag_name</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">,</span>
+        <span class="n">write_option</span><span class="o">=</span><span class="n">SYNCHRONOUS</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Write data to internal database in batches."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="p">[</span><span class="n">time</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+
+        <span class="n">write_api</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">write_api</span><span class="p">(</span><span class="n">write_option</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">"measurement"</span><span class="p">:</span> <span class="n">plant_name</span><span class="p">,</span>
+                    <span class="s2">"tags"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"asset_name"</span><span class="p">:</span> <span class="n">asset_name</span><span class="p">},</span>
+                    <span class="s2">"fields"</span><span class="p">:</span> <span class="p">{</span><span class="n">tag_name</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span> <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">},</span>
+                    <span class="s2">"time"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()),</span>
+                <span class="p">}</span>
+                <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+            <span class="p">]</span>
+            <span class="n">write_api</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"bucket"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"org"</span><span class="p">],</span> <span class="n">batch</span><span class="p">,</span> <span class="n">write_precision</span><span class="o">=</span><span class="s2">"s"</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InfluxdbDriver.get_last_data">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_framework.database.connector.influxdb_driver.html#gemini_framework.database.connector.influxdb_driver.InfluxdbDriver.get_last_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_last_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant_name</span><span class="p">,</span> <span class="n">asset_name</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get last data from database."""</span>
+        <span class="n">query_api</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">query_api</span><span class="p">()</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">'from(bucket: "'</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"bucket"</span><span class="p">]</span>
+            <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; range(start: 0)</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r._measurement == "'</span>
+            <span class="o">+</span> <span class="n">plant_name</span>
+            <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r._field == "'</span>
+            <span class="o">+</span> <span class="n">tag_name</span>
+            <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r.asset_name == "'</span>
+            <span class="o">+</span> <span class="n">asset_name</span>
+            <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; last()'</span>
+        <span class="p">)</span>
+
+        <span class="n">query_result</span> <span class="o">=</span> <span class="n">query_api</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"org"</span><span class="p">],</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">timestamps</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">query_result</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">records</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span>
+                <span class="n">timestamps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">timestamps</span></div>
+
+
+<div class="viewcode-block" id="InfluxdbDriver.get_first_data">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_framework.database.connector.influxdb_driver.html#gemini_framework.database.connector.influxdb_driver.InfluxdbDriver.get_first_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_first_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant_name</span><span class="p">,</span> <span class="n">asset_name</span><span class="p">,</span> <span class="n">tag_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get first data from database."""</span>
+        <span class="n">query_api</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">query_api</span><span class="p">()</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">'from(bucket: "'</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"bucket"</span><span class="p">]</span>
+            <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; range(start: 0)</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r._measurement == "'</span>
+            <span class="o">+</span> <span class="n">plant_name</span>
+            <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r._field == "'</span>
+            <span class="o">+</span> <span class="n">tag_name</span>
+            <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; filter(fn: (r) =&gt; r.asset_name == "'</span>
+            <span class="o">+</span> <span class="n">asset_name</span>
+            <span class="o">+</span> <span class="s1">'")</span><span class="se">\</span>
+<span class="s1">            |&gt; first()'</span>
+        <span class="p">)</span>
+
+        <span class="n">query_result</span> <span class="o">=</span> <span class="n">query_api</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"org"</span><span class="p">],</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">timestamps</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">query_result</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">records</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span>
+                <span class="n">timestamps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get_time</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">timestamps</span></div>
+
+
+<div class="viewcode-block" id="InfluxdbDriver.delete_database">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_framework.database.connector.influxdb_driver.html#gemini_framework.database.connector.influxdb_driver.InfluxdbDriver.delete_database">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant_name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Delete measurement from internal database."""</span>
+        <span class="n">delete_api</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">delete_api</span><span class="p">()</span>
+        <span class="n">delete_api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+            <span class="n">start</span><span class="p">,</span>
+            <span class="n">stop</span><span class="p">,</span>
+            <span class="s2">"_measurement="</span> <span class="o">+</span> <span class="n">plant_name</span><span class="p">,</span>
+            <span class="n">bucket</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"bucket"</span><span class="p">],</span>
+            <span class="n">org</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"org"</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InfluxdbDriver.delete_database_all">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_framework.database.connector.influxdb_driver.html#gemini_framework.database.connector.influxdb_driver.InfluxdbDriver.delete_database_all">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_database_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Delete measurement from internal database."""</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="s2">"1970-01-01T00:00:00Z"</span>
+        <span class="n">stop</span> <span class="o">=</span> <span class="s2">"2100-01-01T00:00:00Z"</span>
+        <span class="n">delete_api</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">delete_api</span><span class="p">()</span>
+        <span class="n">delete_api</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+            <span class="n">start</span><span class="p">,</span>
+            <span class="n">stop</span><span class="p">,</span>
+            <span class="s2">"_measurement="</span> <span class="o">+</span> <span class="n">plant_name</span><span class="p">,</span>
+            <span class="n">bucket</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"bucket"</span><span class="p">],</span>
+            <span class="n">org</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"org"</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InfluxdbDriver.get_tagnames">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_framework.database.connector.influxdb_driver.html#gemini_framework.database.connector.influxdb_driver.InfluxdbDriver.get_tagnames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tagnames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plant_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get unitnames and tagnames from database."""</span>
+        <span class="n">query_api</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">query_api</span><span class="p">()</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">'import "influxdata/influxdb/schema"</span><span class="se">\n\n\</span>
+<span class="s1">        schema.measurementTagValues(</span><span class="se">\</span>
+<span class="s1">        bucket:"'</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"bucket"</span><span class="p">]</span>
+            <span class="o">+</span> <span class="s1">'", </span><span class="se">\</span>
+<span class="s1">        measurement:"'</span>
+            <span class="o">+</span> <span class="n">plant_name</span>
+            <span class="o">+</span> <span class="s1">'",</span><span class="se">\</span>
+<span class="s1">        tag: "_field", )'</span>
+        <span class="p">)</span>
+
+        <span class="n">query_result</span> <span class="o">=</span> <span class="n">query_api</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"org"</span><span class="p">],</span> <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="n">tagnames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tag_desc</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">query_result</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">records</span><span class="p">:</span>
+                <span class="n">tagnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get_value</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">tagnames</span><span class="p">,</span> <span class="n">tag_desc</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

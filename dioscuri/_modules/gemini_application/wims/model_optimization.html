@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_application.wims.model_optimization &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_application.wims.model_optimization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_application.wims.model_optimization</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Per-joint CO2 corrosion parameter calibration using SciPy minimize.</span>
+
+<span class="sd">The modelled corrosion rate comes from the production-data path</span>
+<span class="sd">(:func:`build_prod_corrosion_context` + the corrosion correlation) and the</span>
+<span class="sd">measured target from caliper logs</span>
+<span class="sd">(:func:`get_measured_corrosion_rate_from_logs`).  Because each joint's modelled</span>
+<span class="sd">rate depends only on its own parameters and its own precomputed</span>
+<span class="sd">pressure/temperature/CO2, and each log-to-log interval is independent, the</span>
+<span class="sd">total sum-of-squared-errors is fully separable: the calibration solves one</span>
+<span class="sd">small SLSQP problem per (joint, interval) over a shared, precomputed context</span>
+<span class="sd">instead of one large coupled optimization.  A well with three logs therefore</span>
+<span class="sd">yields a distinct parameter set for the log1-&gt;log2 and log2-&gt;log3 intervals.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.wims.corrosion_from_logs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">WALL_THICKNESS_CHANGE_RATE_PREFIX</span><span class="p">,</span>
+    <span class="n">get_measured_corrosion_rate_from_logs</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.wims.corrosion_from_prod_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">build_prod_corrosion_context</span><span class="p">,</span>
+    <span class="n">corroded_mm_for_interval</span><span class="p">,</span>
+    <span class="n">corrosion_rate_for_joint_interval</span><span class="p">,</span>
+    <span class="n">corrosion_rates_from_context</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Real-valued bounds and initial guess for the DLD parameters (A, B, C, D).</span>
+<span class="c1"># Bounds are intentionally wide and signed (negatives allowed): the calibration</span>
+<span class="c1"># prioritises matching the measured rate over physical plausibility, so the</span>
+<span class="c1"># optimizer is free to move each coefficient either side of its nominal value.</span>
+<span class="c1"># Ranges are still kept inside numerically safe limits (the reaction term is</span>
+<span class="c1"># 10 ** (A - B/T + C*log10(f)), which overflows for very large exponents); the</span>
+<span class="c1"># objective penalises any parameter set that yields a non-finite rate.</span>
+<span class="n">DLD_PARAM_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"A"</span><span class="p">,</span> <span class="s2">"B"</span><span class="p">,</span> <span class="s2">"C"</span><span class="p">,</span> <span class="s2">"D"</span><span class="p">]</span>
+<span class="n">DLD_REAL_BOUNDS</span> <span class="o">=</span> <span class="p">[(</span><span class="o">-</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0e5</span><span class="p">,</span> <span class="mf">1.0e5</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">50.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">)]</span>
+<span class="n">DLD_X0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4.93</span><span class="p">,</span> <span class="mf">1119.0</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mf">2.45</span><span class="p">]</span>
+
+<span class="c1"># Per-joint sign multiplier E in {-1, +1} applied in front of the rate</span>
+<span class="c1"># (modelled = E * dld_rate).  The DLD model can only produce a non-negative</span>
+<span class="c1"># corrosion rate (metal loss), so E lets the modelled rate match measured values</span>
+<span class="c1"># that are negative (a survey-to-survey tool/calibration difference where the</span>
+<span class="c1"># later log reads a smaller bore).  E is the direction of the measured change, so</span>
+<span class="c1"># it is *derived* per joint from the sign of the measured rate (not optimized);</span>
+<span class="c1"># the DLD coefficients then calibrate the magnitude and stay meaningful.</span>
+<span class="n">SIGN_POS</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">SIGN_NEG</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+
+<span class="c1"># Penalty returned when a parameter combination makes the model blow up</span>
+<span class="c1"># (e.g. underflow in the reaction-controlled term -&gt; division by zero).</span>
+<span class="n">_OBJECTIVE_PENALTY</span> <span class="o">=</span> <span class="mf">1e12</span>
+
+
+<div class="viewcode-block" id="OptCO2Corrosion">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.model_optimization.html#gemini_application.wims.model_optimization.OptCO2Corrosion">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OptCO2Corrosion</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Calibrate per-joint CO2 corrosion parameters against log-measured rates."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="p">,</span>
+        <span class="n">outputs</span><span class="p">,</span>
+        <span class="n">corrosion_models</span><span class="p">,</span>
+        <span class="n">co2_models</span><span class="p">,</span>
+        <span class="n">vlp</span><span class="p">,</span>
+        <span class="n">esp_joint_start_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">param_store_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialise the optimizer and precompute everything reusable.</span>
+
+<span class="sd">        The expensive, parameter-independent work (VLP/PVT/CO2) and the measured</span>
+<span class="sd">        target are computed once here; the per-joint solves reuse them.</span>
+<span class="sd">        """</span>
+        <span class="c1"># -- store references -----------------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">corrosion_models</span> <span class="o">=</span> <span class="n">corrosion_models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">co2_models</span> <span class="o">=</span> <span class="n">co2_models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vlp</span> <span class="o">=</span> <span class="n">vlp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_store_path</span> <span class="o">=</span> <span class="n">param_store_path</span>
+
+        <span class="k">if</span> <span class="n">esp_joint_start_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">esp_joint_start_idx</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"esp_joint_start_idx"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span> <span class="o">=</span> <span class="n">esp_joint_start_idx</span>
+
+        <span class="c1"># -- joint bookkeeping ----------------------------------------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">well_tally</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"well_tally"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_total_joints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">well_tally</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_active_joints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_total_joints</span> <span class="o">-</span> <span class="n">esp_joint_start_idx</span>
+
+        <span class="c1"># -- precompute parameter-independent prod-data context -------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="o">=</span> <span class="n">build_prod_corrosion_context</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">well_tally</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="p">,</span>
+            <span class="n">vlp</span><span class="p">,</span>
+            <span class="n">co2_models</span><span class="p">,</span>
+            <span class="n">esp_joint_start_idx</span><span class="o">=</span><span class="n">esp_joint_start_idx</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># -- compute the log-measured calibration target once ---------------</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">measured_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_measured_target</span><span class="p">()</span>
+
+        <span class="c1"># -- bounds / warm-start (DLD: A, B, C, D) --------------------------</span>
+        <span class="c1"># The optimizer fits the 4 DLD coefficients to the measured *magnitude*</span>
+        <span class="c1"># of each (joint, interval); the sign multiplier E (in {-1, +1}) is</span>
+        <span class="c1"># derived per (joint, interval), not solved.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_names</span> <span class="o">=</span> <span class="n">DLD_PARAM_NAMES</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">real_bounds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">DLD_REAL_BOUNDS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalized_bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">real_bounds</span><span class="p">)</span>
+
+        <span class="c1"># -- per-(joint, interval) state, keyed by (total_idx, rate_col) ----</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interval_by_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"interval_by_col"</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pair_signs</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># measured direction E in {-1, +1}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pair_params</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># calibrated [A, B, C, D] written by calibrate()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warm_pairs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_warm_pairs</span><span class="p">()</span>
+
+        <span class="c1"># -- resolve common rate columns + per-(joint, interval) targets ----</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_build_calibration_targets</span><span class="p">()</span>
+
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="c1"># Setup helpers</span>
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_measured_target</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Compute the measured corrosion rate from caliper logs (once)."""</span>
+        <span class="k">return</span> <span class="n">get_measured_corrosion_rate_from_logs</span><span class="p">(</span>
+            <span class="n">well_tally</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">well_tally</span><span class="p">,</span>
+            <span class="n">logs_metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"logs_metadata"</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="n">selected_log_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"selectedLogs"</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="n">processed_logs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"processedLogs"</span><span class="p">,</span> <span class="p">[]),</span>
+            <span class="n">start_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">],</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_warm_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return persisted ``{(total_idx, rate_col): [A, B, C, D]}`` warm starts.</span>
+
+<span class="sd">        Reads the per-interval store written by :meth:`_save_params`.  Returns an</span>
+<span class="sd">        empty dict (every pair falls back to the DLD defaults) when no compatible</span>
+<span class="sd">        store exists -- the store is compatible when it targets the same ESP</span>
+<span class="sd">        offset and a matching number of active joints per interval.</span>
+<span class="sd">        """</span>
+        <span class="n">warm</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_store_path</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">warm</span>
+
+        <span class="c1"># -- read and validate the stored parameters ------------------------</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">stored</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">warm</span>
+
+        <span class="n">intervals</span> <span class="o">=</span> <span class="n">stored</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"intervals"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">intervals</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">stored</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"esp_joint_start_idx"</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="n">warm</span>
+
+        <span class="c1"># -- map each stored interval's per-joint params by rate_col --------</span>
+        <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">intervals</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">rate_col</span> <span class="o">=</span> <span class="n">interval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rate_col"</span><span class="p">)</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">interval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"params"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">rate_col</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_active_joints</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_active_joints</span><span class="p">):</span>
+                <span class="n">entry</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="p">{}</span>
+                <span class="n">warm</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">DLD_X0</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+                <span class="p">]</span>
+        <span class="k">return</span> <span class="n">warm</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_calibration_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Find the rate columns shared by modelled context and measured logs.</span>
+
+<span class="sd">        Stores ``self.common_cols`` (ordered rate-column names present in both)</span>
+<span class="sd">        and ``self.joint_targets`` -- ``{total_idx: {col: measured_value}}`` for</span>
+<span class="sd">        joints that have at least one finite measured value.</span>
+<span class="sd">        """</span>
+        <span class="c1"># -- collect modelled (context) rate columns ------------------------</span>
+        <span class="n">context_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">interval</span><span class="p">[</span><span class="s2">"rate_col"</span><span class="p">]</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">"intervals"</span><span class="p">]]</span>
+
+        <span class="n">measured</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measured_df</span>
+        <span class="k">if</span> <span class="n">measured</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="s2">"Joint No."</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">measured</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">common_cols</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">joint_targets</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">return</span>
+
+        <span class="c1"># -- intersect with measured rate columns ---------------------------</span>
+        <span class="n">measured_rate_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">c</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">measured</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="s2">"Joint No."</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">WALL_THICKNESS_CHANGE_RATE_PREFIX</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">common_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">context_cols</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">measured_rate_cols</span><span class="p">]</span>
+
+        <span class="c1"># -- cache finite per-joint measured values over common columns -----</span>
+        <span class="n">joint_targets</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">active_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_active_joints</span><span class="p">):</span>
+            <span class="n">total_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span> <span class="o">+</span> <span class="n">active_idx</span>
+            <span class="k">if</span> <span class="n">total_idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">measured</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_cols</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">measured</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                    <span class="n">targets</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">targets</span><span class="p">:</span>
+                <span class="n">joint_targets</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">targets</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">joint_targets</span> <span class="o">=</span> <span class="n">joint_targets</span>
+
+        <span class="c1"># -- per-(joint, interval) sign E in {-1, +1} from the measured -----</span>
+        <span class="c1"># direction.  E is the direction of the bore change for that interval</span>
+        <span class="c1"># (positive = corrosion/metal loss, negative = bore shrank); the DLD</span>
+        <span class="c1"># coefficients then calibrate the magnitude of that single interval.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pair_signs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span> <span class="p">(</span><span class="n">SIGN_NEG</span> <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">SIGN_POS</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">targets</span> <span class="ow">in</span> <span class="n">joint_targets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">targets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="c1"># Normalisation / denormalisation</span>
+    <span class="c1"># ----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="OptCO2Corrosion.normalize_params">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.model_optimization.html#gemini_application.wims.model_optimization.OptCO2Corrosion.normalize_params">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">real_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Convert real-valued parameters to normalized [0, 1]."""</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">real_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_bounds</span><span class="p">):</span>
+            <span class="n">norm</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">lo</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span><span class="p">)</span> <span class="k">if</span> <span class="n">hi</span> <span class="o">&gt;</span> <span class="n">lo</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OptCO2Corrosion.denormalize_params">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.model_optimization.html#gemini_application.wims.model_optimization.OptCO2Corrosion.denormalize_params">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">denormalize_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Convert normalized parameters [0, 1] to real-valued."""</span>
+        <span class="n">real</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">z</span><span class="p">,</span> <span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">norm_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_bounds</span><span class="p">):</span>
+            <span class="n">real</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">z</span> <span class="o">*</span> <span class="p">(</span><span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">real</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="c1"># Per-joint parameter handling</span>
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_joint_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">real_params</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Write A, B, C, D into the corrosion model for one joint."""</span>
+        <span class="n">active_idx</span> <span class="o">=</span> <span class="n">total_idx</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrosion_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span>
+            <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">real_params</span><span class="p">)}</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pair_modelled_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Signed modelled rate for one (joint, interval): ``E * dld_rate``.</span>
+
+<span class="sd">        ``E`` in {-1, +1} is the measured direction for that pair (defaults to</span>
+<span class="sd">        +1 when unknown).  Returns ``None`` when the interval/joint is unknown or</span>
+<span class="sd">        the model yields a non-finite rate.</span>
+<span class="sd">        """</span>
+        <span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval_by_col</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rate_col</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="n">corrosion_rate_for_joint_interval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">rate</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pair_signs</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">),</span> <span class="n">SIGN_POS</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">rate</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pair_sse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Squared error for one (joint, interval) at the model's current params."""</span>
+        <span class="n">active_idx</span> <span class="o">=</span> <span class="n">total_idx</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrosion_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span>
+        <span class="n">modelled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pair_modelled_rate</span><span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">modelled</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="n">modelled</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_targets</span><span class="p">[</span><span class="n">total_idx</span><span class="p">][</span><span class="n">rate_col</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">error</span> <span class="o">*</span> <span class="n">error</span>
+
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="c1"># Per-joint calibration (separable problem)</span>
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calibrate_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run SLSQP for one (joint, interval) from several starts; keep the best.</span>
+
+<span class="sd">        Multiple starting points -- the nominal literature DLD defaults plus any</span>
+<span class="sd">        persisted warm-start guess for this exact (joint, interval) -- make the</span>
+<span class="sd">        solve robust to a degenerate initial guess.  A large ``B`` saved from a</span>
+<span class="sd">        previously collapsed run drives the reaction term</span>
+<span class="sd">        ``10 ** (A - B/T + C*log10(f))`` to underflow, so the modelled rate (and</span>
+<span class="sd">        its gradient) is ~0 and SLSQP "converges" after a single step without</span>
+<span class="sd">        moving.  Always starting from the nominal defaults (a healthy, non-zero</span>
+<span class="sd">        rate) lets the optimizer escape that flat region.  The objective</span>
+<span class="sd">        penalises any parameter set that yields a non-finite rate, so the wide,</span>
+<span class="sd">        signed bounds cannot be exploited by driving the model into NaN/inf.</span>
+
+<span class="sd">        The modelled rate carries the pair sign E (``modelled = E * dld_rate``),</span>
+<span class="sd">        so the 4 coefficients calibrate the *magnitude* of this single interval</span>
+<span class="sd">        and the fit can match a negative measured value the DLD model cannot.</span>
+<span class="sd">        Stores the winning ``[A, B, C, D]`` in ``self.pair_params``.</span>
+<span class="sd">        """</span>
+        <span class="n">active_idx</span> <span class="o">=</span> <span class="n">total_idx</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrosion_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span>
+        <span class="n">measured_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_targets</span><span class="p">[</span><span class="n">total_idx</span><span class="p">][</span><span class="n">rate_col</span><span class="p">]</span>
+
+        <span class="c1"># -- objective: single-interval SSE; blow-up / non-finite -&gt; penalty</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">objective</span><span class="p">(</span><span class="n">norm_params</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_params</span><span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">denormalize_params</span><span class="p">(</span><span class="n">norm_params</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">modelled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pair_modelled_rate</span><span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">OverflowError</span><span class="p">,</span> <span class="ne">FloatingPointError</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">_OBJECTIVE_PENALTY</span>
+            <span class="k">if</span> <span class="n">modelled</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_OBJECTIVE_PENALTY</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="n">modelled</span> <span class="o">-</span> <span class="n">measured_value</span>
+            <span class="k">return</span> <span class="n">error</span> <span class="o">*</span> <span class="n">error</span>
+
+        <span class="c1"># -- candidate starts: nominal defaults + this pair's warm-start ----</span>
+        <span class="n">starts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">DLD_X0</span><span class="p">)]</span>
+        <span class="n">warm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">warm_pairs</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">warm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">warm</span><span class="p">,</span> <span class="n">DLD_X0</span><span class="p">):</span>
+            <span class="n">starts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">warm</span><span class="p">))</span>
+
+        <span class="c1"># -- solve from each start, keep the lowest-SSE result --------------</span>
+        <span class="n">best</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">start_real</span> <span class="ow">in</span> <span class="n">starts</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                <span class="n">fun</span><span class="o">=</span><span class="n">objective</span><span class="p">,</span>
+                <span class="n">x0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_params</span><span class="p">(</span><span class="n">start_real</span><span class="p">),</span>
+                <span class="n">bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">normalized_bounds</span><span class="p">,</span>
+                <span class="n">method</span><span class="o">=</span><span class="s2">"SLSQP"</span><span class="p">,</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"maxiter"</span><span class="p">:</span> <span class="n">maxiter</span><span class="p">,</span> <span class="s2">"ftol"</span><span class="p">:</span> <span class="mf">1e-9</span><span class="p">},</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">best</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">best</span><span class="o">.</span><span class="n">fun</span><span class="p">:</span>
+                <span class="n">best</span> <span class="o">=</span> <span class="n">result</span>
+
+        <span class="c1"># -- write the winning parameters back + record them ----------------</span>
+        <span class="n">best_real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">denormalize_params</span><span class="p">(</span><span class="n">best</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_params</span><span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">best_real</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pair_params</span><span class="p">[(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">best_real</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">best</span>
+
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="c1"># Top-level calibration routine</span>
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_interval_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Short interval label ('(d1 -&gt; d2)') derived from a rate-column name."""</span>
+        <span class="k">return</span> <span class="n">rate_col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">WALL_THICKNESS_CHANGE_RATE_PREFIX</span> <span class="o">+</span> <span class="s2">" "</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+<div class="viewcode-block" id="OptCO2Corrosion.calibrate">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.model_optimization.html#gemini_application.wims.model_optimization.OptCO2Corrosion.calibrate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calibrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">progress_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calibrate per-(joint, interval) parameters against log-measured rates.</span>
+
+<span class="sd">        Solves one independent 4-variable problem for every (joint, interval)</span>
+<span class="sd">        pair that has a measured rate -- so a well with three logs yields a</span>
+<span class="sd">        separate parameter set for the log1-&gt;log2 and log2-&gt;log3 intervals.</span>
+<span class="sd">        Stores the uncalibrated and calibrated modelled rates and the measured</span>
+<span class="sd">        target in ``outputs``, persists the per-interval parameters, and returns</span>
+<span class="sd">        a summary dict.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        maxiter : int, optional</span>
+<span class="sd">            Maximum SLSQP iterations per (joint, interval) pair.</span>
+<span class="sd">        progress_callback : callable or None</span>
+<span class="sd">            Optional ``fn(completed, total, per_joint)`` invoked after each pair</span>
+<span class="sd">            is solved.  ``per_joint`` is the growing list of per-(joint,</span>
+<span class="sd">            interval) records (so callers can render live progress).  Exceptions</span>
+<span class="sd">            raised by the callback are swallowed so progress reporting never</span>
+<span class="sd">            breaks the calibration.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Summary dict that includes ``"per_joint"`` -- one record per</span>
+<span class="sd">            (joint, interval) with ``interval``/``rate_col`` tags, params</span>
+<span class="sd">            (A,B,C,D,E), and before/after SSE -- used for the final error</span>
+<span class="sd">            plot and coefficient table.</span>
+<span class="sd">        """</span>
+        <span class="c1"># -- guard: nothing to calibrate ------------------------------------</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">"degenerate"</span><span class="p">]</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_cols</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_targets</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">"Corrosion calibration skipped: no overlapping measured/modelled "</span>
+                <span class="s2">"intervals (need processed logs and production data)."</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"measuredCorrosionRateFromLogs"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measured_df</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"skipped"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span> <span class="s2">"n_joints"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"per_joint"</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="c1"># -- store the uncalibrated modelled result (nominal DLD defaults) --</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apply_nominal_params</span><span class="p">()</span>
+        <span class="n">uncalibrated_table</span> <span class="o">=</span> <span class="n">corrosion_rates_from_context</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrosion_models</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"modelledCorrosionRate"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_signs_to_table</span><span class="p">(</span><span class="n">uncalibrated_table</span><span class="p">)</span>
+
+        <span class="c1"># -- build the ordered list of (joint, interval) pairs to solve -----</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">total_idx</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">joint_targets</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">rate_col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_cols</span>
+            <span class="k">if</span> <span class="n">rate_col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">joint_targets</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">n_pairs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span>
+
+        <span class="c1"># -- solve each (joint, interval) independently (SSE is separable) --</span>
+        <span class="n">sse_before</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">sse_after</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">per_joint</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">completed</span><span class="p">,</span> <span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># "before" = nominal literature DLD (stable, healthy baseline; never</span>
+            <span class="c1"># a previous run's persisted/collapsed parameters)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_params</span><span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">DLD_X0</span><span class="p">))</span>
+            <span class="n">pair_sse_before</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pair_sse</span><span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">)</span>
+
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibrate_pair</span><span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">)</span>
+            <span class="n">pair_sse_after</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">fun</span><span class="p">)</span>
+
+            <span class="n">sse_before</span> <span class="o">+=</span> <span class="n">pair_sse_before</span>
+            <span class="n">sse_after</span> <span class="o">+=</span> <span class="n">pair_sse_after</span>
+
+            <span class="c1"># -- read the calibrated A, B, C, D + the sign E for this pair --</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pair_params</span><span class="p">[(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">)]</span>
+            <span class="n">calibrated_params</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">calibrated_params</span><span class="p">[</span><span class="s2">"E"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pair_signs</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">),</span> <span class="n">SIGN_POS</span><span class="p">))</span>
+
+            <span class="c1"># -- record + report per-(joint, interval) error / convergence -</span>
+            <span class="n">per_joint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"joint"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_idx</span><span class="p">),</span>
+                    <span class="s2">"joint_label"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">"joint_labels"</span><span class="p">][</span><span class="n">total_idx</span><span class="p">]),</span>
+                    <span class="s2">"interval"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interval_label</span><span class="p">(</span><span class="n">rate_col</span><span class="p">),</span>
+                    <span class="s2">"rate_col"</span><span class="p">:</span> <span class="n">rate_col</span><span class="p">,</span>
+                    <span class="s2">"sse_before"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">pair_sse_before</span><span class="p">),</span>
+                    <span class="s2">"sse_after"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">pair_sse_after</span><span class="p">),</span>
+                    <span class="s2">"params"</span><span class="p">:</span> <span class="n">calibrated_params</span><span class="p">,</span>
+                    <span class="s2">"iterations"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"nit"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+                    <span class="s2">"n_func_evals"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"nfev"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+                    <span class="s2">"converged"</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"success"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)),</span>
+                    <span class="s2">"message"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">progress_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">progress_callback</span><span class="p">(</span><span class="n">completed</span><span class="p">,</span> <span class="n">n_pairs</span><span class="p">,</span> <span class="n">per_joint</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+        <span class="c1"># -- store calibrated results (per-interval params + sign) ----------</span>
+        <span class="n">calibrated_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_calibrated_table</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"modelledCorrosionRateCalibrated"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_signs_to_table</span><span class="p">(</span>
+            <span class="n">calibrated_table</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"measuredCorrosionRateFromLogs"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">measured_df</span>
+
+        <span class="c1"># -- persist optimized per-interval parameters for reuse next run ---</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_params</span><span class="p">()</span>
+
+        <span class="n">n_joints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">({</span><span class="n">total_idx</span> <span class="k">for</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">})</span>
+        <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"ok"</span><span class="p">,</span>
+            <span class="s2">"n_joints"</span><span class="p">:</span> <span class="n">n_joints</span><span class="p">,</span>
+            <span class="s2">"n_intervals"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">common_cols</span><span class="p">),</span>
+            <span class="s2">"n_pairs"</span><span class="p">:</span> <span class="n">n_pairs</span><span class="p">,</span>
+            <span class="s2">"sse_before"</span><span class="p">:</span> <span class="n">sse_before</span><span class="p">,</span>
+            <span class="s2">"sse_after"</span><span class="p">:</span> <span class="n">sse_after</span><span class="p">,</span>
+            <span class="s2">"per_joint"</span><span class="p">:</span> <span class="n">per_joint</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Corrosion calibration complete: </span><span class="si">{</span><span class="n">n_pairs</span><span class="si">}</span><span class="s2"> (joint, interval) pairs "</span>
+            <span class="sa">f</span><span class="s2">"across </span><span class="si">{</span><span class="n">n_joints</span><span class="si">}</span><span class="s2"> joints, SSE </span><span class="si">{</span><span class="n">sse_before</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">sse_after</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2">."</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">summary</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_nominal_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Reset all active joints to the nominal literature DLD parameters.</span>
+
+<span class="sd">        This is the *uncalibrated* baseline reported to the user (before vs</span>
+<span class="sd">        after).  It deliberately ignores any persisted warm-start so the</span>
+<span class="sd">        baseline is stable and never reflects a previous run's (possibly</span>
+<span class="sd">        collapsed) parameters.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">active_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_active_joints</span><span class="p">):</span>
+            <span class="n">total_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span> <span class="o">+</span> <span class="n">active_idx</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_params</span><span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">DLD_X0</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_signs_to_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Flip each (joint, interval) cell whose sign E is -1.</span>
+
+<span class="sd">        The sign is per (joint, interval): a negative-E pair (the bore shrank</span>
+<span class="sd">        over that interval) gets its rate and matching corroded value flipped so</span>
+<span class="sd">        the modelled table carries the measured direction.  Pairs with E = +1</span>
+<span class="sd">        are left untouched.</span>
+<span class="sd">        """</span>
+        <span class="c1"># -- nothing to flip without negative signs -------------------------</span>
+        <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pair_signs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">df</span>
+
+        <span class="c1"># -- flip the rate + corroded columns of each negative-E pair -------</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">),</span> <span class="n">sign</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pair_signs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">sign</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">total_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval_by_col</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rate_col</span><span class="p">)</span>
+            <span class="n">corroded_col</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"corroded_col"</span><span class="p">]</span> <span class="k">if</span> <span class="n">interval</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">(</span><span class="n">rate_col</span><span class="p">,</span> <span class="n">corroded_col</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">col</span> <span class="ow">and</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">col</span><span class="p">]):</span>
+                    <span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">col</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_calibrated_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Build the calibrated rate/corroded table column-by-column.</span>
+
+<span class="sd">        Each interval column uses that interval's own per-joint calibrated</span>
+<span class="sd">        parameters (falling back to the nominal DLD defaults for joints that had</span>
+<span class="sd">        no measured value for the interval).  Signs are applied separately by</span>
+<span class="sd">        :meth:`_apply_signs_to_table`, so this returns unsigned magnitudes.</span>
+<span class="sd">        """</span>
+        <span class="n">n_total_joints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">"n_total_joints"</span><span class="p">]</span>
+        <span class="n">esp_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span>
+
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">"joint_labels"</span><span class="p">],</span>
+            <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">n_total_joints</span><span class="p">),</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"Joint No."</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="c1"># -- one column pair per interval, each with its own joint params ---</span>
+        <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">"intervals"</span><span class="p">]:</span>
+            <span class="n">rate_col</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"rate_col"</span><span class="p">]</span>
+            <span class="n">total_duration_yr</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"total_duration_yr"</span><span class="p">]</span>
+
+            <span class="n">corroded_mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_total_joints</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="n">corroded_mm</span><span class="p">[</span><span class="n">esp_start</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="k">for</span> <span class="n">active_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_active_joints</span><span class="p">):</span>
+                <span class="n">total_idx</span> <span class="o">=</span> <span class="n">esp_start</span> <span class="o">+</span> <span class="n">active_idx</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corrosion_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pair_params</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">DLD_X0</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_joint_params</span><span class="p">(</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+                <span class="n">corroded_mm</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">corroded_mm_for_interval</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">active_idx</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">total_duration_yr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">avg_rate</span> <span class="o">=</span> <span class="n">corroded_mm</span> <span class="o">/</span> <span class="n">total_duration_yr</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">avg_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">corroded_mm</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+            <span class="n">result_df</span><span class="p">[</span><span class="n">rate_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg_rate</span>
+            <span class="n">result_df</span><span class="p">[</span><span class="n">interval</span><span class="p">[</span><span class="s2">"corroded_col"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">corroded_mm</span>
+
+        <span class="k">return</span> <span class="n">result_df</span>
+
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="c1"># Persistence</span>
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Write optimized per-interval, per-joint parameters to JSON (atomic).</span>
+
+<span class="sd">        The store keeps one entry per interval (in chronological order) so that</span>
+<span class="sd">        prediction can pick the *latest* interval's parameters.  Each per-joint</span>
+<span class="sd">        entry holds the calibrated ``A, B, C, D`` plus the derived sign ``E`` so</span>
+<span class="sd">        the prediction can carry the direction forward.  Joints without a</span>
+<span class="sd">        calibrated value for an interval fall back to the DLD defaults / E=+1.</span>
+<span class="sd">        """</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_store_path</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># -- gather per-interval, per-joint A, B, C, D, E -------------------</span>
+        <span class="n">intervals_payload</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">"intervals"</span><span class="p">]:</span>
+            <span class="n">rate_col</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"rate_col"</span><span class="p">]</span>
+            <span class="n">params_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">active_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_active_joints</span><span class="p">):</span>
+                <span class="n">total_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span> <span class="o">+</span> <span class="n">active_idx</span>
+                <span class="n">pair</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pair_params</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">pair</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">pair</span><span class="p">)}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">DLD_X0</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">)}</span>
+                <span class="n">entry</span><span class="p">[</span><span class="s2">"E"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pair_signs</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">total_idx</span><span class="p">,</span> <span class="n">rate_col</span><span class="p">),</span> <span class="n">SIGN_POS</span><span class="p">))</span>
+                <span class="n">params_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+
+            <span class="n">intervals_payload</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"rate_col"</span><span class="p">:</span> <span class="n">rate_col</span><span class="p">,</span>
+                    <span class="s2">"start"</span><span class="p">:</span> <span class="n">interval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"start"</span><span class="p">),</span>
+                    <span class="s2">"end"</span><span class="p">:</span> <span class="n">interval</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"end"</span><span class="p">),</span>
+                    <span class="s2">"total_duration_yr"</span><span class="p">:</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"total_duration_yr"</span><span class="p">],</span>
+                    <span class="s2">"params"</span><span class="p">:</span> <span class="n">params_list</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"corrosion_model"</span><span class="p">:</span> <span class="s2">"DLD"</span><span class="p">,</span>
+            <span class="s2">"esp_joint_start_idx"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_joint_start_idx</span><span class="p">,</span>
+            <span class="c1"># local timestamp of this calibration (surfaced as "last optimized")</span>
+            <span class="s2">"optimized_at"</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M"</span><span class="p">),</span>
+            <span class="s2">"intervals"</span><span class="p">:</span> <span class="n">intervals_payload</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># -- atomic write (tmp + replace) -----------------------------------</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">".tmp"</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not persist corrosion parameters to </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="c1"># ----------------------------------------------------------------------</span>
+    <span class="c1"># Plotting</span>
+    <span class="c1"># ----------------------------------------------------------------------</span>
+<div class="viewcode-block" id="OptCO2Corrosion.plot">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.model_optimization.html#gemini_application.wims.model_optimization.OptCO2Corrosion.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Plot measured vs modelled (uncalibrated and calibrated) corrosion."""</span>
+        <span class="n">measured</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"measuredCorrosionRateFromLogs"</span><span class="p">)</span>
+        <span class="n">modelled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"modelledCorrosionRate"</span><span class="p">)</span>
+        <span class="n">calibrated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"modelledCorrosionRateCalibrated"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">measured</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">modelled</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">calibrated</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Nothing to plot: run calibrate() first."</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># -- one line trio per shared interval column -----------------------</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">modelled</span><span class="p">[</span><span class="s2">"Joint No."</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_cols</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">measured</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">measured</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Measured </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">modelled</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">modelled</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Un-calibrated </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">calibrated</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">calibrated</span><span class="p">[</span><span class="n">column</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Calibrated </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Corrosion rate plot"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Joint number"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">WALL_THICKNESS_CHANGE_RATE_PREFIX</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

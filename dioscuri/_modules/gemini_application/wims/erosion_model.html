@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_application.wims.erosion_model &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_application.wims.erosion_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_application.wims.erosion_model</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Erosion analysis application for WIMS."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytz</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.application_abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApplicationAbstract</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.wims.common</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_esp_depth_m</span><span class="p">,</span>
+    <span class="n">get_tally_from_well_parameters</span><span class="p">,</span>
+    <span class="n">get_well_type</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.wims.erosion_from_prod_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_erosion_for_segments</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.wims.erosion_from_tally</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">default_esp_geometry_template</span><span class="p">,</span>
+    <span class="n">get_production_casing_id_inch</span><span class="p">,</span>
+    <span class="n">resolve_production_tubing_id_inch</span><span class="p">,</span>
+    <span class="n">segments_from_tally</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">tzobject</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="s2">"Europe/Amsterdam"</span><span class="p">)</span>
+
+<span class="n">ESP_GEOMETRY_FILENAME</span> <span class="o">=</span> <span class="s2">"esp_geometry.json"</span>
+
+
+<div class="viewcode-block" id="ErosionApplication">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ErosionApplication</span><span class="p">(</span><span class="n">ApplicationAbstract</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Forward erosion calculation from well tally geometry and production data."""</span>
+
+<div class="viewcode-block" id="ErosionApplication.init_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.init_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Load well tally into inputs when available."""</span>
+        <span class="k">if</span> <span class="n">initial_parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">initial_parameters</span><span class="p">)</span>
+        <span class="n">well_tally</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_tally_from_well_parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">well_tally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"well_tally"</span><span class="p">]</span> <span class="o">=</span> <span class="n">well_tally</span></div>
+
+
+<div class="viewcode-block" id="ErosionApplication.calculate">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.calculate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""No-op; erosion workflow uses calculate_erosion()."""</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_well_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return 'productionwell' or 'injectionwell'."""</span>
+        <span class="k">return</span> <span class="n">get_well_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_tally_from_well_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get well tally from unit parameters (app builder)."""</span>
+        <span class="k">return</span> <span class="n">get_tally_from_well_parameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_esp_depth_m</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""ESP setting depth [m] from linked ESP unit, or None."""</span>
+        <span class="k">return</span> <span class="n">get_esp_depth_m</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_well_data_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">project_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">project_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">"/wims_data"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_folder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ErosionApplication.esp_geometry_path">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.esp_geometry_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">esp_geometry_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Path to per-well ESP geometry JSON."""</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_well_data_folder</span><span class="p">(),</span> <span class="n">ESP_GEOMETRY_FILENAME</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ErosionApplication.load_esp_geometry">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.load_esp_geometry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_esp_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Load ESP geometry from disk or return default template."""</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">esp_geometry_path</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">data</span>
+        <span class="k">return</span> <span class="n">default_esp_geometry_template</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ErosionApplication.save_esp_geometry">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.save_esp_geometry">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_esp_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Write ESP geometry JSON for the current well."""</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_well_data_folder</span><span class="p">(),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">esp_geometry_path</span><span class="p">(),</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ErosionApplication.resolve_esp_setting_depth_m">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.resolve_esp_setting_depth_m">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_esp_setting_depth_m</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">esp_geometry</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Resolve ESP setting depth from geometry override or plant ESP unit."""</span>
+        <span class="n">override</span> <span class="o">=</span> <span class="n">esp_geometry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"setting_depth_m"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">override</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">override</span><span class="p">)</span>
+        <span class="n">esp_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_esp_depth_m</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">esp_depth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"ESP setting depth not found. Set esp_depth on the ESP unit "</span>
+                <span class="s2">"or setting_depth_m in esp_geometry.json."</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">esp_depth</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ErosionApplication.get_production_data">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.get_production_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_production_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Read flow, pressure, temperature from internal database."""</span>
+        <span class="n">well_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_well_type</span><span class="p">()</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">],</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"end_time"</span><span class="p">],</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">end_time</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+
+        <span class="n">timestep</span> <span class="o">=</span> <span class="mi">3600</span>
+
+        <span class="k">if</span> <span class="n">well_type</span> <span class="o">==</span> <span class="s2">"productionwell"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="s2">"to_units"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to_units</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Production well has no linked ESP unit."</span><span class="p">)</span>
+            <span class="n">flow_tag</span> <span class="o">=</span> <span class="s2">"esp_flow.measured"</span>
+            <span class="n">pressure_tag</span> <span class="o">=</span> <span class="s2">"esp_inlet_pressure.measured"</span>
+            <span class="n">temperature_tag</span> <span class="o">=</span> <span class="s2">"esp_inlet_temperature.measured"</span>
+            <span class="n">asset_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to_units</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flow_tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">well_type</span><span class="si">}</span><span class="s2">_flow.measured"</span>
+            <span class="n">pressure_tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">well_type</span><span class="si">}</span><span class="s2">_wellhead_pressure.measured"</span>
+            <span class="n">temperature_tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">well_type</span><span class="si">}</span><span class="s2">_wellhead_temperature.measured"</span>
+            <span class="n">asset_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">asset_name</span><span class="p">,</span>
+                <span class="n">flow_tag</span><span class="p">,</span>
+                <span class="n">start_time</span><span class="p">,</span>
+                <span class="n">end_time</span><span class="p">,</span>
+                <span class="n">timestep</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+            <span class="n">result</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">asset_name</span><span class="p">,</span>
+                <span class="n">pressure_tag</span><span class="p">,</span>
+                <span class="n">start_time</span><span class="p">,</span>
+                <span class="n">end_time</span><span class="p">,</span>
+                <span class="n">timestep</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"pressure"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+            <span class="n">result</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">asset_name</span><span class="p">,</span>
+                <span class="n">temperature_tag</span><span class="p">,</span>
+                <span class="n">start_time</span><span class="p">,</span>
+                <span class="n">end_time</span><span class="p">,</span>
+                <span class="n">timestep</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"temperature"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ErosionApplication.build_segments">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.build_segments">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">esp_geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tubing_id_inch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Build erosion flow-path segments from well tally and ESP geometry."""</span>
+        <span class="n">well_tally</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_tally_from_well_parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">well_tally</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No well tally found in Well Parameters (app builder)."</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"well_tally"</span><span class="p">]</span> <span class="o">=</span> <span class="n">well_tally</span>
+
+        <span class="n">well_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_well_type</span><span class="p">()</span>
+        <span class="n">esp_setting_depth_m</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">well_type</span> <span class="o">==</span> <span class="s2">"productionwell"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">esp_geometry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">esp_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_esp_geometry</span><span class="p">()</span>
+            <span class="n">esp_setting_depth_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_esp_setting_depth_m</span><span class="p">(</span><span class="n">esp_geometry</span><span class="p">)</span>
+
+        <span class="n">segments</span> <span class="o">=</span> <span class="n">segments_from_tally</span><span class="p">(</span>
+            <span class="n">well_tally</span><span class="p">,</span>
+            <span class="n">well_type</span><span class="p">,</span>
+            <span class="n">esp_setting_depth_m</span><span class="o">=</span><span class="n">esp_setting_depth_m</span><span class="p">,</span>
+            <span class="n">esp_geometry</span><span class="o">=</span><span class="n">esp_geometry</span><span class="p">,</span>
+            <span class="n">tubing_id_inch</span><span class="o">=</span><span class="n">tubing_id_inch</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">segments</span><span class="p">,</span> <span class="n">well_type</span><span class="p">,</span> <span class="n">esp_setting_depth_m</span></div>
+
+
+<div class="viewcode-block" id="ErosionApplication.get_production_geometry_from_tally">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.get_production_geometry_from_tally">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_production_geometry_from_tally</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">esp_geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return tally-derived production casing and tubing IDs [inch]."""</span>
+        <span class="n">well_tally</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_tally_from_well_parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">well_tally</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No well tally found in Well Parameters (app builder)."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">esp_geometry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">esp_geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_esp_geometry</span><span class="p">()</span>
+        <span class="n">setting_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_esp_setting_depth_m</span><span class="p">(</span><span class="n">esp_geometry</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"production_casing_id_inch"</span><span class="p">:</span> <span class="n">get_production_casing_id_inch</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">setting_m</span><span class="p">),</span>
+            <span class="s2">"production_tubing_id_inch"</span><span class="p">:</span> <span class="n">resolve_production_tubing_id_inch</span><span class="p">(</span>
+                <span class="n">well_tally</span><span class="p">,</span> <span class="n">setting_m</span><span class="p">,</span> <span class="n">esp_geometry</span><span class="o">=</span><span class="n">esp_geometry</span>
+            <span class="p">),</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="ErosionApplication.calculate_erosion">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_model.html#gemini_application.wims.erosion_model.ErosionApplication.calculate_erosion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_erosion</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">erosion_model</span><span class="p">,</span>
+        <span class="n">erosion_params</span><span class="p">,</span>
+        <span class="n">esp_geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">tubing_id_inch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run forward erosion calculation and store results in outputs."""</span>
+        <span class="n">segments</span><span class="p">,</span> <span class="n">well_type</span><span class="p">,</span> <span class="n">esp_depth_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_segments</span><span class="p">(</span>
+            <span class="n">esp_geometry</span><span class="o">=</span><span class="n">esp_geometry</span><span class="p">,</span>
+            <span class="n">tubing_id_inch</span><span class="o">=</span><span class="n">tubing_id_inch</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_production_data</span><span class="p">()</span>
+        <span class="n">flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flow</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">flow</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No production flow data for the selected time window."</span><span class="p">)</span>
+
+        <span class="n">segment_results</span><span class="p">,</span> <span class="n">summary</span> <span class="o">=</span> <span class="n">compute_erosion_for_segments</span><span class="p">(</span>
+            <span class="n">segments</span><span class="p">,</span>
+            <span class="n">flow</span><span class="p">,</span>
+            <span class="n">erosion_model</span><span class="p">,</span>
+            <span class="n">erosion_params</span><span class="p">,</span>
+            <span class="n">well_type</span><span class="o">=</span><span class="n">well_type</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"ok"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"well_type"</span><span class="p">]</span> <span class="o">=</span> <span class="n">well_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_depth_m"</span><span class="p">]</span> <span class="o">=</span> <span class="n">esp_depth_m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"segments"</span><span class="p">]</span> <span class="o">=</span> <span class="n">segment_results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"summary"</span><span class="p">]</span> <span class="o">=</span> <span class="n">summary</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

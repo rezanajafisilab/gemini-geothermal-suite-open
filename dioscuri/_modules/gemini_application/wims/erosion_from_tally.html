@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_application.wims.erosion_from_tally &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_application.wims.erosion_from_tally</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_application.wims.erosion_from_tally</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Build erosion flow-path segments from well tally and ESP geometry."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="n">INCH_TO_M</span> <span class="o">=</span> <span class="mf">0.0254</span>
+
+<span class="n">DEFAULT_ESP_COMPONENT_TYPES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">"intake"</span><span class="p">,</span>
+    <span class="s2">"pump"</span><span class="p">,</span>
+    <span class="s2">"seal"</span><span class="p">,</span>
+    <span class="s2">"protector"</span><span class="p">,</span>
+    <span class="s2">"motor"</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="inch_to_m">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.inch_to_m">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inch_to_m</span><span class="p">(</span><span class="n">value_inch</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Convert inches to meters."""</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value_inch</span><span class="p">)</span> <span class="o">*</span> <span class="n">INCH_TO_M</span></div>
+
+
+
+<div class="viewcode-block" id="annulus_id_m">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.annulus_id_m">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">annulus_id_m</span><span class="p">(</span><span class="n">outer_id_m</span><span class="p">,</span> <span class="n">inner_od_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Effective annulus flow diameter [m] from outer ID and inner OD."""</span>
+    <span class="n">outer_id_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">outer_id_m</span><span class="p">)</span>
+    <span class="n">inner_od_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">inner_od_m</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">inner_od_m</span> <span class="o">&gt;=</span> <span class="n">outer_id_m</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">outer_id_m</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">inner_od_m</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="flow_cross_section_area_m2">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.flow_cross_section_area_m2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flow_cross_section_area_m2</span><span class="p">(</span>
+    <span class="n">flow_area_type</span><span class="p">,</span>
+    <span class="n">flow_diameter_m</span><span class="p">,</span>
+    <span class="n">outer_id_m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">inner_od_m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Flow cross-section area [m2] for circle (tubing ID) or annulus."""</span>
+    <span class="k">if</span> <span class="n">flow_area_type</span> <span class="o">==</span> <span class="s2">"annulus"</span> <span class="ow">and</span> <span class="n">outer_id_m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">inner_od_m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outer_d_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">outer_id_m</span><span class="p">)</span>
+        <span class="n">inner_d_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">inner_od_m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inner_d_m</span> <span class="o">&gt;=</span> <span class="n">outer_d_m</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">outer_d_m</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">inner_d_m</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.0</span>
+
+    <span class="n">diameter_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">flow_diameter_m</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">diameter_m</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">diameter_m</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">4.0</span></div>
+
+
+
+<div class="viewcode-block" id="default_esp_geometry_template">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.default_esp_geometry_template">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_esp_geometry_template</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Return default ESP component rows for the geometry editor."""</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"intake"</span><span class="p">:</span> <span class="s2">"Intake"</span><span class="p">,</span>
+        <span class="s2">"pump"</span><span class="p">:</span> <span class="s2">"Pump"</span><span class="p">,</span>
+        <span class="s2">"seal"</span><span class="p">:</span> <span class="s2">"Seal"</span><span class="p">,</span>
+        <span class="s2">"protector"</span><span class="p">:</span> <span class="s2">"Protector"</span><span class="p">,</span>
+        <span class="s2">"motor"</span><span class="p">:</span> <span class="s2">"Motor"</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"setting_depth_m"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"production_tubing_id_inch"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">"reference"</span><span class="p">:</span> <span class="s2">"intake_bottom"</span><span class="p">,</span>
+        <span class="s2">"components"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">"component_type"</span><span class="p">:</span> <span class="n">ctype</span><span class="p">,</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="n">labels</span><span class="p">[</span><span class="n">ctype</span><span class="p">],</span>
+                <span class="s2">"length_m"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s2">"od_inch"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s2">"flow_path"</span><span class="p">:</span> <span class="s2">"esp_joint_annulus"</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">ctype</span> <span class="ow">in</span> <span class="n">DEFAULT_ESP_COMPONENT_TYPES</span>
+        <span class="p">],</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_segment_dict</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span>
+    <span class="n">segment_type</span><span class="p">,</span>
+    <span class="n">top_md_m</span><span class="p">,</span>
+    <span class="n">bottom_md_m</span><span class="p">,</span>
+    <span class="n">flow_diameter_m</span><span class="p">,</span>
+    <span class="n">outer_id_m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">inner_od_m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">component_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">joint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">joint_id_inch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tubing_id_inch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">flow_area</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">below_esp_intake</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">flow_area_m2</span> <span class="o">=</span> <span class="n">flow_cross_section_area_m2</span><span class="p">(</span>
+        <span class="n">flow_area</span><span class="p">,</span> <span class="n">flow_diameter_m</span><span class="p">,</span> <span class="n">outer_id_m</span><span class="o">=</span><span class="n">outer_id_m</span><span class="p">,</span> <span class="n">inner_od_m</span><span class="o">=</span><span class="n">inner_od_m</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s2">"joint"</span><span class="p">:</span> <span class="n">joint</span><span class="p">,</span>
+        <span class="s2">"joint_id_inch"</span><span class="p">:</span> <span class="n">joint_id_inch</span><span class="p">,</span>
+        <span class="s2">"tubing_id_inch"</span><span class="p">:</span> <span class="n">tubing_id_inch</span><span class="p">,</span>
+        <span class="s2">"below_esp_intake"</span><span class="p">:</span> <span class="n">below_esp_intake</span><span class="p">,</span>
+        <span class="s2">"flow_area"</span><span class="p">:</span> <span class="n">flow_area</span><span class="p">,</span>
+        <span class="s2">"flow_area_m2"</span><span class="p">:</span> <span class="n">flow_area_m2</span><span class="p">,</span>
+        <span class="s2">"flow_area_mm2"</span><span class="p">:</span> <span class="n">flow_area_m2</span> <span class="o">*</span> <span class="mf">1e6</span><span class="p">,</span>
+        <span class="s2">"segment_type"</span><span class="p">:</span> <span class="n">segment_type</span><span class="p">,</span>
+        <span class="s2">"component_name"</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s2">"component_type"</span><span class="p">:</span> <span class="n">component_type</span><span class="p">,</span>
+        <span class="s2">"top_md_m"</span><span class="p">:</span> <span class="n">top_md_m</span><span class="p">,</span>
+        <span class="s2">"bottom_md_m"</span><span class="p">:</span> <span class="n">bottom_md_m</span><span class="p">,</span>
+        <span class="s2">"flow_diameter_m"</span><span class="p">:</span> <span class="n">flow_diameter_m</span><span class="p">,</span>
+        <span class="s2">"outer_id_m"</span><span class="p">:</span> <span class="n">outer_id_m</span><span class="p">,</span>
+        <span class="s2">"inner_od_m"</span><span class="p">:</span> <span class="n">inner_od_m</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_joint_label</span><span class="p">(</span><span class="n">entry</span><span class="p">):</span>
+    <span class="n">joint</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Joint"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">joint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">joint</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"Joint </span><span class="si">{</span><span class="n">joint</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">return</span> <span class="s2">"Tally joint"</span>
+
+
+<div class="viewcode-block" id="tally_joint_to_interior_segment">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.tally_joint_to_interior_segment">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tally_joint_to_interior_segment</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">segment_type</span><span class="o">=</span><span class="s2">"tubing_interior"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Map a tally row to an interior-flow erosion segment."""</span>
+    <span class="n">top_md_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"TopMD"</span><span class="p">])</span>
+    <span class="n">bottom_md_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"BottomMD"</span><span class="p">])</span>
+    <span class="n">id_inch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"ID"</span><span class="p">])</span>
+    <span class="n">id_m</span> <span class="o">=</span> <span class="n">inch_to_m</span><span class="p">(</span><span class="n">id_inch</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_segment_dict</span><span class="p">(</span>
+        <span class="n">_joint_label</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span>
+        <span class="n">segment_type</span><span class="p">,</span>
+        <span class="n">top_md_m</span><span class="p">,</span>
+        <span class="n">bottom_md_m</span><span class="p">,</span>
+        <span class="n">id_m</span><span class="p">,</span>
+        <span class="n">joint</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Joint"</span><span class="p">),</span>
+        <span class="n">joint_id_inch</span><span class="o">=</span><span class="n">id_inch</span><span class="p">,</span>
+        <span class="n">flow_area</span><span class="o">=</span><span class="s2">"circle"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_tally_joint_at_depth">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.find_tally_joint_at_depth">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_tally_joint_at_depth</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">depth_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return tally row containing depth_m [m], or nearest joint at/below depth."""</span>
+    <span class="n">depth_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">depth_m</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="n">top_md_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"TopMD"</span><span class="p">])</span>
+        <span class="n">bottom_md_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"BottomMD"</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">top_md_m</span> <span class="o">&lt;=</span> <span class="n">depth_m</span> <span class="o">&lt;=</span> <span class="n">bottom_md_m</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">entry</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"TopMD"</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">depth_m</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">entry</span>
+    <span class="k">if</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">well_tally</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="find_esp_joint_index">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.find_esp_joint_index">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_esp_joint_index</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">esp_setting_depth_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Index of first tally joint at or below ESP setting depth (TopMD &gt;= setting)."""</span>
+    <span class="n">setting_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">esp_setting_depth_m</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">well_tally</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"TopMD"</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">setting_m</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">idx</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">well_tally</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="esp_top_depth_m">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.esp_top_depth_m">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">esp_top_depth_m</span><span class="p">(</span><span class="n">esp_geometry</span><span class="p">,</span> <span class="n">esp_setting_depth_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Top of ESP package [m] from component lengths stacked from setting depth."""</span>
+    <span class="n">total_length_m</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">esp_geometry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"components"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]:</span>
+        <span class="n">total_length_m</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"length_m"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">esp_setting_depth_m</span><span class="p">)</span> <span class="o">+</span> <span class="n">total_length_m</span></div>
+
+
+
+<div class="viewcode-block" id="get_production_casing_id_inch">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.get_production_casing_id_inch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_production_casing_id_inch</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">esp_setting_depth_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Production casing ID [inch] from tally (max ID below ESP intake depth)."""</span>
+    <span class="n">setting_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">esp_setting_depth_m</span><span class="p">)</span>
+    <span class="n">id_values_inch</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"BottomMD"</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">setting_m</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">id_inch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ID"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">id_inch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">id_values_inch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">id_inch</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">id_values_inch</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">well_tally</span><span class="p">:</span>
+            <span class="n">id_inch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ID"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">id_inch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">id_values_inch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">id_inch</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">id_values_inch</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No ID values in well tally for production casing ID."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">id_values_inch</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="resolve_production_tubing_id_inch">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.resolve_production_tubing_id_inch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_production_tubing_id_inch</span><span class="p">(</span>
+    <span class="n">well_tally</span><span class="p">,</span>
+    <span class="n">esp_setting_depth_m</span><span class="p">,</span>
+    <span class="n">esp_geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tubing_id_inch_override</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Resolve production tubing ID [inch] from override, saved geometry, or tally."""</span>
+    <span class="k">if</span> <span class="n">tubing_id_inch_override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">tubing_id_inch_override</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">tubing_id_inch_override</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">esp_geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">saved_id_inch</span> <span class="o">=</span> <span class="n">esp_geometry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"production_tubing_id_inch"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">saved_id_inch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">saved_id_inch</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">saved_id_inch</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_production_tubing_id_inch</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">esp_setting_depth_m</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_production_tubing_id_inch">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.get_production_tubing_id_inch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_production_tubing_id_inch</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">esp_setting_depth_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Production tubing ID [inch] from tally joint at ESP setting depth."""</span>
+    <span class="n">esp_idx</span> <span class="o">=</span> <span class="n">find_esp_joint_index</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">esp_setting_depth_m</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">esp_idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">well_tally</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ESP setting depth is below the well tally."</span><span class="p">)</span>
+    <span class="n">tubing_id_inch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">well_tally</span><span class="p">[</span><span class="n">esp_idx</span><span class="p">][</span><span class="s2">"ID"</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">tubing_id_inch</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ESP joint tally ID must be positive."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tubing_id_inch</span></div>
+
+
+
+<div class="viewcode-block" id="split_depth_interval_by_tally_joints">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.split_depth_interval_by_tally_joints">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_depth_interval_by_tally_joints</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">top_md_m</span><span class="p">,</span> <span class="n">bottom_md_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Split a depth interval into sub-intervals for each overlapping tally joint."""</span>
+    <span class="n">top_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">top_md_m</span><span class="p">)</span>
+    <span class="n">bottom_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bottom_md_m</span><span class="p">)</span>
+    <span class="n">sub_intervals</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="n">joint_top_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"TopMD"</span><span class="p">])</span>
+        <span class="n">joint_bottom_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"BottomMD"</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">joint_bottom_m</span> <span class="o">&lt;=</span> <span class="n">top_m</span> <span class="ow">or</span> <span class="n">joint_top_m</span> <span class="o">&gt;=</span> <span class="n">bottom_m</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">sub_top_m</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">top_m</span><span class="p">,</span> <span class="n">joint_top_m</span><span class="p">)</span>
+        <span class="n">sub_bottom_m</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">bottom_m</span><span class="p">,</span> <span class="n">joint_bottom_m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sub_bottom_m</span> <span class="o">&lt;=</span> <span class="n">sub_top_m</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">sub_intervals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sub_top_m</span><span class="p">,</span> <span class="n">sub_bottom_m</span><span class="p">,</span> <span class="n">entry</span><span class="p">))</span>
+
+    <span class="n">sub_intervals</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">sub_intervals</span></div>
+
+
+
+<div class="viewcode-block" id="build_esp_joint_annulus_segments">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.build_esp_joint_annulus_segments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_esp_joint_annulus_segments</span><span class="p">(</span><span class="n">esp_geometry</span><span class="p">,</span> <span class="n">esp_setting_depth_m</span><span class="p">,</span> <span class="n">well_tally</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Stack ESP components; split each component at tally joint boundaries."""</span>
+    <span class="n">components</span> <span class="o">=</span> <span class="n">esp_geometry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"components"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">depth_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">esp_setting_depth_m</span><span class="p">)</span>
+    <span class="n">segments</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+        <span class="n">length_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"length_m"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">od_inch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">comp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"od_inch"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">length_m</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">od_inch</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">comp_top_m</span> <span class="o">=</span> <span class="n">depth_m</span>
+        <span class="n">comp_bottom_m</span> <span class="o">=</span> <span class="n">depth_m</span> <span class="o">+</span> <span class="n">length_m</span>
+        <span class="n">esp_od_m</span> <span class="o">=</span> <span class="n">inch_to_m</span><span class="p">(</span><span class="n">od_inch</span><span class="p">)</span>
+        <span class="n">comp_name</span> <span class="o">=</span> <span class="n">comp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">comp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"component_type"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"ESP"</span>
+
+        <span class="n">sub_intervals</span> <span class="o">=</span> <span class="n">split_depth_interval_by_tally_joints</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">comp_top_m</span><span class="p">,</span> <span class="n">comp_bottom_m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sub_intervals</span><span class="p">:</span>
+            <span class="n">tally_entry</span> <span class="o">=</span> <span class="n">find_tally_joint_at_depth</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">comp_top_m</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tally_entry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No tally joint found at ESP component depth."</span><span class="p">)</span>
+            <span class="n">sub_intervals</span> <span class="o">=</span> <span class="p">[(</span><span class="n">comp_top_m</span><span class="p">,</span> <span class="n">comp_bottom_m</span><span class="p">,</span> <span class="n">tally_entry</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">sub_top_m</span><span class="p">,</span> <span class="n">sub_bottom_m</span><span class="p">,</span> <span class="n">tally_entry</span> <span class="ow">in</span> <span class="n">sub_intervals</span><span class="p">:</span>
+            <span class="n">tally_id_inch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tally_entry</span><span class="p">[</span><span class="s2">"ID"</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">tally_id_inch</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Tally joint ID must be positive for ESP annulus segment."</span><span class="p">)</span>
+
+            <span class="n">tally_id_m</span> <span class="o">=</span> <span class="n">inch_to_m</span><span class="p">(</span><span class="n">tally_id_inch</span><span class="p">)</span>
+            <span class="n">flow_diameter_m</span> <span class="o">=</span> <span class="n">annulus_id_m</span><span class="p">(</span><span class="n">tally_id_m</span><span class="p">,</span> <span class="n">esp_od_m</span><span class="p">)</span>
+            <span class="n">segment_name</span> <span class="o">=</span> <span class="n">comp_name</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sub_intervals</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">joint_label</span> <span class="o">=</span> <span class="n">tally_entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Joint"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">joint_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">joint_label</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                    <span class="n">segment_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">comp_name</span><span class="si">}</span><span class="s2"> (joint </span><span class="si">{</span><span class="n">joint_label</span><span class="si">}</span><span class="s2">)"</span>
+
+            <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">_segment_dict</span><span class="p">(</span>
+                    <span class="n">segment_name</span><span class="p">,</span>
+                    <span class="s2">"esp_joint_annulus"</span><span class="p">,</span>
+                    <span class="n">sub_top_m</span><span class="p">,</span>
+                    <span class="n">sub_bottom_m</span><span class="p">,</span>
+                    <span class="n">flow_diameter_m</span><span class="p">,</span>
+                    <span class="n">outer_id_m</span><span class="o">=</span><span class="n">tally_id_m</span><span class="p">,</span>
+                    <span class="n">inner_od_m</span><span class="o">=</span><span class="n">esp_od_m</span><span class="p">,</span>
+                    <span class="n">component_type</span><span class="o">=</span><span class="n">comp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"component_type"</span><span class="p">),</span>
+                    <span class="n">flow_area</span><span class="o">=</span><span class="s2">"annulus"</span><span class="p">,</span>
+                    <span class="n">joint</span><span class="o">=</span><span class="n">tally_entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Joint"</span><span class="p">),</span>
+                    <span class="n">joint_id_inch</span><span class="o">=</span><span class="n">tally_id_inch</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">depth_m</span> <span class="o">=</span> <span class="n">comp_bottom_m</span>
+
+    <span class="k">return</span> <span class="n">segments</span></div>
+
+
+
+<div class="viewcode-block" id="segments_for_production_well">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.segments_for_production_well">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segments_for_production_well</span><span class="p">(</span>
+    <span class="n">well_tally</span><span class="p">,</span>
+    <span class="n">esp_geometry</span><span class="p">,</span>
+    <span class="n">esp_setting_depth_m</span><span class="p">,</span>
+    <span class="n">tubing_id_inch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build production-well erosion segments from tally and ESP geometry."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Well tally is empty."</span><span class="p">)</span>
+
+    <span class="n">setting_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">esp_setting_depth_m</span><span class="p">)</span>
+    <span class="n">esp_top_m</span> <span class="o">=</span> <span class="n">esp_top_depth_m</span><span class="p">(</span><span class="n">esp_geometry</span><span class="p">,</span> <span class="n">setting_m</span><span class="p">)</span>
+    <span class="n">esp_idx</span> <span class="o">=</span> <span class="n">find_esp_joint_index</span><span class="p">(</span><span class="n">well_tally</span><span class="p">,</span> <span class="n">setting_m</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">esp_idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">well_tally</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ESP setting depth is below the well tally."</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tubing_id_inch</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">float</span><span class="p">(</span><span class="n">tubing_id_inch</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">tubing_id_inch</span> <span class="o">=</span> <span class="n">resolve_production_tubing_id_inch</span><span class="p">(</span>
+            <span class="n">well_tally</span><span class="p">,</span> <span class="n">setting_m</span><span class="p">,</span> <span class="n">esp_geometry</span><span class="o">=</span><span class="n">esp_geometry</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tubing_id_inch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">tubing_id_inch</span><span class="p">)</span>
+
+    <span class="n">tubing_id_m</span> <span class="o">=</span> <span class="n">inch_to_m</span><span class="p">(</span><span class="n">tubing_id_inch</span><span class="p">)</span>
+    <span class="n">segments</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># -- tally joints below ESP intake: production tubing interior -----------</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="n">top_md_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"TopMD"</span><span class="p">])</span>
+        <span class="n">bottom_md_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"BottomMD"</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">bottom_md_m</span> <span class="o">&lt;=</span> <span class="n">setting_m</span><span class="p">:</span>
+            <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">_segment_dict</span><span class="p">(</span>
+                    <span class="n">_joint_label</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span>
+                    <span class="s2">"tubing_interior"</span><span class="p">,</span>
+                    <span class="n">top_md_m</span><span class="p">,</span>
+                    <span class="n">bottom_md_m</span><span class="p">,</span>
+                    <span class="n">tubing_id_m</span><span class="p">,</span>
+                    <span class="n">joint</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Joint"</span><span class="p">),</span>
+                    <span class="n">tubing_id_inch</span><span class="o">=</span><span class="n">tubing_id_inch</span><span class="p">,</span>
+                    <span class="n">flow_area</span><span class="o">=</span><span class="s2">"circle"</span><span class="p">,</span>
+                    <span class="n">below_esp_intake</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">top_md_m</span> <span class="o">&lt;</span> <span class="n">setting_m</span><span class="p">:</span>
+            <span class="c1"># -- partial tally joint up to ESP intake (tubing not in tally) --</span>
+            <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">_segment_dict</span><span class="p">(</span>
+                    <span class="n">_joint_label</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" (to ESP intake)"</span><span class="p">,</span>
+                    <span class="s2">"tubing_interior"</span><span class="p">,</span>
+                    <span class="n">top_md_m</span><span class="p">,</span>
+                    <span class="n">setting_m</span><span class="p">,</span>
+                    <span class="n">tubing_id_m</span><span class="p">,</span>
+                    <span class="n">joint</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Joint"</span><span class="p">),</span>
+                    <span class="n">tubing_id_inch</span><span class="o">=</span><span class="n">tubing_id_inch</span><span class="p">,</span>
+                    <span class="n">flow_area</span><span class="o">=</span><span class="s2">"circle"</span><span class="p">,</span>
+                    <span class="n">below_esp_intake</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="c1"># -- ESP package: annulus (tally joint ID at depth vs ESP OD) ------------</span>
+    <span class="n">esp_segments</span> <span class="o">=</span> <span class="n">build_esp_joint_annulus_segments</span><span class="p">(</span><span class="n">esp_geometry</span><span class="p">,</span> <span class="n">setting_m</span><span class="p">,</span> <span class="n">well_tally</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">esp_segments</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"ESP geometry must include at least one component with positive length and OD."</span>
+        <span class="p">)</span>
+    <span class="n">segments</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">esp_segments</span><span class="p">)</span>
+
+    <span class="c1"># -- tally joints at/above ESP top: production tubing interior (tally ID) ----</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="n">top_md_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"TopMD"</span><span class="p">])</span>
+        <span class="n">bottom_md_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"BottomMD"</span><span class="p">])</span>
+        <span class="n">id_inch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ID"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">id_inch</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">bottom_md_m</span> <span class="o">&lt;=</span> <span class="n">esp_top_m</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">top_md_m</span> <span class="o">&gt;=</span> <span class="n">esp_top_m</span><span class="p">:</span>
+            <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tally_joint_to_interior_segment</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s2">"tubing_interior"</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">_segment_dict</span><span class="p">(</span>
+                    <span class="n">_joint_label</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="o">+</span> <span class="s2">" (above ESP)"</span><span class="p">,</span>
+                    <span class="s2">"tubing_interior"</span><span class="p">,</span>
+                    <span class="n">esp_top_m</span><span class="p">,</span>
+                    <span class="n">bottom_md_m</span><span class="p">,</span>
+                    <span class="n">inch_to_m</span><span class="p">(</span><span class="n">id_inch</span><span class="p">),</span>
+                    <span class="n">joint</span><span class="o">=</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Joint"</span><span class="p">),</span>
+                    <span class="n">joint_id_inch</span><span class="o">=</span><span class="n">id_inch</span><span class="p">,</span>
+                    <span class="n">flow_area</span><span class="o">=</span><span class="s2">"circle"</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">segments</span></div>
+
+
+
+<div class="viewcode-block" id="segments_for_injection_well">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.segments_for_injection_well">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segments_for_injection_well</span><span class="p">(</span><span class="n">well_tally</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""One interior segment per tally joint."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Well tally is empty."</span><span class="p">)</span>
+
+    <span class="n">segments</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">well_tally</span><span class="p">:</span>
+        <span class="n">id_inch</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ID"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">id_inch</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tally_joint_to_interior_segment</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="s2">"tubular_interior"</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">segments</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No valid tally joints with positive ID."</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">segments</span></div>
+
+
+
+<div class="viewcode-block" id="segments_from_tally">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_tally.html#gemini_application.wims.erosion_from_tally.segments_from_tally">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">segments_from_tally</span><span class="p">(</span>
+    <span class="n">well_tally</span><span class="p">,</span>
+    <span class="n">well_type</span><span class="p">,</span>
+    <span class="n">esp_setting_depth_m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">esp_geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tubing_id_inch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build erosion segments from well tally (production or injection)."""</span>
+    <span class="k">if</span> <span class="n">well_type</span> <span class="o">==</span> <span class="s2">"productionwell"</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">esp_setting_depth_m</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ESP setting depth is required for production wells."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">esp_geometry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"ESP geometry is required for production wells."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">segments_for_production_well</span><span class="p">(</span>
+            <span class="n">well_tally</span><span class="p">,</span>
+            <span class="n">esp_geometry</span><span class="p">,</span>
+            <span class="n">esp_setting_depth_m</span><span class="p">,</span>
+            <span class="n">tubing_id_inch</span><span class="o">=</span><span class="n">tubing_id_inch</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">segments_for_injection_well</span><span class="p">(</span><span class="n">well_tally</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

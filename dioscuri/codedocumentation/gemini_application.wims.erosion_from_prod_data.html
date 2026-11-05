@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.3.8.5. gemini_application.wims.erosion_from_prod_data &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.3.8.6. gemini_application.wims.erosion_from_tally" href="gemini_application.wims.erosion_from_tally.html" />
+    <link rel="prev" title="6.3.8.4. gemini_application.wims.corrosion_model" href="gemini_application.wims.corrosion_model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.application_abstract.html">6.3.1. gemini_application.application_abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.chatpopup.html">6.3.2. gemini_application.chatpopup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.esp.html">6.3.3. gemini_application.esp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.injectionwell.html">6.3.4. gemini_application.injectionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.productionwell.html">6.3.5. gemini_application.productionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.reportgenerator.html">6.3.6. gemini_application.reportgenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.tagbrowser.html">6.3.7. gemini_application.tagbrowser</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_application.wims.html">6.3.8. gemini_application.wims</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.common.html">6.3.8.1. gemini_application.wims.common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_logs.html">6.3.8.2. gemini_application.wims.corrosion_from_logs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_prod_data.html">6.3.8.3. gemini_application.wims.corrosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_model.html">6.3.8.4. gemini_application.wims.corrosion_model</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">6.3.8.5. gemini_application.wims.erosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_tally.html">6.3.8.6. gemini_application.wims.erosion_from_tally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_model.html">6.3.8.7. gemini_application.wims.erosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.model_optimization.html">6.3.8.8. gemini_application.wims.model_optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.html"><span class="section-number">6.3. </span>gemini_application</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.wims.html"><span class="section-number">6.3.8. </span>gemini_application.wims</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.3.8.5. </span>gemini_application.wims.erosion_from_prod_data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_application.wims.erosion_from_prod_data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_application.wims.erosion_from_prod_data">
+<span id="gemini-application-wims-erosion-from-prod-data"></span><h1><span class="section-number">6.3.8.5. </span>gemini_application.wims.erosion_from_prod_data<a class="headerlink" href="#module-gemini_application.wims.erosion_from_prod_data" title="Link to this heading"></a></h1>
+<p>Erosion rate estimation from production / injection flow data.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_prod_data.aggregate_erosion_by_joint" title="gemini_application.wims.erosion_from_prod_data.aggregate_erosion_by_joint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate_erosion_by_joint</span></code></a>(segment_results, ...)</p></td>
+<td><p>Build per-joint erosion summary for production and injection wells.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_prod_data.api_velocity_comparison" title="gemini_application.wims.erosion_from_prod_data.api_velocity_comparison"><code class="xref py py-obj docutils literal notranslate"><span class="pre">api_velocity_comparison</span></code></a>(flow_velocity_ms, ...)</p></td>
+<td><p>Compare actual flow velocity to API erosion velocity limit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_prod_data.build_correlation_input_base" title="gemini_application.wims.erosion_from_prod_data.build_correlation_input_base"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_correlation_input_base</span></code></a>(flow_m3h, ...)</p></td>
+<td><p>Correlation input fields independent of per-segment geometry.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_prod_data.compute_erosion_for_segments" title="gemini_application.wims.erosion_from_prod_data.compute_erosion_for_segments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_erosion_for_segments</span></code></a>(segments, ...)</p></td>
+<td><p>Compute erosion for each flow-path segment.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_prod_data.flow_velocity_ms" title="gemini_application.wims.erosion_from_prod_data.flow_velocity_ms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flow_velocity_ms</span></code></a>(flow_m3h, diameter_m)</p></td>
+<td><p>Actual flow velocity [m/s] from volumetric flow and effective diameter.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_prod_data.aggregate_erosion_by_joint">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">aggregate_erosion_by_joint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment_results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_prod_data.html#aggregate_erosion_by_joint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_prod_data.aggregate_erosion_by_joint" title="Link to this definition"></a></dt>
+<dd><p>Build per-joint erosion summary for production and injection wells.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_prod_data.api_velocity_comparison">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">api_velocity_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_velocity_ms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_limit_velocity_ms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_prod_data.html#api_velocity_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_prod_data.api_velocity_comparison" title="Link to this definition"></a></dt>
+<dd><p>Compare actual flow velocity to API erosion velocity limit.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_prod_data.build_correlation_input_base">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">build_correlation_input_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_m3h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erosion_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_prod_data.html#build_correlation_input_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_prod_data.build_correlation_input_base" title="Link to this definition"></a></dt>
+<dd><p>Correlation input fields independent of per-segment geometry.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_prod_data.compute_erosion_for_segments">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">compute_erosion_for_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_m3h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erosion_model_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">erosion_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_prod_data.html#compute_erosion_for_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_prod_data.compute_erosion_for_segments" title="Link to this definition"></a></dt>
+<dd><p>Compute erosion for each flow-path segment.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_prod_data.flow_velocity_ms">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">flow_velocity_ms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_m3h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_prod_data.html#flow_velocity_ms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_prod_data.flow_velocity_ms" title="Link to this definition"></a></dt>
+<dd><p>Actual flow velocity [m/s] from volumetric flow and effective diameter.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_application.wims.corrosion_model.html" class="btn btn-neutral float-left" title="6.3.8.4. gemini_application.wims.corrosion_model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_application.wims.erosion_from_tally.html" class="btn btn-neutral float-right" title="6.3.8.6. gemini_application.wims.erosion_from_tally" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_framework.framework.plant &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_framework.framework.plant</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_framework.framework.plant</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Plant container that holds units, database, and project configuration."""</span>
+
+
+<div class="viewcode-block" id="Plant">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Plant</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Includes units (assets), connects them, and manages database access."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize plant."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">project_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">databases</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Plant.update_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.update_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update plant parameters."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Plant.add_unit">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.add_unit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Add asset instance to the plant."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Plant.remove_unit">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.remove_unit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Remove asset instance based on unit id.</span>
+
+<span class="sd">        :param str unit_id: the unique identifier of an asset.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">unit</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">unit_id</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span>
+                <span class="k">break</span></div>
+
+
+<div class="viewcode-block" id="Plant.get_unit">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.get_unit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get asset instance based on unit id.</span>
+
+<span class="sd">        :param str unit_id: the unique identifier of an asset.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">((</span><span class="n">unit</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="k">if</span> <span class="n">unit</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">unit_id</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Plant.connect_unit">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.connect_unit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Connect all units."""</span>
+        <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagram</span><span class="p">[</span><span class="s2">"cells"</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">cell</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"devs.Link"</span><span class="p">:</span>
+                <span class="n">source_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unit</span><span class="p">(</span><span class="n">cell</span><span class="p">[</span><span class="s2">"source"</span><span class="p">][</span><span class="s2">"id"</span><span class="p">])</span>
+                <span class="n">target_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unit</span><span class="p">(</span><span class="n">cell</span><span class="p">[</span><span class="s2">"target"</span><span class="p">][</span><span class="s2">"id"</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">source_unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">target_unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">source_unit</span><span class="o">.</span><span class="n">to_units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target_unit</span><span class="p">)</span>
+                    <span class="n">target_unit</span><span class="o">.</span><span class="n">from_units</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source_unit</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Plant.link_unit">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.link_unit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">link_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Link all unit modules."""</span>
+        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+            <span class="n">unit</span><span class="o">.</span><span class="n">link</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Plant.add_database">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.add_database">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_database</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Add database to plant."""</span>
+        <span class="n">database</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"database"</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">category</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">database</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="p">[</span><span class="n">category</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">database</span><span class="p">]</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return the primary "measured" database reader.</span>
+
+<span class="sd">        Convenience accessor for callers that expect a single database</span>
+<span class="sd">        connection. When more than one reader is registered for the</span>
+<span class="sd">        "measured" category (e.g. a CSV reader plus an external historian</span>
+<span class="sd">        reader), the most recently added one takes precedence.</span>
+<span class="sd">        """</span>
+        <span class="n">measured</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"measured"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">measured</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">measured</span> <span class="k">else</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Plant.connect_database">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.connect_database">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connect_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Connect to database."""</span>
+        <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">databases</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">database</span> <span class="ow">in</span> <span class="n">databases</span><span class="p">:</span>
+                <span class="n">database</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Plant.register_tags">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.register_tags">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Register tags with database."""</span>
+        <span class="k">for</span> <span class="n">category</span><span class="p">,</span> <span class="n">databases</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">databases</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">database</span> <span class="ow">in</span> <span class="n">databases</span><span class="p">:</span>
+                <span class="n">database</span><span class="o">.</span><span class="n">register_tags</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Plant.find_modules">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.framework.plant.html#gemini_framework.framework.plant.Plant.find_modules">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Find modules of specified category."""</span>
+        <span class="n">modules</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+            <span class="n">modules</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">category</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">modules</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

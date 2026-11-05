@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_application.esp.esp &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_application.esp.esp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_application.esp.esp</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""ESP application for pump performance analysis and pump curve generation."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.dates</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mdates</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytz</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardScaler</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.application_abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApplicationAbstract</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.pump.esp</span><span class="w"> </span><span class="kn">import</span> <span class="n">ESP</span>
+
+<span class="n">tzobject</span> <span class="o">=</span> <span class="n">pytz</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="s2">"Europe/Amsterdam"</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ESPApp">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ESPApp</span><span class="p">(</span><span class="n">ApplicationAbstract</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Class for application ESP calculation."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize ESP application."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span> <span class="o">=</span> <span class="n">ESP</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ESPApp.init_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.init_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize model parameters."""</span>
+        <span class="n">esp_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span>
+
+        <span class="n">esp_param</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">esp_param</span><span class="p">[</span><span class="s2">"no_stages"</span><span class="p">]</span> <span class="o">=</span> <span class="n">esp_unit</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">][</span><span class="s2">"esp_no_stage"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">esp_param</span><span class="p">[</span><span class="s2">"pump_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">esp_unit</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">][</span><span class="s2">"esp_type"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">esp_param</span><span class="p">[</span><span class="s2">"head_coeff"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">esp_unit</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">][</span><span class="s2">"esp_head_coeff"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">";"</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">)</span>
+        <span class="n">esp_param</span><span class="p">[</span><span class="s2">"power_coeff"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">esp_unit</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">][</span><span class="s2">"esp_power_coeff"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">";"</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">)</span>
+        <span class="n">esp_param</span><span class="p">[</span><span class="s2">"min_flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">esp_unit</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">][</span><span class="s2">"esp_min_flow"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">esp_param</span><span class="p">[</span><span class="s2">"max_flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">esp_unit</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">][</span><span class="s2">"esp_max_flow"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">esp_param</span><span class="p">[</span><span class="s2">"bep_flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">esp_unit</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">][</span><span class="s2">"esp_bep_flow"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">esp_param</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_correction_factor"</span><span class="p">]</span> <span class="o">=</span> <span class="n">esp_unit</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">][</span>
+            <span class="s2">"esp_correction_factor"</span>
+        <span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tagname</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Read a measured/calculated series from the internal database."""</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">],</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"end_time"</span><span class="p">],</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">end_time</span><span class="p">)</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">timestep</span> <span class="o">=</span> <span class="mi">3600</span>
+        <span class="n">result</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">tagname</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="p">,</span>
+            <span class="n">end_time</span><span class="p">,</span>
+            <span class="n">timestep</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ESPApp.get_data">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.get_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get ESP data."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"flow_measured"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_series</span><span class="p">(</span><span class="s2">"esp_flow.measured"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"frequency_measured"</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_series</span><span class="p">(</span><span class="s2">"esp_frequency.measured"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"inlet_pressure_measured"</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_series</span><span class="p">(</span>
+            <span class="s2">"esp_inlet_pressure.measured"</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_vlp_head_calculated"</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_series</span><span class="p">(</span><span class="s2">"esp_vlp_head.calculated"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_theoretical_head_calculated"</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_series</span><span class="p">(</span>
+            <span class="s2">"esp_theoretical_head.calculated"</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_vlp_outlet_pressure_calculated"</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_series</span><span class="p">(</span>
+            <span class="s2">"esp_vlp_outlet_pressure.calculated"</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_vlp_ipr_inlet_pressure_calculated"</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_series</span><span class="p">(</span>
+            <span class="s2">"esp_vlp_ipr_inlet_pressure.calculated"</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_theoretical_outlet_pressure_calculated"</span><span class="p">],</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_series</span><span class="p">(</span>
+            <span class="s2">"esp_theoretical_outlet_pressure.calculated"</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.calibrate_esp_head_simple">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.calibrate_esp_head_simple">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calibrate_esp_head_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calibrate ESP head using simple method."""</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"calibration_start_time"</span><span class="p">],</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"calibration_end_time"</span><span class="p">],</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">end_time</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+
+        <span class="n">timestep</span> <span class="o">=</span> <span class="mi">3600</span>  <span class="c1"># hardcoded 1 hour since flowrate is in m3/h</span>
+
+        <span class="n">database</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">database</span>
+
+        <span class="n">esp_vlp_head</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">"esp_vlp_head.calculated"</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="p">,</span>
+            <span class="n">end_time</span><span class="p">,</span>
+            <span class="n">timestep</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">esp_theoretical_head</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">"esp_theoretical_head.calculated"</span><span class="p">,</span>
+            <span class="n">start_time</span><span class="p">,</span>
+            <span class="n">end_time</span><span class="p">,</span>
+            <span class="n">timestep</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">esp_vlp_head</span><span class="p">,</span> <span class="n">esp_theoretical_head</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">xi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">yi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+                <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yi</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Not enough valid data points for calibration."</span><span class="p">)</span>
+
+        <span class="c1"># Linear regression: y = ax + b</span>
+        <span class="n">x_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_mean</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_mean</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">y_mean</span> <span class="o">-</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x_mean</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_correction_factor"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">;</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">"</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.calculate">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.calculate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate IPR, VLP, ESP."""</span>
+        <span class="n">xValues_arrays</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">min_flow_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">max_flow_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">frequency_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"min_frequency"</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"max_frequency"</span><span class="p">]</span> <span class="o">+</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span>
+        <span class="p">)</span>
+        <span class="n">min_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"min_flow"</span><span class="p">]</span>
+        <span class="n">max_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"max_flow"</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="n">frequency_array</span><span class="p">:</span>
+            <span class="n">Xmin</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">Xmax</span> <span class="o">=</span> <span class="n">max_flow</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="n">min_flow_freq</span> <span class="o">=</span> <span class="n">min_flow</span> <span class="o">*</span> <span class="n">freq</span> <span class="o">/</span> <span class="mi">60</span>
+            <span class="n">min_flow_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">min_flow_freq</span><span class="p">)</span>
+            <span class="n">max_flow_freq</span> <span class="o">=</span> <span class="n">max_flow</span> <span class="o">*</span> <span class="n">freq</span> <span class="o">/</span> <span class="mi">60</span>
+            <span class="n">max_flow_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">max_flow_freq</span><span class="p">)</span>
+
+            <span class="c1"># Flow rates scaled by frequency</span>
+            <span class="n">x_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Xmin</span> <span class="o">*</span> <span class="n">freq</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="n">Xmax</span> <span class="o">*</span> <span class="n">freq</span> <span class="o">/</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">freq</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span>
+            <span class="n">xValues_arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_array</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"xValues"</span><span class="p">]</span> <span class="o">=</span> <span class="n">xValues_arrays</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"frequency"</span><span class="p">]</span> <span class="o">=</span> <span class="n">frequency_array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"min_flow_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_flow_array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"max_flow_array"</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_flow_array</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculate_pump_head_curve</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.calculate_pump_head_curve">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.calculate_pump_head_curve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_pump_head_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate ESP output."""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pump_head_all</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">pump_power_all</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">pump_eff_all</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">head_min_flow_freq</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">head_max_flow_freq</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">min_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"min_flow"</span><span class="p">]</span>
+            <span class="n">max_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"max_flow"</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">freq_idx</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"frequency"</span><span class="p">]):</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">pump_head_freq</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">pump_power_freq</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">pump_eff_freq</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">xValues_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"xValues"</span><span class="p">][</span><span class="n">freq_idx</span><span class="p">]</span>
+
+                <span class="k">for</span> <span class="n">flow</span> <span class="ow">in</span> <span class="n">xValues_array</span><span class="p">:</span>
+                    <span class="n">u</span><span class="p">[</span><span class="s2">"pump_freq"</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq</span>
+                    <span class="n">u</span><span class="p">[</span><span class="s2">"pump_flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">flow</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">/</span> <span class="n">freq</span> <span class="o">/</span> <span class="mi">3600</span>  <span class="c1"># Convert flow to m^3/s</span>
+
+                    <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+                    <span class="c1"># ASSERT</span>
+                    <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">get_output</span><span class="p">()</span>
+                    <span class="n">pump_head_freq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s2">"pump_head"</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e5</span><span class="p">)</span>  <span class="c1"># Convert to bar</span>
+                    <span class="n">pump_power_freq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s2">"pump_power"</span><span class="p">])</span>
+                    <span class="n">pump_eff_freq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s2">"pump_eff"</span><span class="p">])</span>
+
+                <span class="n">pump_head_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pump_head_freq</span><span class="p">)</span>
+                <span class="n">pump_power_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pump_power_freq</span><span class="p">)</span>
+                <span class="n">pump_eff_all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pump_eff_freq</span><span class="p">)</span>
+
+                <span class="c1"># Min flow</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">u</span><span class="p">[</span><span class="s2">"pump_freq"</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq</span>
+                <span class="n">u</span><span class="p">[</span><span class="s2">"pump_flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_flow</span> <span class="o">/</span> <span class="mi">3600</span>  <span class="c1"># Convert flow to m^3/s</span>
+
+                <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+                <span class="c1"># ASSERT</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">get_output</span><span class="p">()</span>
+                <span class="n">head_min_flow</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="s2">"pump_head"</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e5</span>
+                <span class="n">head_min_flow_freq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head_min_flow</span><span class="p">)</span>
+
+                <span class="c1"># Max flow</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">u</span><span class="p">[</span><span class="s2">"pump_freq"</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq</span>
+                <span class="n">u</span><span class="p">[</span><span class="s2">"pump_flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_flow</span> <span class="o">/</span> <span class="mi">3600</span>  <span class="c1"># Convert flow to m^3/s</span>
+
+                <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+                <span class="c1"># ASSERT</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ESP</span><span class="o">.</span><span class="n">get_output</span><span class="p">()</span>
+                <span class="n">head_max_flow</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="s2">"pump_head"</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1e5</span>
+                <span class="n">head_max_flow_freq</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head_max_flow</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"ERROR:"</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">pump_head_all</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">pump_power_all</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">pump_eff_all</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"pump_head"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump_head_all</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"pump_power"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump_power_all</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"pump_eff"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pump_eff_all</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"pump_head_min_flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">head_min_flow_freq</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"pump_head_max_flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">head_max_flow_freq</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.get_sensor_data_failure_prediction">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.get_sensor_data_failure_prediction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sensor_data_failure_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get all sensor data required for failure prediction from database."""</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">],</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">start_time</span><span class="p">)</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"end_time"</span><span class="p">],</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">end_time</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+
+        <span class="n">timestep</span> <span class="o">=</span> <span class="mi">3600</span>  <span class="c1"># 1 hour</span>
+
+        <span class="n">database</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">database</span>
+        <span class="n">unit_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">plant_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">well_unit</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">from_units</span><span class="p">:</span>
+            <span class="n">well_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">from_units</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">sensor_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">time_array</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">,</span> <span class="n">time_array</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+                <span class="n">plant_name</span><span class="p">,</span> <span class="n">unit_name</span><span class="p">,</span> <span class="s2">"esp_flow.measured"</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">timestep</span>
+            <span class="p">)</span>
+            <span class="n">sensor_data</span><span class="p">[</span><span class="s2">"Brine flow rate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: Could not read esp_flow.measured: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">start_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+            <span class="n">end_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">end_time</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">)</span>
+            <span class="n">time_array</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="n">start_dt</span><span class="p">,</span> <span class="n">end_dt</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">timestep</span><span class="si">}</span><span class="s2">S"</span><span class="p">)</span>
+
+        <span class="n">data_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_array</span><span class="p">)</span>
+
+        <span class="n">tags_mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"intake pressure ESP"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"esp_inlet_pressure"</span><span class="p">,</span> <span class="s2">"measured"</span><span class="p">),</span>
+            <span class="s2">"discharge pressure ESP"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"esp_outlet_pressure"</span><span class="p">,</span> <span class="s2">"measured"</span><span class="p">),</span>
+            <span class="s2">"ESP Motor temperature"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"esp_motor_temperature"</span><span class="p">,</span> <span class="s2">"measured"</span><span class="p">),</span>
+            <span class="s2">"Vibration (Vx)"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"esp_vibration_x"</span><span class="p">,</span> <span class="s2">"measured"</span><span class="p">),</span>
+            <span class="s2">"Vibration (Vy, Vz)"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"esp_vibration_y"</span><span class="p">,</span> <span class="s2">"measured"</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">col_name</span><span class="p">,</span> <span class="p">(</span><span class="n">tag_base</span><span class="p">,</span> <span class="n">tag_type</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tags_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tag_base</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">tag_type</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+                    <span class="n">plant_name</span><span class="p">,</span> <span class="n">unit_name</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">timestep</span>
+                <span class="p">)</span>
+                <span class="n">sensor_data</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: Could not read </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">sensor_data</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">data_length</span>
+
+        <span class="k">if</span> <span class="n">well_unit</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+                    <span class="n">plant_name</span><span class="p">,</span>
+                    <span class="n">well_unit</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">"productionwell_wellhead_pressure.measured"</span><span class="p">,</span>
+                    <span class="n">start_time</span><span class="p">,</span>
+                    <span class="n">end_time</span><span class="p">,</span>
+                    <span class="n">timestep</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">sensor_data</span><span class="p">[</span><span class="s2">"wellhead pressure"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: Could not read wellhead pressure: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">sensor_data</span><span class="p">[</span><span class="s2">"wellhead pressure"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">data_length</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">read_internal_database</span><span class="p">(</span>
+                    <span class="n">plant_name</span><span class="p">,</span>
+                    <span class="n">well_unit</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">"productionwell_wellhead_temperature.measured"</span><span class="p">,</span>
+                    <span class="n">start_time</span><span class="p">,</span>
+                    <span class="n">end_time</span><span class="p">,</span>
+                    <span class="n">timestep</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">sensor_data</span><span class="p">[</span><span class="s2">"wellhead temperature"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: Could not read wellhead temperature: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">sensor_data</span><span class="p">[</span><span class="s2">"wellhead temperature"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">data_length</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sensor_data</span><span class="p">[</span><span class="s2">"wellhead pressure"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">data_length</span>
+            <span class="n">sensor_data</span><span class="p">[</span><span class="s2">"wellhead temperature"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">data_length</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sensor_data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">time_array</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.filter_sensor_data">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.filter_sensor_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_sensor_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Filter sensor data to remove unphysical values.</span>
+
+<span class="sd">        This follows the same thresholds as used in the training pipeline.</span>
+<span class="sd">        """</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"Brine flow rate"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">450</span><span class="p">,</span> <span class="s2">"Brine flow rate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"Brine flow rate"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Brine flow rate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"wellhead pressure"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">40</span><span class="p">,</span> <span class="s2">"wellhead pressure"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"wellhead pressure"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"wellhead pressure"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"wellhead temperature"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">120</span><span class="p">,</span> <span class="s2">"wellhead temperature"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"wellhead temperature"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="s2">"wellhead temperature"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"intake pressure ESP"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">150</span><span class="p">,</span> <span class="s2">"intake pressure ESP"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"intake pressure ESP"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"intake pressure ESP"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"discharge pressure ESP"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">150</span><span class="p">,</span> <span class="s2">"discharge pressure ESP"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"discharge pressure ESP"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"discharge pressure ESP"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"ESP Motor temperature"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">"ESP Motor temperature"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"ESP Motor temperature"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">,</span> <span class="s2">"ESP Motor temperature"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"Vibration (Vx)"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Vibration (Vx)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"Vibration (Vx)"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Vibration (Vx)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"Vibration (Vy, Vz)"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Vibration (Vy, Vz)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">"Vibration (Vy, Vz)"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Vibration (Vy, Vz)"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.predict_failures">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.predict_failures">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict_failures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prediction_mode</span><span class="o">=</span><span class="s2">"forward"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Predict failures using ML model based on sensor data.</span>
+
+<span class="sd">        This function follows the exact preprocessing pipeline from training the model:</span>
+<span class="sd">        1. Filter unphysical values</span>
+<span class="sd">        2. Calculate Vibration from components</span>
+<span class="sd">        3. Apply rolling window average (96 points = 4 days for 1-hour data)</span>
+<span class="sd">        4. Extract 7 relevant features</span>
+<span class="sd">        5. Scale features using StandardScaler</span>
+<span class="sd">        6. Make predictions using HistGradientBoostingClassifier</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_path: Path to the ML model pickle file.</span>
+<span class="sd">            prediction_mode: Mode of prediction:</span>
+<span class="sd">                - "forward": Show 60-day window (30 days before + 30 days after selected time)</span>
+<span class="sd">                - "historical": Analyze entire historical period</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">model_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">current_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">model_path</span> <span class="o">=</span> <span class="n">current_dir</span> <span class="o">/</span> <span class="s2">"ml_model"</span> <span class="o">/</span> <span class="s2">"SavedModel_TestTrainVal_30.pkl"</span>
+
+        <span class="n">original_start_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">original_end_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">prediction_mode</span> <span class="o">==</span> <span class="s2">"forward"</span><span class="p">:</span>
+            <span class="n">selected_time_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"selected_time"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">selected_time_str</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">selected_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">selected_time_str</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+                    <span class="n">selected_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">selected_time</span><span class="p">)</span>
+                    <span class="n">selected_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">selected_time</span><span class="p">)</span>
+                    <span class="n">window_start</span> <span class="o">=</span> <span class="n">selected_time</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+                    <span class="n">window_end</span> <span class="o">=</span> <span class="n">selected_time</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+                    <span class="n">original_start_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"start_time"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">original_end_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"end_time"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">window_start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"end_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">window_end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Forward mode: Data window set to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'start_time'</span><span class="p">]</span><span class="si">}</span><span class="s2"> -&gt; "</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s1">'end_time'</span><span class="p">]</span><span class="si">}</span><span class="s2"> (60-day window around "</span>
+                        <span class="sa">f</span><span class="s2">"selected_time </span><span class="si">{</span><span class="n">selected_time_str</span><span class="si">}</span><span class="s2">)"</span>
+                    <span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: Could not apply selected_time window for forward mode: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="c1"># Step 1: Get sensor data from database</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sensor_data_failure_prediction</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">original_end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"end_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_end_time</span>
+            <span class="k">if</span> <span class="n">original_start_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_start_time</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">original_end_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"end_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_end_time</span>
+            <span class="k">if</span> <span class="n">original_start_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">original_start_time</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error getting sensor data: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_predictions"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_times"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"No sensor data available for failure prediction"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_predictions"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_times"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Step 2: Filter unphysical values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_sensor_data</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+        <span class="c1"># Step 3: Calculate Vibration (Pythagorean theorem)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">"Vibration"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">"Vibration (Vx)"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">df</span><span class="p">[</span><span class="s2">"Vibration (Vy, Vz)"</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># Step 4: Average noisy sensor data (rolling window = 96 points)</span>
+        <span class="c1"># For 1-hour data: 96 points = 96 hours = 4 days</span>
+        <span class="n">rolling_window</span> <span class="o">=</span> <span class="mi">96</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="n">rolling_window</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_df_for_plot</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Step 5: Specify relevant features (exact order as training)</span>
+        <span class="n">relevant</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">"Vibration"</span><span class="p">,</span>
+            <span class="s2">"ESP Motor temperature"</span><span class="p">,</span>
+            <span class="s2">"wellhead temperature"</span><span class="p">,</span>
+            <span class="s2">"wellhead pressure"</span><span class="p">,</span>
+            <span class="s2">"Brine flow rate"</span><span class="p">,</span>
+            <span class="s2">"intake pressure ESP"</span><span class="p">,</span>
+            <span class="s2">"discharge pressure ESP"</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">relevant</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: Missing required features: </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">missing</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="n">features_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">relevant</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">num_features</span> <span class="o">=</span> <span class="n">features_df</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Step 6: Scale features using StandardScaler</span>
+        <span class="n">scaler</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">scaler_path</span> <span class="o">=</span> <span class="n">model_path</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">model_path</span><span class="o">.</span><span class="n">stem</span><span class="si">}</span><span class="s2">_scaler.pkl"</span>
+        <span class="k">if</span> <span class="n">scaler_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">scaler</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">scaler_path</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded scaler from training: </span><span class="si">{</span><span class="n">scaler_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: Could not load scaler from </span><span class="si">{</span><span class="n">scaler_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">scaler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">model_data</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"scaler"</span> <span class="ow">in</span> <span class="n">model_data</span><span class="p">:</span>
+                    <span class="n">scaler</span> <span class="o">=</span> <span class="n">model_data</span><span class="p">[</span><span class="s2">"scaler"</span><span class="p">]</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">scaler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">features_scaled</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">features_df</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">features_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">features_df</span><span class="o">.</span><span class="n">columns</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+            <span class="n">features_scaled</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">features_df</span><span class="p">),</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">features_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="n">features_df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Step 7: Load model and make predictions</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"model"</span> <span class="ow">in</span> <span class="n">model</span><span class="p">:</span>
+                    <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="p">[</span><span class="s2">"model"</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error loading ML model: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_predictions"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_times"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">features_scaled</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">features_scaled</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">idx_diff</span> <span class="o">=</span> <span class="n">features_scaled</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">features_scaled</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">time_diff</span> <span class="o">=</span> <span class="n">idx_diff</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">3600</span>  <span class="c1"># hours</span>
+                <span class="k">if</span> <span class="n">time_diff</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>  <span class="c1"># 15-minute or less data</span>
+                    <span class="n">smoothing_window</span> <span class="o">=</span> <span class="mi">480</span>  <span class="c1"># 120 hours (5 days) for 15-minute data</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># 1-hour data</span>
+                    <span class="n">smoothing_window</span> <span class="o">=</span> <span class="mi">120</span>  <span class="c1"># 120 hours (5 days) for 1-hour data</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">smoothing_window</span> <span class="o">=</span> <span class="mi">120</span>  <span class="c1"># default (5 days)</span>
+
+            <span class="n">predictions_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">features_scaled</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">predictions_smoothed</span> <span class="o">=</span> <span class="n">predictions_series</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span>
+                <span class="n">window</span><span class="o">=</span><span class="n">smoothing_window</span><span class="p">,</span> <span class="n">min_periods</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">predictions</span> <span class="o">=</span> <span class="n">predictions_smoothed</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="n">prediction_times</span> <span class="o">=</span> <span class="n">features_scaled</span><span class="o">.</span><span class="n">index</span>
+            <span class="k">if</span> <span class="n">prediction_mode</span> <span class="o">==</span> <span class="s2">"forward"</span><span class="p">:</span>
+                <span class="n">selected_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"selected_time"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">selected_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">selected_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"end_time"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">selected_time</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">current_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">selected_time</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+                        <span class="n">current_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                        <span class="n">current_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"selected_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_time</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Warning: Could not parse selected_time for forward mode: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="n">num_features_values</span> <span class="o">=</span> <span class="n">num_features</span><span class="o">.</span><span class="n">values</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_predictions"</span><span class="p">]</span> <span class="o">=</span> <span class="n">predictions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_times"</span><span class="p">]</span> <span class="o">=</span> <span class="n">prediction_times</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_probability"</span><span class="p">]</span> <span class="o">=</span> <span class="n">predictions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"num_features"</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_features_values</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"prediction_mode"</span><span class="p">]</span> <span class="o">=</span> <span class="n">prediction_mode</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error making predictions: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_predictions"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_times"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.plot">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Plot pump curves and the measured data."""</span>
+        <span class="n">bar_to_meters</span> <span class="o">=</span> <span class="mf">10.1972</span>  <span class="c1"># 1 bar ≈ 10.1972 meters of water head</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">format_func</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ti</span><span class="p">):</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"</span><span class="si">%d</span><span class="s2"> %B %Y"</span><span class="p">)</span>
+
+        <span class="n">time_measured</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"time"</span><span class="p">])</span>
+        <span class="n">flow_measured</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"flow_measured"</span><span class="p">]</span>
+        <span class="n">esp_vlp_head_calculated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_vlp_head_calculated"</span><span class="p">]</span>
+        <span class="n">time_x</span> <span class="o">=</span> <span class="n">flow_measured</span>
+
+        <span class="n">pump_head_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"pump_head"</span><span class="p">]</span>
+        <span class="n">xValues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"xValues"</span><span class="p">]</span>
+        <span class="n">frequency_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"frequency"</span><span class="p">]</span>
+
+        <span class="c1"># Head calibration</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_correction_factor"</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">";"</span><span class="p">)]</span>
+        <span class="n">head_corrected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">esp_vlp_head_calculated</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">head_corrected_m</span> <span class="o">=</span> <span class="n">head_corrected</span> <span class="o">*</span> <span class="n">bar_to_meters</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+
+        <span class="c1"># Plot measured data with a color map representing time</span>
+        <span class="n">scatter</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">time_x</span><span class="p">,</span> <span class="n">head_corrected_m</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">time_measured</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"int64"</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"jet"</span><span class="p">)</span>
+        <span class="n">colorbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">scatter</span><span class="p">)</span>
+        <span class="n">colorbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">FuncFormatter</span><span class="p">(</span><span class="n">format_func</span><span class="p">))</span>
+
+        <span class="c1"># Iterate over each frequency and corresponding flow array</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">freq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frequency_array</span><span class="p">):</span>
+            <span class="n">pump_head_meters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pump_head_all</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">bar_to_meters</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xValues</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">pump_head_meters</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Frequency: </span><span class="si">{</span><span class="n">freq</span><span class="si">}</span><span class="s2"> Hz"</span><span class="p">)</span>
+
+        <span class="n">head_min_flow_freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"pump_head_min_flow"</span><span class="p">])</span> <span class="o">*</span> <span class="n">bar_to_meters</span>
+        <span class="n">head_max_flow_freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"pump_head_max_flow"</span><span class="p">])</span> <span class="o">*</span> <span class="n">bar_to_meters</span>
+        <span class="n">min_flow_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"min_flow_array"</span><span class="p">]</span>
+        <span class="n">max_flow_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"max_flow_array"</span><span class="p">]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">min_flow_array</span><span class="p">,</span> <span class="n">head_min_flow_freq</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Min optimum rate"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">max_flow_array</span><span class="p">,</span> <span class="n">head_max_flow_freq</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Max optimum rate"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Flow Rate (m³/h)"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Pump Head (m)"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Pump Head vs Flow Rate"</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">ticks</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">xValues</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">ticks</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">pump_head_meters</span><span class="p">))</span> <span class="o">+</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.plot_features">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.plot_features">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Plot key ESP sensor features over time."""</span>
+        <span class="n">time_measured</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"time"</span><span class="p">])</span>
+        <span class="n">flow_measured</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"flow_measured"</span><span class="p">])</span>
+        <span class="n">frequency_measured</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"frequency_measured"</span><span class="p">])</span>
+
+        <span class="n">motor_temp_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">motor_temp_times</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_sensor_df_for_plot"</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_df_for_plot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df_plot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_df_for_plot</span>
+            <span class="k">if</span> <span class="s2">"ESP Motor temperature"</span> <span class="ow">in</span> <span class="n">df_plot</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">motor_temp_series</span> <span class="o">=</span> <span class="n">df_plot</span><span class="p">[</span><span class="s2">"ESP Motor temperature"</span><span class="p">]</span>
+                <span class="n">valid_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">motor_temp_series</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">valid_mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="n">motor_temp_data</span> <span class="o">=</span> <span class="n">motor_temp_series</span><span class="p">[</span><span class="n">valid_mask</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+                    <span class="n">motor_temp_times</span> <span class="o">=</span> <span class="n">motor_temp_series</span><span class="p">[</span><span class="n">valid_mask</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+
+        <span class="n">flow_valid_mask</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">flow_measured</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">flow_measured</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_measured</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">flow_valid</span> <span class="o">=</span> <span class="n">flow_measured</span><span class="p">[</span><span class="n">flow_valid_mask</span><span class="p">]</span>
+        <span class="n">flow_times_valid</span> <span class="o">=</span> <span class="n">time_measured</span><span class="p">[</span><span class="n">flow_valid_mask</span><span class="p">]</span>
+
+        <span class="n">freq_valid_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">frequency_measured</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">frequency_measured</span><span class="p">)</span>
+        <span class="n">freq_valid</span> <span class="o">=</span> <span class="n">frequency_measured</span><span class="p">[</span><span class="n">freq_valid_mask</span><span class="p">]</span>
+        <span class="n">freq_times_valid</span> <span class="o">=</span> <span class="n">time_measured</span><span class="p">[</span><span class="n">freq_valid_mask</span><span class="p">]</span>
+
+        <span class="n">end_time_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"end_time"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">end_time_str</span><span class="p">:</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">end_time_str</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="n">time_measured</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_measured</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+        <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"major"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">AutoDateLocator</span><span class="p">())</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">ConciseDateFormatter</span><span class="p">(</span><span class="n">ax1</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">get_major_locator</span><span class="p">()))</span>
+
+        <span class="k">if</span> <span class="n">motor_temp_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">motor_temp_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+                <span class="n">motor_temp_times</span><span class="p">,</span>
+                <span class="n">motor_temp_data</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">"#2E8B57"</span><span class="p">,</span>
+                <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">"Motor Temperature"</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ylabel</span> <span class="o">=</span> <span class="s2">"Motor Temperature (°C)"</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#2E8B57"</span><span class="p">)</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">200</span><span class="p">])</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">"#2E8B57"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">freq_valid</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+                <span class="n">freq_times_valid</span><span class="p">,</span>
+                <span class="n">freq_valid</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">"#9370DB"</span><span class="p">,</span>
+                <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">"Frequency"</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Frequency (Hz)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#9370DB"</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">70</span><span class="p">])</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">"#9370DB"</span><span class="p">)</span>
+            <span class="n">ax2</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">"right"</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s2">"outward"</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">flow_valid</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ax3</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+                <span class="n">flow_times_valid</span><span class="p">,</span>
+                <span class="n">flow_valid</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">"#FF4FA3"</span><span class="p">,</span>
+                <span class="n">s</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">"Flowrate"</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Flowrate (m³/h)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#FF4FA3"</span><span class="p">)</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">450</span><span class="p">])</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">"#FF4FA3"</span><span class="p">)</span>
+            <span class="n">ax3</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s2">"right"</span><span class="p">]</span><span class="o">.</span><span class="n">set_position</span><span class="p">((</span><span class="s2">"outward"</span><span class="p">,</span> <span class="mi">120</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">current_time</span><span class="p">:</span>
+            <span class="n">ax1</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">current_time</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
+                <span class="n">linestyle</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+                <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="n">label</span><span class="o">=</span><span class="s2">"Current Time"</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">handles</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">freq_valid</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">handles2</span><span class="p">,</span> <span class="n">labels2</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+            <span class="n">handles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">handles2</span><span class="p">)</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">labels2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">flow_valid</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">handles3</span><span class="p">,</span> <span class="n">labels3</span> <span class="o">=</span> <span class="n">ax3</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+            <span class="n">handles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">handles3</span><span class="p">)</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">labels3</span><span class="p">)</span>
+
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">"ESP Sensor Features - Motor Temperature, Frequency, and Flow Rate"</span>
+        <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.plot_failure_prediction">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.plot_failure_prediction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_failure_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Plot failure prediction probability over time.</span>
+
+<span class="sd">        The plot shows:</span>
+<span class="sd">        - Probability of failure occurring within the next 30 days from each timestamp</span>
+<span class="sd">        - Horizontal bands for risk zones (High/Moderate/Low)</span>
+<span class="sd">        - A dashed vertical line at the selected time in forward mode</span>
+
+<span class="sd">        Modes:</span>
+<span class="sd">            - "forward": x-axis is a 60-day window (30 days before and 30 days after</span>
+<span class="sd">              the selected time), with a dashed line at the selected time.</span>
+<span class="sd">            - "historical": shows the full available period.</span>
+<span class="sd">        """</span>
+        <span class="n">failure_preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"failure_predictions"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"failure_predictions"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="ow">or</span> <span class="n">failure_preds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"No failure predictions available. Run predict_failures() first."</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">failure_predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_predictions"</span><span class="p">]</span>
+        <span class="n">failure_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"failure_times"</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">failure_times</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">failure_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">failure_times</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">failure_times</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DatetimeIndex</span><span class="p">):</span>
+            <span class="n">failure_times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">failure_times</span><span class="p">)</span>
+
+        <span class="n">prediction_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"prediction_mode"</span><span class="p">,</span> <span class="s2">"forward"</span><span class="p">)</span>
+
+        <span class="n">current_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">prediction_mode</span> <span class="o">==</span> <span class="s2">"forward"</span><span class="p">:</span>
+            <span class="n">current_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"selected_time"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">current_time</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">end_time_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"end_time"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">end_time_str</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">current_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">end_time_str</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+                        <span class="n">current_time</span> <span class="o">=</span> <span class="n">tzobject</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                        <span class="n">current_time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">current_time</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="n">current_time</span> <span class="o">=</span> <span class="n">failure_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failure_times</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">current_time</span> <span class="o">=</span> <span class="n">failure_times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failure_times</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s2">"major"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">":"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">AutoDateLocator</span><span class="p">())</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">mdates</span><span class="o">.</span><span class="n">ConciseDateFormatter</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">get_major_locator</span><span class="p">()))</span>
+
+        <span class="n">high_risk_threshold</span> <span class="o">=</span> <span class="mf">0.7</span>
+        <span class="n">moderate_risk_threshold</span> <span class="o">=</span> <span class="mf">0.3</span>
+
+        <span class="n">x_min</span> <span class="o">=</span> <span class="n">failure_times</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failure_times</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">x_max</span> <span class="o">=</span> <span class="n">failure_times</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">failure_times</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">axhspan</span><span class="p">(</span>
+            <span class="n">high_risk_threshold</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">xmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">xmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
+            <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">axhspan</span><span class="p">(</span>
+            <span class="n">moderate_risk_threshold</span><span class="p">,</span>
+            <span class="n">high_risk_threshold</span><span class="p">,</span>
+            <span class="n">xmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">xmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"orange"</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">axhspan</span><span class="p">(</span>
+            <span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">moderate_risk_threshold</span><span class="p">,</span>
+            <span class="n">xmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">xmax</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span>
+            <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">high_risk_threshold</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"darkred"</span><span class="p">,</span>
+            <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">moderate_risk_threshold</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"darkorange"</span><span class="p">,</span>
+            <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">failure_times</span><span class="p">,</span>
+            <span class="n">failure_predictions</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"#0047AB"</span><span class="p">,</span>
+            <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"Failure Probability Prediction"</span><span class="p">,</span>
+            <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">failure_times</span><span class="p">,</span>
+            <span class="n">failure_predictions</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">"#0047AB"</span><span class="p">,</span>
+            <span class="n">s</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+            <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+            <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">current_time</span> <span class="ow">and</span> <span class="n">prediction_mode</span> <span class="o">==</span> <span class="s2">"forward"</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">current_time</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">6</span>
+            <span class="p">)</span>
+
+        <span class="n">ylabel</span> <span class="o">=</span> <span class="s2">"Failure Probability</span><span class="se">\n</span><span class="s2">(within next 30 days from each timestamp)"</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Time"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">prediction_mode</span> <span class="o">==</span> <span class="s2">"forward"</span> <span class="ow">and</span> <span class="n">current_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">failure_times</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">x_min</span> <span class="o">=</span> <span class="n">current_time</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+            <span class="n">x_max</span> <span class="o">=</span> <span class="n">current_time</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">x_min</span> <span class="o">&lt;</span> <span class="n">failure_times</span><span class="o">.</span><span class="n">min</span><span class="p">():</span>
+                <span class="n">x_min</span> <span class="o">=</span> <span class="n">failure_times</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">x_max</span> <span class="o">&gt;</span> <span class="n">failure_times</span><span class="o">.</span><span class="n">max</span><span class="p">():</span>
+                <span class="n">x_max</span> <span class="o">=</span> <span class="n">failure_times</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">prediction_mode</span> <span class="o">==</span> <span class="s2">"forward"</span><span class="p">:</span>
+            <span class="n">mode_title</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">"Forward Prediction Mode (60-day window: "</span>
+                <span class="s2">"30 days before + 30 days after selected time)"</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mode_title</span> <span class="o">=</span> <span class="s2">"Historical Analysis Mode"</span>
+        <span class="n">risk_desc</span> <span class="o">=</span> <span class="s2">"Risk zones: High &gt;70%, Moderate 30-70%, Low &lt;30%"</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"ESP Failure Prediction (</span><span class="si">{</span><span class="n">mode_title</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="si">{</span><span class="n">risk_desc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span>
+            <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">,</span>
+            <span class="n">pad</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ESPApp.plot_comparison">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.esp.esp.html#gemini_application.esp.esp.ESPApp.plot_comparison">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_comparison</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Plot the measured and calculated tags."""</span>
+        <span class="n">time_measured</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"time"</span><span class="p">])</span>
+        <span class="n">flow_measured</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"flow_measured"</span><span class="p">]</span>
+        <span class="n">frequency_measured</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"frequency_measured"</span><span class="p">]</span>
+        <span class="n">esp_vlp_head_calculated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_vlp_head_calculated"</span><span class="p">]</span>
+        <span class="n">esp_theoretical_head_calculated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_theoretical_head_calculated"</span><span class="p">]</span>
+        <span class="n">esp_vlp_outlet_pressure_calculated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_vlp_outlet_pressure_calculated"</span><span class="p">]</span>
+        <span class="n">esp_vlp_ipr_inlet_pressure_calculated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span>
+            <span class="s2">"esp_vlp_ipr_inlet_pressure_calculated"</span>
+        <span class="p">]</span>
+        <span class="n">intake_pressure_measured</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"inlet_pressure_measured"</span><span class="p">]</span>
+        <span class="n">esp_theoretical_outlet_pressure_calculated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span>
+            <span class="s2">"esp_theoretical_outlet_pressure_calculated"</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Head calibration</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">"esp_correction_factor"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">";"</span><span class="p">)]</span>
+        <span class="n">head_corrected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">esp_vlp_head_calculated</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="n">pad</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_measured</span><span class="p">,</span> <span class="n">flow_measured</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Flow"</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Flow vs Time"</span><span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_measured</span><span class="p">,</span> <span class="n">frequency_measured</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Frequency"</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Frequency vs Time"</span><span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_measured</span><span class="p">,</span> <span class="n">esp_vlp_head_calculated</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Calculated Head via VLP"</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_measured</span><span class="p">,</span> <span class="n">esp_theoretical_head_calculated</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical Head"</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">time_measured</span><span class="p">,</span>
+            <span class="n">head_corrected</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Calibrated VLP Head (</span><span class="si">{</span><span class="n">a</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">*x + </span><span class="si">{</span><span class="n">b</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+            <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Head vs Time"</span><span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">time_measured</span><span class="p">,</span>
+            <span class="n">esp_vlp_head_calculated</span> <span class="o">-</span> <span class="n">esp_theoretical_head_calculated</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"differences"</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Calculated head via VLP - Theoretical head vs Time"</span><span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">time_measured</span><span class="p">,</span>
+            <span class="n">esp_vlp_outlet_pressure_calculated</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"Calculated Outlet Pressure via VLP"</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">time_measured</span><span class="p">,</span>
+            <span class="n">esp_theoretical_outlet_pressure_calculated</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"Theoretical Outlet Pressure"</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Outlet Pressure vs Time"</span><span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">time_measured</span><span class="p">,</span>
+            <span class="n">esp_vlp_outlet_pressure_calculated</span> <span class="o">-</span> <span class="n">esp_theoretical_outlet_pressure_calculated</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"differences"</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+            <span class="s2">"Calculated Outlet Pressure via VLP - Theoretical Outlet Pressure vs Time"</span>
+        <span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time_measured</span><span class="p">,</span> <span class="n">intake_pressure_measured</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Measured Inlet Pressure"</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">time_measured</span><span class="p">,</span>
+            <span class="n">esp_vlp_ipr_inlet_pressure_calculated</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"Calculated Inlet Pressure via VLP-IPR"</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Inlet Pressure vs Time"</span><span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">time_measured</span><span class="p">,</span>
+            <span class="n">intake_pressure_measured</span> <span class="o">-</span> <span class="n">esp_vlp_ipr_inlet_pressure_calculated</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">"differences"</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+            <span class="s2">"Measured Inlet Pressure - Calculated Inlet Pressure via VLP-IPR vs Time"</span>
+        <span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

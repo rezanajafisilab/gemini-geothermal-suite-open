@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.3.8.6. gemini_application.wims.erosion_from_tally &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.3.8.7. gemini_application.wims.erosion_model" href="gemini_application.wims.erosion_model.html" />
+    <link rel="prev" title="6.3.8.5. gemini_application.wims.erosion_from_prod_data" href="gemini_application.wims.erosion_from_prod_data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.application_abstract.html">6.3.1. gemini_application.application_abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.chatpopup.html">6.3.2. gemini_application.chatpopup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.esp.html">6.3.3. gemini_application.esp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.injectionwell.html">6.3.4. gemini_application.injectionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.productionwell.html">6.3.5. gemini_application.productionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.reportgenerator.html">6.3.6. gemini_application.reportgenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.tagbrowser.html">6.3.7. gemini_application.tagbrowser</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_application.wims.html">6.3.8. gemini_application.wims</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.common.html">6.3.8.1. gemini_application.wims.common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_logs.html">6.3.8.2. gemini_application.wims.corrosion_from_logs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_prod_data.html">6.3.8.3. gemini_application.wims.corrosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_model.html">6.3.8.4. gemini_application.wims.corrosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_prod_data.html">6.3.8.5. gemini_application.wims.erosion_from_prod_data</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">6.3.8.6. gemini_application.wims.erosion_from_tally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_model.html">6.3.8.7. gemini_application.wims.erosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.model_optimization.html">6.3.8.8. gemini_application.wims.model_optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.html"><span class="section-number">6.3. </span>gemini_application</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.wims.html"><span class="section-number">6.3.8. </span>gemini_application.wims</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.3.8.6. </span>gemini_application.wims.erosion_from_tally</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_application.wims.erosion_from_tally.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_application.wims.erosion_from_tally">
+<span id="gemini-application-wims-erosion-from-tally"></span><h1><span class="section-number">6.3.8.6. </span>gemini_application.wims.erosion_from_tally<a class="headerlink" href="#module-gemini_application.wims.erosion_from_tally" title="Link to this heading"></a></h1>
+<p>Build erosion flow-path segments from well tally and ESP geometry.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.annulus_id_m" title="gemini_application.wims.erosion_from_tally.annulus_id_m"><code class="xref py py-obj docutils literal notranslate"><span class="pre">annulus_id_m</span></code></a>(outer_id_m, inner_od_m)</p></td>
+<td><p>Effective annulus flow diameter [m] from outer ID and inner OD.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.build_esp_joint_annulus_segments" title="gemini_application.wims.erosion_from_tally.build_esp_joint_annulus_segments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_esp_joint_annulus_segments</span></code></a>(...)</p></td>
+<td><p>Stack ESP components; split each component at tally joint boundaries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.default_esp_geometry_template" title="gemini_application.wims.erosion_from_tally.default_esp_geometry_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_esp_geometry_template</span></code></a>()</p></td>
+<td><p>Return default ESP component rows for the geometry editor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.esp_top_depth_m" title="gemini_application.wims.erosion_from_tally.esp_top_depth_m"><code class="xref py py-obj docutils literal notranslate"><span class="pre">esp_top_depth_m</span></code></a>(esp_geometry, ...)</p></td>
+<td><p>Top of ESP package [m] from component lengths stacked from setting depth.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.find_esp_joint_index" title="gemini_application.wims.erosion_from_tally.find_esp_joint_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_esp_joint_index</span></code></a>(well_tally, ...)</p></td>
+<td><p>Index of first tally joint at or below ESP setting depth (TopMD &gt;= setting).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.find_tally_joint_at_depth" title="gemini_application.wims.erosion_from_tally.find_tally_joint_at_depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_tally_joint_at_depth</span></code></a>(well_tally, depth_m)</p></td>
+<td><p>Return tally row containing depth_m [m], or nearest joint at/below depth.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.flow_cross_section_area_m2" title="gemini_application.wims.erosion_from_tally.flow_cross_section_area_m2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flow_cross_section_area_m2</span></code></a>(flow_area_type, ...)</p></td>
+<td><p>Flow cross-section area [m2] for circle (tubing ID) or annulus.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.get_production_casing_id_inch" title="gemini_application.wims.erosion_from_tally.get_production_casing_id_inch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_production_casing_id_inch</span></code></a>(well_tally, ...)</p></td>
+<td><p>Production casing ID [inch] from tally (max ID below ESP intake depth).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.get_production_tubing_id_inch" title="gemini_application.wims.erosion_from_tally.get_production_tubing_id_inch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_production_tubing_id_inch</span></code></a>(well_tally, ...)</p></td>
+<td><p>Production tubing ID [inch] from tally joint at ESP setting depth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.inch_to_m" title="gemini_application.wims.erosion_from_tally.inch_to_m"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inch_to_m</span></code></a>(value_inch)</p></td>
+<td><p>Convert inches to meters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.resolve_production_tubing_id_inch" title="gemini_application.wims.erosion_from_tally.resolve_production_tubing_id_inch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resolve_production_tubing_id_inch</span></code></a>(...[, ...])</p></td>
+<td><p>Resolve production tubing ID [inch] from override, saved geometry, or tally.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.segments_for_injection_well" title="gemini_application.wims.erosion_from_tally.segments_for_injection_well"><code class="xref py py-obj docutils literal notranslate"><span class="pre">segments_for_injection_well</span></code></a>(well_tally)</p></td>
+<td><p>One interior segment per tally joint.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.segments_for_production_well" title="gemini_application.wims.erosion_from_tally.segments_for_production_well"><code class="xref py py-obj docutils literal notranslate"><span class="pre">segments_for_production_well</span></code></a>(well_tally, ...)</p></td>
+<td><p>Build production-well erosion segments from tally and ESP geometry.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.segments_from_tally" title="gemini_application.wims.erosion_from_tally.segments_from_tally"><code class="xref py py-obj docutils literal notranslate"><span class="pre">segments_from_tally</span></code></a>(well_tally, well_type[, ...])</p></td>
+<td><p>Build erosion segments from well tally (production or injection).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.split_depth_interval_by_tally_joints" title="gemini_application.wims.erosion_from_tally.split_depth_interval_by_tally_joints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_depth_interval_by_tally_joints</span></code></a>(...)</p></td>
+<td><p>Split a depth interval into sub-intervals for each overlapping tally joint.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.erosion_from_tally.tally_joint_to_interior_segment" title="gemini_application.wims.erosion_from_tally.tally_joint_to_interior_segment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tally_joint_to_interior_segment</span></code></a>(entry[, ...])</p></td>
+<td><p>Map a tally row to an interior-flow erosion segment.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.annulus_id_m">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">annulus_id_m</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outer_id_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_od_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#annulus_id_m"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.annulus_id_m" title="Link to this definition"></a></dt>
+<dd><p>Effective annulus flow diameter [m] from outer ID and inner OD.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.build_esp_joint_annulus_segments">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">build_esp_joint_annulus_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">esp_geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_setting_depth_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#build_esp_joint_annulus_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.build_esp_joint_annulus_segments" title="Link to this definition"></a></dt>
+<dd><p>Stack ESP components; split each component at tally joint boundaries.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.default_esp_geometry_template">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">default_esp_geometry_template</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#default_esp_geometry_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.default_esp_geometry_template" title="Link to this definition"></a></dt>
+<dd><p>Return default ESP component rows for the geometry editor.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.esp_top_depth_m">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">esp_top_depth_m</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">esp_geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_setting_depth_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#esp_top_depth_m"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.esp_top_depth_m" title="Link to this definition"></a></dt>
+<dd><p>Top of ESP package [m] from component lengths stacked from setting depth.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.find_esp_joint_index">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">find_esp_joint_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_setting_depth_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#find_esp_joint_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.find_esp_joint_index" title="Link to this definition"></a></dt>
+<dd><p>Index of first tally joint at or below ESP setting depth (TopMD &gt;= setting).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.find_tally_joint_at_depth">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">find_tally_joint_at_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#find_tally_joint_at_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.find_tally_joint_at_depth" title="Link to this definition"></a></dt>
+<dd><p>Return tally row containing depth_m [m], or nearest joint at/below depth.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.flow_cross_section_area_m2">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">flow_cross_section_area_m2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_area_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_diameter_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outer_id_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inner_od_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#flow_cross_section_area_m2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.flow_cross_section_area_m2" title="Link to this definition"></a></dt>
+<dd><p>Flow cross-section area [m2] for circle (tubing ID) or annulus.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.get_production_casing_id_inch">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">get_production_casing_id_inch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_setting_depth_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#get_production_casing_id_inch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.get_production_casing_id_inch" title="Link to this definition"></a></dt>
+<dd><p>Production casing ID [inch] from tally (max ID below ESP intake depth).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.get_production_tubing_id_inch">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">get_production_tubing_id_inch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_setting_depth_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#get_production_tubing_id_inch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.get_production_tubing_id_inch" title="Link to this definition"></a></dt>
+<dd><p>Production tubing ID [inch] from tally joint at ESP setting depth.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.inch_to_m">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">inch_to_m</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_inch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#inch_to_m"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.inch_to_m" title="Link to this definition"></a></dt>
+<dd><p>Convert inches to meters.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.resolve_production_tubing_id_inch">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">resolve_production_tubing_id_inch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_setting_depth_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tubing_id_inch_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#resolve_production_tubing_id_inch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.resolve_production_tubing_id_inch" title="Link to this definition"></a></dt>
+<dd><p>Resolve production tubing ID [inch] from override, saved geometry, or tally.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.segments_for_injection_well">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">segments_for_injection_well</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#segments_for_injection_well"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.segments_for_injection_well" title="Link to this definition"></a></dt>
+<dd><p>One interior segment per tally joint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.segments_for_production_well">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">segments_for_production_well</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_setting_depth_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tubing_id_inch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#segments_for_production_well"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.segments_for_production_well" title="Link to this definition"></a></dt>
+<dd><p>Build production-well erosion segments from tally and ESP geometry.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.segments_from_tally">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">segments_from_tally</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">well_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_setting_depth_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tubing_id_inch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#segments_from_tally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.segments_from_tally" title="Link to this definition"></a></dt>
+<dd><p>Build erosion segments from well tally (production or injection).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.split_depth_interval_by_tally_joints">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">split_depth_interval_by_tally_joints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_md_m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottom_md_m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#split_depth_interval_by_tally_joints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.split_depth_interval_by_tally_joints" title="Link to this definition"></a></dt>
+<dd><p>Split a depth interval into sub-intervals for each overlapping tally joint.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.erosion_from_tally.tally_joint_to_interior_segment">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.erosion_from_tally.</span></span><span class="sig-name descname"><span class="pre">tally_joint_to_interior_segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tubing_interior'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/erosion_from_tally.html#tally_joint_to_interior_segment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.erosion_from_tally.tally_joint_to_interior_segment" title="Link to this definition"></a></dt>
+<dd><p>Map a tally row to an interior-flow erosion segment.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_application.wims.erosion_from_prod_data.html" class="btn btn-neutral float-left" title="6.3.8.5. gemini_application.wims.erosion_from_prod_data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_application.wims.erosion_model.html" class="btn btn-neutral float-right" title="6.3.8.7. gemini_application.wims.erosion_model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_framework.abstract.unit_abstract &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_framework.abstract.unit_abstract</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_framework.abstract.unit_abstract</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Abstract unit interface for framework plants."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+
+
+<div class="viewcode-block" id="UnitAbstract">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.abstract.unit_abstract.html#gemini_framework.abstract.unit_abstract.UnitAbstract">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnitAbstract</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Abstract base class for plant units."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_id</span><span class="p">,</span> <span class="n">unit_name</span><span class="p">,</span> <span class="n">plant</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize unit object.</span>
+
+<span class="sd">        :param str unit_id: The unique identifier of the unit.</span>
+<span class="sd">        :param str unit_name: The name of the unit.</span>
+<span class="sd">        :param object plant: The plant.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">unit_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">unit_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plant</span> <span class="o">=</span> <span class="n">plant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"timestamps"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"property"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"timestamps"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"measured"</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">"filtered"</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">"calculated"</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modules</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"preprocessor"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"model"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"postprocessor"</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">from_units</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_units</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="UnitAbstract.link">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.abstract.unit_abstract.html#gemini_framework.abstract.unit_abstract.UnitAbstract.link">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">link</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Link unit modules."""</span>
+        <span class="k">for</span> <span class="n">phases</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">module_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">phases</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">module_list</span><span class="p">)):</span>
+                <span class="n">module_list</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">link</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="UnitAbstract.set_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.abstract.unit_abstract.html#gemini_framework.abstract.unit_abstract.UnitAbstract.set_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set unit parameters.</span>
+
+<span class="sd">        :param dict parameters: dict of parameters property.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"timestamps"</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">"timestamps"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">"property"</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="UnitAbstract.set_tagnames">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.abstract.unit_abstract.html#gemini_framework.abstract.unit_abstract.UnitAbstract.set_tagnames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_tagnames</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tagnames</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Set unit tagnames.</span>
+
+<span class="sd">        :param dict tagnames: tagnames that need to be updated.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="s2">"timestamps"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tagnames</span><span class="p">[</span><span class="s2">"timestamps"</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"measured"</span><span class="p">,</span> <span class="s2">"filtered"</span><span class="p">,</span> <span class="s2">"calculated"</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tagnames</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">[</span><span class="n">category</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="UnitAbstract.update_model_parameter">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_framework.abstract.unit_abstract.html#gemini_framework.abstract.unit_abstract.UnitAbstract.update_model_parameter">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_model_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamps</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update model parameters for given timestamps."""</span>
+        <span class="k">pass</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

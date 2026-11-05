@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.cooling_common.physics &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.cooling_common.physics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.cooling_common.physics</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Traceable SI pump, counterflow HX and tower-water equations from 03/11."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="nonnegative">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.physics.html#gemini_model.cooling_common.physics.nonnegative">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">nonnegative</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Validate finite nonnegative scalar/array data without modifying it."""</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be finite and nonnegative"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span></div>
+
+
+
+<div class="viewcode-block" id="pump_power_w">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.physics.html#gemini_model.cooling_common.physics.pump_power_w">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pump_power_w</span><span class="p">(</span><span class="n">flow_m3s</span><span class="p">,</span> <span class="n">pressure_drop_pa</span><span class="p">,</span> <span class="n">efficiency</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return flow * differential pressure / total efficiency, W (03)."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">efficiency</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">efficiency</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Pump efficiency must be in (0,1]"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"flow_m3s"</span><span class="p">,</span> <span class="n">flow_m3s</span><span class="p">)</span> <span class="o">*</span> <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"dp_pa"</span><span class="p">,</span> <span class="n">pressure_drop_pa</span><span class="p">)</span> <span class="o">/</span> <span class="n">efficiency</span></div>
+
+
+
+<div class="viewcode-block" id="hx_conductance_w_k">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.physics.html#gemini_model.cooling_common.physics.hx_conductance_w_k">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hx_conductance_w_k</span><span class="p">(</span><span class="n">capacity_a_w_k</span><span class="p">,</span> <span class="n">capacity_b_w_k</span><span class="p">,</span> <span class="n">ua_w_k</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return epsilon*Cmin for a counterflow HX, stable at Cr=1 and zero flow."""</span>
+    <span class="n">ca</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">ua</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span>
+        <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"C_a"</span><span class="p">,</span> <span class="n">capacity_a_w_k</span><span class="p">),</span>
+        <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"C_b"</span><span class="p">,</span> <span class="n">capacity_b_w_k</span><span class="p">),</span>
+        <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"UA"</span><span class="p">,</span> <span class="n">ua_w_k</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">cmin</span><span class="p">,</span> <span class="n">cmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">cb</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">cb</span><span class="p">)</span>
+    <span class="n">cr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">cmin</span><span class="p">,</span> <span class="n">cmax</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">cmin</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">cmax</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">ntu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">ua</span><span class="p">,</span> <span class="n">cmin</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">cmin</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">cmin</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">exp_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">ntu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cr</span><span class="p">))</span>
+    <span class="n">numerator</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">expm1</span><span class="p">(</span><span class="o">-</span><span class="n">ntu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cr</span><span class="p">))</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
+        <span class="n">numerator</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">cr</span> <span class="o">*</span> <span class="n">exp_term</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">cmin</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-8</span>
+    <span class="p">)</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cr</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="n">ntu</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ntu</span><span class="p">),</span> <span class="n">epsilon</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">epsilon</span> <span class="o">*</span> <span class="n">cmin</span></div>
+
+
+
+<div class="viewcode-block" id="counterflow_hx">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.physics.html#gemini_model.cooling_common.physics.counterflow_hx">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">counterflow_hx</span><span class="p">(</span>
+    <span class="n">temperature_a_c</span><span class="p">,</span> <span class="n">temperature_b_c</span><span class="p">,</span> <span class="n">capacity_a_w_k</span><span class="p">,</span> <span class="n">capacity_b_w_k</span><span class="p">,</span> <span class="n">ua_w_k</span><span class="p">,</span> <span class="n">approach_k</span><span class="o">=</span><span class="mf">0.0</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Transfer heat from the hotter port, preserving port order and both pinches."""</span>
+    <span class="k">if</span> <span class="n">approach_k</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">approach_k</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Nonnegative approach required"</span><span class="p">)</span>
+    <span class="n">ta</span><span class="p">,</span> <span class="n">tb</span><span class="p">,</span> <span class="n">ca</span><span class="p">,</span> <span class="n">cb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span>
+        <span class="n">temperature_a_c</span><span class="p">,</span> <span class="n">temperature_b_c</span><span class="p">,</span> <span class="n">capacity_a_w_k</span><span class="p">,</span> <span class="n">capacity_b_w_k</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">ta</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">tb</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Finite temperatures required"</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">hx_conductance_w_k</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">ua_w_k</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span>
+        <span class="n">g</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ta</span> <span class="o">-</span> <span class="n">tb</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">cb</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ta</span> <span class="o">-</span> <span class="n">tb</span><span class="p">)</span> <span class="o">-</span> <span class="n">approach_k</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">signed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">ta</span> <span class="o">-</span> <span class="n">tb</span><span class="p">)</span> <span class="o">*</span> <span class="n">q</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">signed</span><span class="p">,</span> <span class="n">ca</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">ca</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">signed</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">cb</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"power_transfer_w"</span><span class="p">:</span> <span class="n">q</span><span class="p">,</span> <span class="s2">"outlet_a_c"</span><span class="p">:</span> <span class="n">ta</span> <span class="o">-</span> <span class="n">da</span><span class="p">,</span> <span class="s2">"outlet_b_c"</span><span class="p">:</span> <span class="n">tb</span> <span class="o">+</span> <span class="n">db</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="water_rates_m3h">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.physics.html#gemini_model.cooling_common.physics.water_rates_m3h">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">water_rates_m3h</span><span class="p">(</span><span class="n">rejection_w</span><span class="p">,</span> <span class="n">settings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return evaporation, blowdown, makeup m3/h; no drift, specification 11."""</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">settings</span>
+    <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">cycles</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">w</span><span class="o">.</span><span class="n">latent_fraction</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid cycles/latent fraction"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">density_kg_m3</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">w</span><span class="o">.</span><span class="n">latent_heat_j_kg</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Positive water properties required"</span><span class="p">)</span>
+    <span class="n">evaporation</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"tower rejection W"</span><span class="p">,</span> <span class="n">rejection_w</span><span class="p">)</span>
+        <span class="o">*</span> <span class="mi">3600</span>
+        <span class="o">*</span> <span class="n">w</span><span class="o">.</span><span class="n">latent_fraction</span>
+        <span class="o">/</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">density_kg_m3</span> <span class="o">*</span> <span class="n">w</span><span class="o">.</span><span class="n">latent_heat_j_kg</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">blowdown</span> <span class="o">=</span> <span class="n">evaporation</span> <span class="o">/</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">cycles</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">evaporation</span><span class="p">,</span> <span class="n">blowdown</span><span class="p">,</span> <span class="n">evaporation</span> <span class="o">+</span> <span class="n">blowdown</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

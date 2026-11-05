@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_interface.blueprint.auth.routes &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_interface.blueprint.auth.routes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_interface.blueprint.auth.routes</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">Authentication Routes.</span>
+
+<span class="sd">=====================</span>
+
+<span class="sd">This module handles user authentication, login, logout, password management, and user registration.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">flash</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">url_for</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask_login</span><span class="w"> </span><span class="kn">import</span> <span class="n">current_user</span><span class="p">,</span> <span class="n">login_required</span><span class="p">,</span> <span class="n">login_user</span><span class="p">,</span> <span class="n">logout_user</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">werkzeug.security</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_password_hash</span><span class="p">,</span> <span class="n">generate_password_hash</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_interface.blueprint.dbmodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_interface.create_app</span><span class="w"> </span><span class="kn">import</span> <span class="n">db</span>
+
+<span class="n">auth</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">"auth"</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="login">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.auth.routes.html#gemini_interface.blueprint.auth.routes.login">[docs]</a>
+<span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/login"</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">login</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Display the login page."""</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">"login.html"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="login_post">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.auth.routes.html#gemini_interface.blueprint.auth.routes.login_post">[docs]</a>
+<span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/login"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">login_post</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Process user login form submission."""</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"email"</span><span class="p">)</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"password"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">email</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">"Please fill in your email address."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"auth.login"</span><span class="p">))</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="c1"># check if the user actually exists</span>
+    <span class="c1"># take the user-supplied password, hash it, and compare it to</span>
+    <span class="c1"># the hashed password in the database</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">check_password_hash</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">"Please check your login details and try again."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span>
+            <span class="n">url_for</span><span class="p">(</span><span class="s2">"auth.login"</span><span class="p">)</span>
+        <span class="p">)</span>  <span class="c1"># if the user doesn't exist or password is wrong, reload the page</span>
+
+    <span class="c1"># if the above check passes, then we know the user has the right credentials</span>
+    <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"main.index"</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="password">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.auth.routes.html#gemini_interface.blueprint.auth.routes.password">[docs]</a>
+<span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/password"</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">password</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Display password change page."""</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">"password.html"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="password_post">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.auth.routes.html#gemini_interface.blueprint.auth.routes.password_post">[docs]</a>
+<span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/password"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">password_post</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Process password change form submission."""</span>
+    <span class="n">old_password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"old_password"</span><span class="p">)</span>
+    <span class="n">new_password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"new_password"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_password_hash</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="n">old_password</span><span class="p">):</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">"old password does not match."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"auth.password"</span><span class="p">))</span>
+
+    <span class="n">current_user</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">generate_password_hash</span><span class="p">(</span><span class="n">new_password</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"scrypt"</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"main.index"</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="signup">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.auth.routes.html#gemini_interface.blueprint.auth.routes.signup">[docs]</a>
+<span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/signup"</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">signup</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Display user registration page (admin only)."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_user</span><span class="o">.</span><span class="n">role</span> <span class="o">==</span> <span class="s2">"admin"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"main.index"</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s2">"signup.html"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="signup_post">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.auth.routes.html#gemini_interface.blueprint.auth.routes.signup_post">[docs]</a>
+<span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/signup"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">signup_post</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Process user registration form submission."""</span>
+    <span class="c1"># code to validate and add user to database goes here</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"email"</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"password"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">email</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">"Please fill in your email address."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"auth.signup"</span><span class="p">))</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span>
+        <span class="n">email</span><span class="o">=</span><span class="n">email</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>  <span class="c1"># if this returns a user, then the email already exists in database</span>
+
+    <span class="k">if</span> <span class="n">user</span><span class="p">:</span>  <span class="c1"># if a user is found, we want to redirect back to signup page so user can try again</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">"Email address already exists."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"auth.signup"</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">""</span><span class="p">:</span>
+        <span class="n">flash</span><span class="p">(</span><span class="s2">"Please fill in your name."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"auth.signup"</span><span class="p">))</span>
+
+    <span class="c1"># create a new user with the form data. Hash the password so the plaintext version isn't saved.</span>
+    <span class="n">new_user</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span>
+        <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">generate_password_hash</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">"scrypt"</span><span class="p">),</span>
+        <span class="n">group</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># add the new user to the database</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_user</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"main.index"</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="logout">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.auth.routes.html#gemini_interface.blueprint.auth.routes.logout">[docs]</a>
+<span class="nd">@auth</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/logout"</span><span class="p">)</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">logout</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Log out the current user and clear session data."""</span>
+    <span class="n">logout_user</span><span class="p">()</span>
+
+    <span class="n">session</span><span class="p">[</span><span class="s2">"projectname"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">session</span><span class="p">[</span><span class="s2">"system_assets"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">url_for</span><span class="p">(</span><span class="s2">"auth.login"</span><span class="p">))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

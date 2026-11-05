@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.5. ESP Performance &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4.6. Well Schematics" href="application_well_schematics.html" />
+    <link rel="prev" title="4.4. Parameters overview" href="application_parameters_overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_applications.html">4. Applications</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="application_grafana.html">4.1. Time Series Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_production_well_performance.html">4.2. Production well performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_injectivity.html">4.3. Injectivity Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_parameters_overview.html">4.4. Parameters overview</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.5. ESP Performance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">4.5.1. Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#monitoring-tab">4.5.2. Monitoring Tab</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#calibration-tab">4.5.3. Calibration Tab</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prediction-tab">4.5.4. Prediction Tab</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="application_well_schematics.html">4.6. Well Schematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_wellintegrity.html">4.7. Well Integrity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_rag.html">4.8. Chat Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_report_generator.html">4.9. Report Generator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_applications.html"><span class="section-number">4. </span>Applications</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4.5. </span>ESP Performance</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/application_esp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="esp-performance">
+<h1><span class="section-number">4.5. </span>ESP Performance<a class="headerlink" href="#esp-performance" title="Link to this heading"></a></h1>
+<section id="description">
+<h2><span class="section-number">4.5.1. </span>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>This application provides comprehensive monitoring, calibration, and failure prediction capabilities for Electric Submersible Pumps (ESP) in geothermal reservoirs.</p>
+<p>ESPs are installed in production wells to provide additional lift when the reservoir pressure is not sufficient to bring the fluid to the surface. They increase pressure between the pump intake (inlet) and discharge (outlet).</p>
+<p>The schematic below illustrates a typical pressure profile across a geothermal production well equipped with an ESP:</p>
+<a class="reference internal image-reference" href="_images/application_esp_0.png"><img alt="_images/application_esp_0.png" class="align-center" src="_images/application_esp_0.png" style="width: 40%;" /></a>
+<p>The application is organized into three tabs: <strong>Monitoring</strong>, <strong>Calibration</strong>,
+and <strong>Prediction</strong>.</p>
+</section>
+<section id="monitoring-tab">
+<h2><span class="section-number">4.5.2. </span>Monitoring Tab<a class="headerlink" href="#monitoring-tab" title="Link to this heading"></a></h2>
+<p>The Monitoring tab provides real-time ESP performance visualization.</p>
+<p><strong>ESP Pump Curve and Real-Time Data</strong></p>
+<p>This section shows the ESP pump curve from the manufacturer, plotted as head versus flowrate. On top of this, real-time operating data is added to show actual pump performance.</p>
+<p>The pump curve displays theoretical frequency lines (typically 30, 40, 50, and 60 Hz) as “Theoretical Frequency” in the legend. The real-time operational point is overlaid on the pump curve, allowing users to compare actual performance against expected behavior.</p>
+<p>Because discharge pressure is often unavailable, pump head is estimated from:</p>
+<ul class="simple">
+<li><p>inlet pressure measured by a downhole sensor</p></li>
+<li><p>upper pressure difference (<span class="math notranslate nohighlight">\(\Delta P^{1}\)</span>), calculated with VLP (see
+<a class="reference internal" href="application_production_well_performance.html"><span class="doc">Production well performance</span></a>) from ESP top to wellhead</p></li>
+</ul>
+<p>From these, we estimate the actual pressure increase provided by the pump. This gives us the real-time pump head, which is plotted with the flowrate on top of the manufacturer pump curve.</p>
+<a class="reference internal image-reference" href="_images/application_esp_Mon_1.png"><img alt="_images/application_esp_Mon_1.png" src="_images/application_esp_Mon_1.png" style="width: 100%;" /></a>
+<p><strong>Flow and Frequency Plot</strong></p>
+<p>A time-series plot displays the measured flow rate and frequency over the selected date range. This helps users identify operational patterns and potential issues with pump performance.</p>
+<a class="reference internal image-reference" href="_images/application_esp_Mon_2.png"><img alt="_images/application_esp_Mon_2.png" src="_images/application_esp_Mon_2.png" style="width: 100%;" /></a>
+<p><strong>Note on Calibration</strong></p>
+<p>If the measured operating point does not align with theoretical frequency lines,
+the ESP model may require calibration.</p>
+</section>
+<section id="calibration-tab">
+<h2><span class="section-number">4.5.3. </span>Calibration Tab<a class="headerlink" href="#calibration-tab" title="Link to this heading"></a></h2>
+<p>The Calibration tab enables users to calibrate the ESP model by aligning calculated values with theoretical expectations.</p>
+<p><strong>Calibration Process</strong></p>
+<p>The calibration matches the linear fitting to the calculated pump head. The goal is to match the <strong>calculated VLP head</strong> to the <strong>theoretical head</strong> that comes from the pump curve.</p>
+<p>By clicking “Run Calibration”, the application performs a linear fit of the form <span class="math notranslate nohighlight">\(ax+b\)</span> for a selected time period. The calibration coefficients <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are displayed in the calibration window and can be saved in the Parameters Overview so the calibration is applied to future ESP performance evaluations.</p>
+<p><strong>Comparison Plots</strong></p>
+<p>This section compares real-time measurements with model-based values:</p>
+<a class="reference internal image-reference" href="_images/application_esp_Calib_1.png"><img alt="_images/application_esp_Calib_1.png" src="_images/application_esp_Calib_1.png" style="width: 100%;" /></a>
+<p><strong>Head Comparison</strong></p>
+<p>This is the most critical plot, used in the calibration step. It includes:</p>
+<ul class="simple">
+<li><p>VLP Head: calculated using pressure drop from the top of the ESP to the wellhead (since no discharge sensor is available) and measured intake pressure.</p></li>
+<li><p>Theoretical Head: calculated from the manufacturer pump curve using current flow and frequency.</p></li>
+<li><p>Calibrated Head: VLP head adjusted using calibration coefficients (if applied) to better match the theoretical head.</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/application_esp_Calib_2.png"><img alt="_images/application_esp_Calib_2.png" src="_images/application_esp_Calib_2.png" style="width: 100%;" /></a>
+<p>If no calibration is applied, default values are used with <span class="math notranslate nohighlight">\(a = 1\)</span> and <span class="math notranslate nohighlight">\(b = 0\)</span>. This helps users to see the initial mismatch between measured and expected pump behavior.</p>
+<p><strong>Outlet Pressure Comparison</strong></p>
+<p>Since there is no discharge pressure sensor, it shows:</p>
+<ul class="simple">
+<li><p>VLP-based Outlet Pressure: calculated from the pressure drop above the ESP and wellhead pressure.</p></li>
+<li><p>Theoretical Outlet Pressure: calculated using the measured inlet pressure and theoretical pump head.</p></li>
+</ul>
+<p><strong>Inlet Pressure Comparison</strong></p>
+<p>This compares:</p>
+<ul class="simple">
+<li><p>Measured Inlet Pressure: from the ESP sensor at the pump intake.</p></li>
+<li><p>Calculated Inlet Pressure: calculated from IPR (using reservoir pressure and flowrate, as described in <a class="reference internal" href="application_production_well_performance.html"><span class="doc">Production well performance</span></a>) and VLP (from reservoir to pump location, using bottomhole pressure and pressure drop in the lower stage of the ESP, <span class="math notranslate nohighlight">\(\Delta P^{2}\)</span>).</p></li>
+</ul>
+<p>These comparisons act as diagnostic tools to check consistency between measurements and expected values. Deviations in head, outlet, or inlet pressures may indicate uncalibrated models, measurement errors, or operational issues.</p>
+</section>
+<section id="prediction-tab">
+<h2><span class="section-number">4.5.4. </span>Prediction Tab<a class="headerlink" href="#prediction-tab" title="Link to this heading"></a></h2>
+<p>The Prediction tab provides ESP failure forecasting using a machine-learning
+model trained on historical operating data.</p>
+<p><strong>Prediction Modes</strong></p>
+<p>The application supports two prediction modes:</p>
+<ul class="simple">
+<li><p><strong>Forward Prediction (Next 30 Days)</strong>: Predicts failure probability for the next 30 days from a selected time point.</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/application_esp_Pred_1.png"><img alt="_images/application_esp_Pred_1.png" src="_images/application_esp_Pred_1.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="_images/application_esp_Pred_2.png"><img alt="_images/application_esp_Pred_2.png" src="_images/application_esp_Pred_2.png" style="width: 100%;" /></a>
+<ul class="simple">
+<li><p><strong>Historical Analysis (Full Period)</strong>: Analyzes failure probability across the entire selected historical period.</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/application_esp_Pred_3.png"><img alt="_images/application_esp_Pred_3.png" src="_images/application_esp_Pred_3.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="_images/application_esp_Pred_4.png"><img alt="_images/application_esp_Pred_4.png" src="_images/application_esp_Pred_4.png" style="width: 100%;" /></a>
+<p><strong>Failure Probability Plot</strong></p>
+<p>The main prediction plot displays the failure probability over time with color-coded risk zones:</p>
+<ul class="simple">
+<li><p><strong>High Risk (Red)</strong>: Probability &gt; 0.7</p></li>
+<li><p><strong>Medium Risk (Orange)</strong>: Probability between 0.3 and 0.7</p></li>
+<li><p><strong>Low Risk (Green)</strong>: Probability &lt; 0.3</p></li>
+</ul>
+<p>For forward prediction mode, a vertical line indicates the current time point, with predictions shown for the future period.</p>
+<p><strong>Features (Model Inputs)</strong></p>
+<p>The application displays all sensor features used as inputs to the ML model in a consolidated plot with grouped subplots:</p>
+<ul class="simple">
+<li><p><strong>Pressures</strong>: Wellhead pressure, Intake pressure (ESP), and Discharge pressure (ESP)</p></li>
+<li><p><strong>Temperatures</strong>: ESP Motor temperature and Wellhead temperature</p></li>
+<li><p><strong>Vibration and Flow Rate</strong>: Vibration and Brine flow rate</p></li>
+</ul>
+<p><strong>Model Disclaimer</strong></p>
+<p>The model was trained on limited examples from one well/ESP type. Interpret
+predictions with caution, especially in unfamiliar operating envelopes.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="application_parameters_overview.html" class="btn btn-neutral float-left" title="4.4. Parameters overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="application_well_schematics.html" class="btn btn-neutral float-right" title="4.6. Well Schematics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

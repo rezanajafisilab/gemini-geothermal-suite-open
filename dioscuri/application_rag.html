@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.8. Chat Assistant &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4.9. Report Generator" href="application_report_generator.html" />
+    <link rel="prev" title="4.7. Well Integrity" href="application_wellintegrity.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_applications.html">4. Applications</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="application_grafana.html">4.1. Time Series Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_production_well_performance.html">4.2. Production well performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_injectivity.html">4.3. Injectivity Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_parameters_overview.html">4.4. Parameters overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_esp.html">4.5. ESP Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_well_schematics.html">4.6. Well Schematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_wellintegrity.html">4.7. Well Integrity</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.8. Chat Assistant</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">4.8.1. Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#document-inventory">4.8.2. Document Inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#document-processing">4.8.3. Document Processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#retrieval-and-generation">4.8.4. Retrieval and generation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#answer-quality-and-best-practices">4.8.5. Answer Quality and Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="application_report_generator.html">4.9. Report Generator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_applications.html"><span class="section-number">4. </span>Applications</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4.8. </span>Chat Assistant</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/application_rag.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="chat-assistant">
+<h1><span class="section-number">4.8. </span>Chat Assistant<a class="headerlink" href="#chat-assistant" title="Link to this heading"></a></h1>
+<section id="description">
+<h2><span class="section-number">4.8.1. </span>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The Chat Assistant lets users ask natural-language questions about uploaded
+project documents. It is based on Retrieval-Augmented Generation (RAG), which
+combines semantic search with LLM-based answer generation.</p>
+</section>
+<section id="document-inventory">
+<h2><span class="section-number">4.8.2. </span>Document Inventory<a class="headerlink" href="#document-inventory" title="Link to this heading"></a></h2>
+<p>To use the assistant, documents must first be uploaded (PDF format) through
+<strong>INFO</strong> -&gt; <strong>REPORT</strong>.
+This interface allows users to upload new reports and browse existing ones.
+When uploading a report, the user can enable the option <strong>“document is included for search”</strong> to make the report available to the Chat Assistant.</p>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="_images/application_rag_2.png"><img alt="_images/application_rag_2.png" src="_images/application_rag_2.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 4.1 </span><span class="caption-text">By enabling the checkbox “document is included for search”, the uploaded report will be indexed and made available to the Chat Assistant for answering user questions.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="document-processing">
+<h2><span class="section-number">4.8.3. </span>Document Processing<a class="headerlink" href="#document-processing" title="Link to this heading"></a></h2>
+<p>Uploaded PDF files are automatically processed by the system.
+The text is extracted and split into small sections (chunks).
+Each chunk is transformed into a numerical representation (embedding) that allows efficient comparison with user questions.
+Each report is stored as a set of chunks in a database, dedicated for the Chat Assistant.</p>
+<p>The pipeline supports English and Dutch documents. Dutch content is translated
+for improved LLM processing consistency.</p>
+</section>
+<section id="retrieval-and-generation">
+<h2><span class="section-number">4.8.4. </span>Retrieval and generation<a class="headerlink" href="#retrieval-and-generation" title="Link to this heading"></a></h2>
+<p>The Chat Assistant uses a two-step process called Retrieval-Augmented Generation:</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/application_rag_1.png"><img alt="_images/application_rag_1.png" src="_images/application_rag_1.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 4.2 </span><span class="caption-text">Schematic explaining the workflow of the Retrieval-Augmented Generation method.
+The process includes the indexing the documents, retrieving the context and generating the response.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<ol class="arabic simple">
+<li><p><strong>Retrieval</strong>: the question is embedded and compared with stored document
+embeddings; the most relevant chunks are selected as context.</p></li>
+<li><p><strong>Generation</strong>: the selected context and question are sent to the LLM, which
+produces the answer shown in the interface.</p></li>
+</ol>
+</section>
+<section id="answer-quality-and-best-practices">
+<h2><span class="section-number">4.8.5. </span>Answer Quality and Best Practices<a class="headerlink" href="#answer-quality-and-best-practices" title="Link to this heading"></a></h2>
+<p>Answer quality depends on:</p>
+<ul class="simple">
+<li><p>question clarity and specificity</p></li>
+<li><p>document quality and structure</p></li>
+<li><p>model capability for the selected task</p></li>
+</ul>
+<p>Consistent report formatting and concise questions generally improve response
+quality.</p>
+<p>If the first answer is not satisfactory:</p>
+<ul class="simple">
+<li><p>ask narrower and more specific questions</p></li>
+<li><p>use terms present in the reports</p></li>
+<li><p>break complex requests into smaller queries</p></li>
+</ul>
+<p>For transparency and validation, the Chat Assistant includes a list of the document parts (citations) that were used to generate the answer.
+These citations allow users to:</p>
+<ul class="simple">
+<li><p>Check the source of the information</p></li>
+<li><p>Verify the accuracy of the AI-generated response</p></li>
+<li><p>Identify which reports are most relevant to the question</p></li>
+</ul>
+<p>By reviewing citations, users can validate the response and inspect source text
+directly. For high-stakes decisions, always verify critical outputs.</p>
+<p>RAG systems involve a trade-off between response speed and answer quality.
+Larger models are usually more accurate but slower.</p>
+<p>The framework supports multiple LLMs. See
+<a class="reference internal" href="start_installation.html#chat-assistant-setup"><span class="std std-ref">Chat Assistant setup</span></a> for model configuration.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="application_wellintegrity.html" class="btn btn-neutral float-left" title="4.7. Well Integrity" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="application_report_generator.html" class="btn btn-neutral float-right" title="4.9. Report Generator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

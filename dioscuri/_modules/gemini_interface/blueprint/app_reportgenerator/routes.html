@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_interface.blueprint.app_reportgenerator.routes &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_interface.blueprint.app_reportgenerator.routes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_interface.blueprint.app_reportgenerator.routes</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">App Report Generator Application Routes.</span>
+
+<span class="sd">==============================</span>
+
+<span class="sd">This module handles the generation of the report of the plant automatically.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">calendar</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">send_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">werkzeug.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadRequest</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.reportgenerator.reportgenerator</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportGenerator</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="c1"># If available in your environment</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">adh_sample_library_preview.SdsError</span><span class="w"> </span><span class="kn">import</span> <span class="n">SdsError</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="n">SdsError</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># fallback if import path differs</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">app_reportgenerator</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">"app_reportgenerator"</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">NLOG_SECTION_FILE_PAIRS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s2">"tagnames_section1A_default.json"</span><span class="p">,</span> <span class="s2">"tagnames_section1A.json"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"tagnames_section1B_default.json"</span><span class="p">,</span> <span class="s2">"tagnames_section1B.json"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"tagnames_section2_default.json"</span><span class="p">,</span> <span class="s2">"tagnames_section2.json"</span><span class="p">),</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="ensure_nlog_default_files">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.ensure_nlog_default_files">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_nlog_default_files</span><span class="p">(</span><span class="n">project_root</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Ensure NLOG default section files exist for a project."""</span>
+    <span class="n">report_folder</span> <span class="o">=</span> <span class="n">project_root</span> <span class="o">/</span> <span class="n">project_name</span> <span class="o">/</span> <span class="s2">"report_generator"</span>
+    <span class="n">report_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">template_folder</span> <span class="o">=</span> <span class="n">project_root</span> <span class="o">/</span> <span class="s2">"_template"</span> <span class="o">/</span> <span class="s2">"report_generator"</span>
+
+    <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">NLOG_SECTION_FILE_PAIRS</span><span class="p">:</span>
+        <span class="n">target_file</span> <span class="o">=</span> <span class="n">report_folder</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="k">if</span> <span class="n">target_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">continue</span>
+
+        <span class="n">source_file</span> <span class="o">=</span> <span class="n">template_folder</span> <span class="o">/</span> <span class="n">filename</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">source_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Default template file missing: </span><span class="si">{</span><span class="n">source_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">target_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">report_folder</span></div>
+
+
+
+<div class="viewcode-block" id="load_plant">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.load_plant">[docs]</a>
+<span class="nd">@app_reportgenerator</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/reportgenerator/load_plant"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_plant</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Load the plant object."""</span>
+    <span class="k">global</span> <span class="n">app_instance</span>
+
+    <span class="c1"># ---- 1) Validate request JSON early ----</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">request</span><span class="o">.</span><span class="n">is_json</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">jsonify</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"error"</span><span class="p">,</span>
+                    <span class="s2">"error"</span><span class="p">:</span> <span class="s2">"bad_request"</span><span class="p">,</span>
+                    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Expected application/json request body."</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+            <span class="mi">400</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">(</span><span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">plant_name</span> <span class="o">=</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"field_name"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">plant_name</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">plant_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">plant_name</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">jsonify</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"error"</span><span class="p">,</span>
+                    <span class="s2">"error"</span><span class="p">:</span> <span class="s2">"bad_request"</span><span class="p">,</span>
+                    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Missing or invalid 'field_name' in JSON body."</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+            <span class="mi">400</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="c1"># current_app.config["GEMINI_PROJECT_FOLDER"]</span>
+    <span class="n">project_folder</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">project_folder</span><span class="p">:</span>
+        <span class="c1"># Misconfiguration on the server</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"GEMINI_PROJECT_FOLDER is not set in Flask config."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">jsonify</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"error"</span><span class="p">,</span>
+                    <span class="s2">"error"</span><span class="p">:</span> <span class="s2">"server_misconfigured"</span><span class="p">,</span>
+                    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Server configuration missing GEMINI_PROJECT_FOLDER."</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+            <span class="mi">500</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># ---- 2) Run and catch errors ----</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">app_instance</span> <span class="o">=</span> <span class="n">ReportGenerator</span><span class="p">()</span>
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">load_plant</span><span class="p">(</span><span class="n">project_folder</span><span class="p">,</span> <span class="n">plant_name</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"ok"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Plant loaded successfully."</span><span class="p">}),</span> <span class="mi">200</span>
+
+    <span class="c1"># ---- 3) Known/expected errors ----</span>
+    <span class="k">except</span> <span class="n">BadRequest</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># If something in Flask parsing/validation throws this</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"error"</span><span class="p">,</span> <span class="s2">"error"</span><span class="p">:</span> <span class="s2">"bad_request"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}),</span> <span class="mi">400</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Special-case ADH auth error if it's the one you showed</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">SdsError</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">SdsError</span><span class="p">):</span>
+            <span class="c1"># Don't leak sensitive config; return a helpful, safe message</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"ADH authentication/SDSError while loading plant."</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">jsonify</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"error"</span><span class="p">,</span>
+                        <span class="s2">"error"</span><span class="p">:</span> <span class="s2">"external_auth_failed"</span><span class="p">,</span>
+                        <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Failed to authenticate to ADH."</span>
+                        <span class="s2">" Check client id/secret/tenant and token endpoint configuration."</span><span class="p">,</span>
+                        <span class="s2">"details"</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>  <span class="c1"># optional: remove if you don't want raw upstream text</span>
+                    <span class="p">}</span>
+                <span class="p">),</span>
+                <span class="mi">502</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Generic fallback</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"Unhandled exception in load_plant()."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">jsonify</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"error"</span><span class="p">,</span>
+                    <span class="s2">"error"</span><span class="p">:</span> <span class="s2">"internal_error"</span><span class="p">,</span>
+                    <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"An unexpected error occurred while loading the plant."</span><span class="p">,</span>
+                    <span class="s2">"details"</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>  <span class="c1"># optional; remove in production</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+            <span class="mi">500</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="generate_report">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.generate_report">[docs]</a>
+<span class="nd">@app_reportgenerator</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/reportgenerator/generate_report"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_report</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Generate the report pdf object."""</span>
+    <span class="c1"># Get inputs</span>
+    <span class="n">StartTime</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"StartTime"</span><span class="p">]</span>
+    <span class="n">EndTime</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"EndTime"</span><span class="p">]</span>
+    <span class="n">AuthorName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"AuthorName"</span><span class="p">]</span>
+    <span class="n">ProjectName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"ProjectName"</span><span class="p">]</span>
+
+    <span class="n">esp_plots_options</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"esp_plots_options"</span><span class="p">]</span>
+    <span class="n">inj_well_crossplot_options</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"inj_well_crossplot_options"</span><span class="p">]</span>
+
+    <span class="n">injection_report</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"InjectionReport"</span><span class="p">]</span>
+    <span class="n">production_report</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"ProductionReport"</span><span class="p">]</span>
+    <span class="n">p_q_date_crossplot</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"P_Q_date_crossplot"</span><span class="p">]</span>
+    <span class="n">p_q_t_crossplot</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"P_Q_T_crossplot"</span><span class="p">]</span>
+    <span class="n">esp_q_pow_date_crossplot</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"ESP_Q_Pow_date_crossplot"</span><span class="p">]</span>
+    <span class="n">esp_freq_i_date_crossplot</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"ESP_freq_I_date_crossplot"</span><span class="p">]</span>
+
+    <span class="c1"># User comments</span>
+    <span class="n">inj_report_comments</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"inj_report_comments"</span><span class="p">]</span>
+    <span class="n">prod_report_comments</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"prod_report_comments"</span><span class="p">]</span>
+    <span class="n">esp_report_comments</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"esp_report_comments"</span><span class="p">]</span>
+    <span class="c1"># Initialize parameters</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">StartTime</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"end_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">EndTime</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"timestep"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3600</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"author_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">AuthorName</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"project_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ProjectName</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"project_path"</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">)</span>
+
+    <span class="c1"># Convert to datetime objects</span>
+    <span class="n">start_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">StartTime</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+    <span class="n">end_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">EndTime</span><span class="p">,</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"number_days"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_dt</span> <span class="o">-</span> <span class="n">start_dt</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+
+    <span class="c1"># Initialize app</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">init_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">initialize_pdf_object</span><span class="p">()</span>
+
+    <span class="c1"># Get plant components</span>
+    <span class="n">inj_wells</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_injection_wells</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">inj_wells</span><span class="p">)</span>
+    <span class="n">prod_wells</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_production_wells</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">prod_wells</span><span class="p">)</span>
+    <span class="n">esps</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_esps</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">esps</span><span class="p">)</span>
+
+    <span class="c1"># ADD TITLE PAGE</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">add_title_page</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"CREATING STATS REPORT..."</span><span class="p">)</span>
+    <span class="c1"># CREATE TABLE WITH STATS</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">add_stats_table</span><span class="p">(</span><span class="n">inj_wells</span><span class="p">,</span> <span class="n">prod_wells</span><span class="p">)</span>
+    <span class="c1"># CREATE MAX VALUES PLOTS</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">add_stats_plot</span><span class="p">(</span><span class="n">inj_wells</span><span class="p">,</span> <span class="n">prod_wells</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">injection_report</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"CREATING INJECTION REPORT..."</span><span class="p">)</span>
+        <span class="n">tagnames</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">"injectionwell_injectivity_index.calculated"</span><span class="p">,</span>
+            <span class="s2">"injectionwell_wellhead_pressure.measured"</span><span class="p">,</span>
+            <span class="s2">"injectionwell_flow.measured"</span><span class="p">,</span>
+            <span class="s2">"injectionwell_wellhead_temperature.measured"</span><span class="p">,</span>
+            <span class="s2">"injectionwell_annulus_pressure.measured"</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">add_injection_report</span><span class="p">(</span><span class="n">inj_wells</span><span class="p">,</span> <span class="n">tagnames</span><span class="p">)</span>
+
+        <span class="n">user_text_inj_report_title</span> <span class="o">=</span> <span class="s2">"Injection report: User comments"</span>
+        <span class="n">user_text_inj_report</span> <span class="o">=</span> <span class="n">inj_report_comments</span>
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">add_text_section_page</span><span class="p">(</span><span class="n">user_text_inj_report</span><span class="p">,</span> <span class="n">user_text_inj_report_title</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">production_report</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"CREATING PRODUCTION REPORT..."</span><span class="p">)</span>
+        <span class="n">tagnames</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">"productionwell_annulus_a_pressure.measured"</span><span class="p">,</span>
+            <span class="s2">"productionwell_annulus_b_pressure.measured"</span><span class="p">,</span>
+            <span class="s2">"productionwell_wellhead_pressure.measured"</span><span class="p">,</span>
+            <span class="s2">"productionwell_flow.measured"</span><span class="p">,</span>
+            <span class="s2">"productionwell_wellhead_temperature.measured"</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">add_production_report</span><span class="p">(</span><span class="n">prod_wells</span><span class="p">,</span> <span class="n">tagnames</span><span class="p">)</span>
+
+        <span class="n">user_text_prod_report_title</span> <span class="o">=</span> <span class="s2">"Production report: User comments"</span>
+        <span class="n">user_text_prod_report</span> <span class="o">=</span> <span class="n">prod_report_comments</span>
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">add_text_section_page</span><span class="p">(</span><span class="n">user_text_prod_report</span><span class="p">,</span> <span class="n">user_text_prod_report_title</span><span class="p">)</span>
+
+    <span class="c1"># ESP plots</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"CREATING ESP REPORT..."</span><span class="p">)</span>
+    <span class="n">option_to_tagname_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"esp_flow"</span><span class="p">:</span> <span class="s2">"esp_flow.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_frequency"</span><span class="p">:</span> <span class="s2">"esp_frequency.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_amperage"</span><span class="p">:</span> <span class="s2">"esp_current.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_voltage"</span><span class="p">:</span> <span class="s2">"esp_voltage.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_power_consumption"</span><span class="p">:</span> <span class="s2">"esp_power_consumption.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_motor_temperature"</span><span class="p">:</span> <span class="s2">"esp_motor_temperature.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_inlet_temperature"</span><span class="p">:</span> <span class="s2">"esp_inlet_temperature.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_outlet_temperature"</span><span class="p">:</span> <span class="s2">"esp_outlet_temperature.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_vibration_x"</span><span class="p">:</span> <span class="s2">"esp_vibration_x.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_vibration_y"</span><span class="p">:</span> <span class="s2">"esp_vibration_y.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_intake_pressure"</span><span class="p">:</span> <span class="s2">"esp_inlet_pressure.measured"</span><span class="p">,</span>
+        <span class="s2">"esp_discharge_pressure"</span><span class="p">:</span> <span class="s2">"esp_outlet_pressure.measured"</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">esp_plots_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">tagname</span> <span class="o">=</span> <span class="n">option_to_tagname_dict</span><span class="p">[</span><span class="n">option</span><span class="p">]</span>
+        <span class="n">esp_plots_options</span><span class="p">[</span><span class="n">option</span><span class="p">][</span><span class="s2">"tagname"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tagname</span>
+
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">add_esp_report</span><span class="p">(</span><span class="n">esps</span><span class="p">,</span> <span class="n">esp_plots_options</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">p_q_date_crossplot</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"CREATING INJECTION CROSS PLOT..."</span><span class="p">)</span>
+        <span class="n">tagnames</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">"injectionwell_wellhead_pressure.measured"</span><span class="p">,</span>
+            <span class="s2">"injectionwell_flow.measured"</span><span class="p">,</span>
+            <span class="s2">"datestamp"</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Function below creates generic cross-plot without skin lines</span>
+        <span class="c1"># app_instance.add_cross_plot(inj_wells, tagnames, 'Pressure-Flow-Date')</span>
+
+        <span class="n">inj_well_crossplot_options</span><span class="p">[</span><span class="s2">"starttime"</span><span class="p">]</span> <span class="o">=</span> <span class="n">StartTime</span>
+        <span class="n">inj_well_crossplot_options</span><span class="p">[</span><span class="s2">"endtime"</span><span class="p">]</span> <span class="o">=</span> <span class="n">EndTime</span>
+        <span class="n">inj_well_crossplot_options</span><span class="p">[</span><span class="s2">"plot_type"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Pressure-Flow-Date"</span>
+
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">add_cross_plot_with_skin_lines</span><span class="p">(</span><span class="n">inj_wells</span><span class="p">,</span> <span class="n">tagnames</span><span class="p">,</span> <span class="n">inj_well_crossplot_options</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">p_q_t_crossplot</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"CREATING INJECTION CROSS PLOT..."</span><span class="p">)</span>
+        <span class="n">tagnames</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">"injectionwell_wellhead_pressure.measured"</span><span class="p">,</span>
+            <span class="s2">"injectionwell_flow.measured"</span><span class="p">,</span>
+            <span class="s2">"injectionwell_wellhead_temperature.measured"</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="c1"># Function below creates generic cross-plot without skin lines</span>
+        <span class="c1"># app_instance.add_cross_plot(inj_wells, tagnames, 'Pressure-Flow-Temperature')</span>
+
+        <span class="n">inj_well_crossplot_options</span><span class="p">[</span><span class="s2">"starttime"</span><span class="p">]</span> <span class="o">=</span> <span class="n">StartTime</span>
+        <span class="n">inj_well_crossplot_options</span><span class="p">[</span><span class="s2">"endtime"</span><span class="p">]</span> <span class="o">=</span> <span class="n">EndTime</span>
+        <span class="n">inj_well_crossplot_options</span><span class="p">[</span><span class="s2">"plot_type"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Pressure-Flow-Date"</span>
+
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">add_cross_plot_with_skin_lines</span><span class="p">(</span><span class="n">inj_wells</span><span class="p">,</span> <span class="n">tagnames</span><span class="p">,</span> <span class="n">inj_well_crossplot_options</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">esp_q_pow_date_crossplot</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"CREATING ESP CROSS PLOT..."</span><span class="p">)</span>
+        <span class="n">tagnames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"esp_flow.measured"</span><span class="p">,</span> <span class="s2">"esp_current.measured"</span><span class="p">,</span> <span class="s2">"datestamp"</span><span class="p">]</span>
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">add_cross_plot</span><span class="p">(</span><span class="n">esps</span><span class="p">,</span> <span class="n">tagnames</span><span class="p">,</span> <span class="s2">"ESP flow-ESP current-Date"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">esp_freq_i_date_crossplot</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"CREATING ESP CROSS PLOT..."</span><span class="p">)</span>
+        <span class="n">tagnames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"esp_frequency.measured"</span><span class="p">,</span> <span class="s2">"esp_current.measured"</span><span class="p">,</span> <span class="s2">"datestamp"</span><span class="p">]</span>
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">add_cross_plot</span><span class="p">(</span><span class="n">esps</span><span class="p">,</span> <span class="n">tagnames</span><span class="p">,</span> <span class="s2">"ESP frequency-ESP current-Date"</span><span class="p">)</span>
+
+    <span class="n">user_text_esp_report_title</span> <span class="o">=</span> <span class="s2">"ESP report: User comments"</span>
+    <span class="n">user_text_esp_report</span> <span class="o">=</span> <span class="n">esp_report_comments</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">add_text_section_page</span><span class="p">(</span><span class="n">user_text_esp_report</span><span class="p">,</span> <span class="n">user_text_esp_report_title</span><span class="p">)</span>
+
+    <span class="c1"># Create pdf</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">pdf_object</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">pdf_buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">send_file</span><span class="p">(</span>
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">pdf_buffer</span><span class="p">,</span>
+        <span class="n">mimetype</span><span class="o">=</span><span class="s2">"application/pdf"</span><span class="p">,</span>
+        <span class="n">as_attachment</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">download_name</span><span class="o">=</span><span class="s2">"report.pdf"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="generate_nlog_report">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.generate_nlog_report">[docs]</a>
+<span class="nd">@app_reportgenerator</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/reportgenerator/generate_nlog_report"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_nlog_report</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Generate the NLOG report excel object."""</span>
+    <span class="n">ProjectName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"ProjectName"</span><span class="p">]</span>
+    <span class="n">project_root</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="n">project_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">project_root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="n">ensure_nlog_default_files</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="n">ProjectName</span><span class="p">)</span>
+
+    <span class="n">NlogPeriod</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"NlogPeriod"</span><span class="p">]</span>
+    <span class="n">rows_section1A</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"rows_section1A"</span><span class="p">]</span>
+    <span class="n">rows_section1B</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"rows_section1B"</span><span class="p">]</span>
+    <span class="n">rows_section2</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"rows_section2"</span><span class="p">]</span>
+    <span class="n">year</span><span class="p">,</span> <span class="n">month</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">NlogPeriod</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"-"</span><span class="p">))</span>
+
+    <span class="c1"># Start: last hour of the previous month (23:00:00)</span>
+    <span class="k">if</span> <span class="n">month</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">prev_year</span> <span class="o">=</span> <span class="n">year</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">prev_month</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">prev_year</span> <span class="o">=</span> <span class="n">year</span>
+        <span class="n">prev_month</span> <span class="o">=</span> <span class="n">month</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="n">last_day_prev_month</span> <span class="o">=</span> <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">prev_year</span><span class="p">,</span> <span class="n">prev_month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">start_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">prev_year</span><span class="p">,</span> <span class="n">prev_month</span><span class="p">,</span> <span class="n">last_day_prev_month</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># End: last hour of the given month (23:00:00)</span>
+    <span class="n">last_day_curr_month</span> <span class="o">=</span> <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">end_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">last_day_curr_month</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">StartTime</span> <span class="o">=</span> <span class="n">start_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+    <span class="n">EndTime</span> <span class="o">=</span> <span class="n">end_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+
+    <span class="n">LicenseHolder</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"LicenseHolder"</span><span class="p">]</span>
+
+    <span class="c1"># Initialize parameters</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">StartTime</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"end_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">EndTime</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"timestep"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3600</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"author_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">LicenseHolder</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"project_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ProjectName</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"project_path"</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">)</span>
+
+    <span class="c1"># Initialize app</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">init_parameters</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="c1"># Get plant components</span>
+    <span class="n">inj_wells</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_injection_wells</span><span class="p">()</span>
+    <span class="n">prod_wells</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_production_wells</span><span class="p">()</span>
+    <span class="n">esps</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_esps</span><span class="p">()</span>
+    <span class="n">hexs</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_hexs</span><span class="p">()</span>
+    <span class="n">injection_pumps</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_injection_pumps</span><span class="p">()</span>
+    <span class="n">data_section1A</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">calculate_nlog_1A</span><span class="p">(</span><span class="n">rows_section1A</span><span class="p">,</span> <span class="n">prod_wells</span><span class="p">,</span> <span class="n">esps</span><span class="p">)</span>
+    <span class="n">data_section1B</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">calculate_nlog_1B</span><span class="p">(</span>
+        <span class="n">rows_section1B</span><span class="p">,</span> <span class="n">inj_wells</span><span class="p">,</span> <span class="n">hexs</span><span class="p">,</span> <span class="n">injection_pumps</span>
+    <span class="p">)</span>
+    <span class="n">data_section2</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">calculate_nlog_2</span><span class="p">(</span><span class="n">rows_section2</span><span class="p">)</span>
+
+    <span class="n">nlog_object</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">add_nlog_report</span><span class="p">(</span>
+        <span class="n">LicenseHolder</span><span class="p">,</span>
+        <span class="n">NlogPeriod</span><span class="p">,</span>
+        <span class="n">data_section1A</span><span class="p">,</span>
+        <span class="n">data_section1B</span><span class="p">,</span>
+        <span class="n">data_section2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">send_file</span><span class="p">(</span>
+        <span class="n">nlog_object</span><span class="p">,</span>
+        <span class="n">mimetype</span><span class="o">=</span><span class="s2">"application/vnd.ms-excel.sheet.macroEnabled.12"</span><span class="p">,</span>
+        <span class="n">as_attachment</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">download_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">LicenseHolder</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">ProjectName</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">NlogPeriod</span><span class="si">}</span><span class="s2">_NLOG.xlsm"</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_nlog_tagnames">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.get_nlog_tagnames">[docs]</a>
+<span class="nd">@app_reportgenerator</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/reportgenerator/get_nlog_tagnames"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_nlog_tagnames</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Return NLOG tagname settings for all report sections."""</span>
+    <span class="c1"># Resolve project path and report_generator folder</span>
+    <span class="n">ProjectName</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"ProjectName"</span><span class="p">]</span>
+    <span class="n">project_root</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="n">project_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">project_root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">ensure_nlog_default_files</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="n">ProjectName</span><span class="p">)</span>
+
+    <span class="c1"># Get plant components (lists of names)</span>
+    <span class="n">inj_wells</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_injection_wells</span><span class="p">()</span>
+    <span class="n">prod_wells</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_production_wells</span><span class="p">()</span>
+    <span class="n">esps</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_esps</span><span class="p">()</span>
+    <span class="n">hexs</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_hexs</span><span class="p">()</span>
+    <span class="n">booster_pumps</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_booster_pumps</span><span class="p">()</span>
+    <span class="n">injection_pumps</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_injection_pumps</span><span class="p">()</span>
+    <span class="n">aquifers</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_aquifers</span><span class="p">()</span>
+    <span class="c1"># Build section dataframes</span>
+    <span class="n">section1a_df</span><span class="p">,</span> <span class="n">section1b_df</span><span class="p">,</span> <span class="n">section2_df</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_nlog_tagnames_df</span><span class="p">(</span>
+        <span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span>
+        <span class="n">inj_wells</span><span class="o">=</span><span class="n">inj_wells</span><span class="p">,</span>
+        <span class="n">prod_wells</span><span class="o">=</span><span class="n">prod_wells</span><span class="p">,</span>
+        <span class="n">esps</span><span class="o">=</span><span class="n">esps</span><span class="p">,</span>
+        <span class="n">hexs</span><span class="o">=</span><span class="n">hexs</span><span class="p">,</span>
+        <span class="n">booster_pumps</span><span class="o">=</span><span class="n">booster_pumps</span><span class="p">,</span>
+        <span class="n">injection_pumps</span><span class="o">=</span><span class="n">injection_pumps</span><span class="p">,</span>
+        <span class="n">aquifers</span><span class="o">=</span><span class="n">aquifers</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Convert to records for JS</span>
+    <span class="n">section1a_dict</span> <span class="o">=</span> <span class="n">section1a_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">"records"</span><span class="p">)</span>
+    <span class="n">section1b_dict</span> <span class="o">=</span> <span class="n">section1b_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">"records"</span><span class="p">)</span>
+    <span class="n">section2_dict</span> <span class="o">=</span> <span class="n">section2_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">"records"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">"section1A"</span><span class="p">:</span> <span class="n">section1a_dict</span><span class="p">,</span>
+            <span class="s2">"section1B"</span><span class="p">:</span> <span class="n">section1b_dict</span><span class="p">,</span>
+            <span class="s2">"section2"</span><span class="p">:</span> <span class="n">section2_dict</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_unit_tagnames">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.get_unit_tagnames">[docs]</a>
+<span class="nd">@app_reportgenerator</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/reportgenerator/get_unit_tagnames"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_unit_tagnames</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Retrieve all available tagnames for a given unit in format 'tagname.category'."""</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">(</span><span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">unit_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"unit_name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">unit_name</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app_instance</span><span class="p">,</span> <span class="s2">"plant"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"tagnames"</span><span class="p">:</span> <span class="p">[]}),</span> <span class="mi">200</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">unit</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Try direct lookup if units_by_name exists</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="s2">"units_by_name"</span><span class="p">):</span>
+            <span class="n">unit</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">units_by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">unit_name</span><span class="p">)</span>
+
+        <span class="c1"># Otherwise, search through units list</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unit</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="s2">"units"</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">u</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">unit_name</span><span class="p">:</span>
+                    <span class="n">unit</span> <span class="o">=</span> <span class="n">u</span>
+                    <span class="k">break</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">unit</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"tagnames"</span><span class="p">:</span> <span class="p">[]}),</span> <span class="mi">200</span>
+
+        <span class="c1"># Collect all tagnames in format "tagname.category"</span>
+        <span class="n">all_tags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="s2">"tags"</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"measured"</span><span class="p">,</span> <span class="s2">"filtered"</span><span class="p">,</span> <span class="s2">"calculated"</span><span class="p">]:</span>
+                <span class="n">category_tags</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="p">{})</span>
+                <span class="k">for</span> <span class="n">tag_key</span> <span class="ow">in</span> <span class="n">category_tags</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">all_tags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">tag_key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"tagnames"</span><span class="p">:</span> <span class="n">all_tags</span><span class="p">}),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error getting unit tagnames for </span><span class="si">{</span><span class="n">unit_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"tagnames"</span><span class="p">:</span> <span class="p">[]}),</span> <span class="mi">200</span></div>
+
+
+
+<div class="viewcode-block" id="get_all_units">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.get_all_units">[docs]</a>
+<span class="nd">@app_reportgenerator</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/reportgenerator/get_all_units"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"GET"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_units</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Return sorted list of all available unit names."""</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app_instance</span><span class="p">,</span> <span class="s2">"plant"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"units"</span><span class="p">:</span> <span class="p">[]}),</span> <span class="mi">200</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="s2">"units"</span><span class="p">):</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">units</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">u</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"units"</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">units</span><span class="p">)}),</span> <span class="mi">200</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error getting all units: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"units"</span><span class="p">:</span> <span class="p">[]}),</span> <span class="mi">200</span></div>
+
+
+
+<div class="viewcode-block" id="validate_nlog_tagnames">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.validate_nlog_tagnames">[docs]</a>
+<span class="nd">@app_reportgenerator</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/reportgenerator/validate_nlog_tagnames"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_nlog_tagnames</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Validate tagnames against available unit tagnames; return warnings organized by section."""</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">(</span><span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">rows_section1A</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rows_section1A"</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">rows_section1B</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rows_section1B"</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">rows_section2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rows_section2"</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="n">warnings_section1A</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">warnings_section1B</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">warnings_section2</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app_instance</span><span class="p">,</span> <span class="s2">"plant"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"warnings"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"warnings_by_section"</span><span class="p">:</span> <span class="p">{}}),</span> <span class="mi">200</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Helper function to get unit by name</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_unit_by_name</span><span class="p">(</span><span class="n">unit_name</span><span class="p">):</span>
+            <span class="c1"># Try direct lookup if units_by_name exists</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="s2">"units_by_name"</span><span class="p">):</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">units_by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">unit_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">unit</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">unit</span>
+
+            <span class="c1"># Otherwise, search through units list</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="p">,</span> <span class="s2">"units"</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">u</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">unit_name</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">u</span>
+
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Helper function to validate tagname in format "tagname.category"</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">validate_tagname_format</span><span class="p">(</span><span class="n">tagname</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">"""Validate tagname in format 'tagname.category' against available tags."""</span>
+            <span class="k">if</span> <span class="s2">"."</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tagname</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">tagname</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="n">tag_key</span><span class="p">,</span> <span class="n">category</span> <span class="o">=</span> <span class="n">parts</span>
+            <span class="n">category</span> <span class="o">=</span> <span class="n">category</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="s2">"tags"</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="c1"># Check if category exists and tagname key is in that category</span>
+            <span class="n">category_tags</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="k">return</span> <span class="n">tag_key</span> <span class="ow">in</span> <span class="n">category_tags</span>
+
+        <span class="c1"># Helper function to validate and collect warnings</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">is_row_enabled</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"enabled"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"false"</span><span class="p">,</span> <span class="s2">"0"</span><span class="p">,</span> <span class="s2">"no"</span><span class="p">,</span> <span class="s2">"off"</span><span class="p">}</span>
+            <span class="k">return</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">validate_rows</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">section_name</span><span class="p">,</span> <span class="n">warnings_list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_row_enabled</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="n">unit_name</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"component_name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">tagname</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tagname"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">parameter</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"parameter"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+                <span class="n">param_label</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">PARAM_DISPLAY_LABELS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span> <span class="k">if</span> <span class="n">parameter</span> <span class="k">else</span> <span class="n">parameter</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Check unit first (even if tagname is also empty)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">unit_name</span><span class="p">:</span>
+                    <span class="c1"># Unit is empty</span>
+                    <span class="n">warnings_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Parameter: </span><span class="si">{</span><span class="n">param_label</span><span class="si">}</span><span class="s2"> | Unit: EMPTY | Status: Unit not selected"</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">tagname</span><span class="p">:</span>
+                    <span class="c1"># Tagname is empty</span>
+                    <span class="n">warnings_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Parameter: </span><span class="si">{</span><span class="n">param_label</span><span class="si">}</span><span class="s2"> | Unit: </span><span class="si">{</span><span class="n">unit_name</span><span class="si">}</span><span class="s2"> | "</span>
+                        <span class="s2">"Status: Tagname not selected"</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Both are present, validate them</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">get_unit_by_name</span><span class="p">(</span><span class="n">unit_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">unit</span><span class="p">:</span>
+                    <span class="n">warnings_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Parameter: </span><span class="si">{</span><span class="n">param_label</span><span class="si">}</span><span class="s2"> | Unit: </span><span class="si">{</span><span class="n">unit_name</span><span class="si">}</span><span class="s2"> | "</span>
+                        <span class="sa">f</span><span class="s2">"Tagname: </span><span class="si">{</span><span class="n">tagname</span><span class="si">}</span><span class="s2"> — Unit not found"</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># Validate tagname in format "tagname.category"</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">validate_tagname_format</span><span class="p">(</span><span class="n">tagname</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+                    <span class="n">warnings_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Parameter: </span><span class="si">{</span><span class="n">param_label</span><span class="si">}</span><span class="s2"> | Unit: </span><span class="si">{</span><span class="n">unit_name</span><span class="si">}</span><span class="s2"> | "</span>
+                        <span class="sa">f</span><span class="s2">"Tagname: </span><span class="si">{</span><span class="n">tagname</span><span class="si">}</span><span class="s2"> — Tagname not found or incorrect"</span>
+                    <span class="p">)</span>
+
+        <span class="n">validate_rows</span><span class="p">(</span><span class="n">rows_section1A</span><span class="p">,</span> <span class="s2">"Production well (1A)"</span><span class="p">,</span> <span class="n">warnings_section1A</span><span class="p">)</span>
+        <span class="n">validate_rows</span><span class="p">(</span><span class="n">rows_section1B</span><span class="p">,</span> <span class="s2">"Injection well (1B)"</span><span class="p">,</span> <span class="n">warnings_section1B</span><span class="p">)</span>
+        <span class="n">validate_rows</span><span class="p">(</span><span class="n">rows_section2</span><span class="p">,</span> <span class="s2">"Plant (2)"</span><span class="p">,</span> <span class="n">warnings_section2</span><span class="p">)</span>
+
+        <span class="c1"># Combine all warnings for backward compatibility</span>
+        <span class="n">all_warnings</span> <span class="o">=</span> <span class="n">warnings_section1A</span> <span class="o">+</span> <span class="n">warnings_section1B</span> <span class="o">+</span> <span class="n">warnings_section2</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">jsonify</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"warnings"</span><span class="p">:</span> <span class="n">all_warnings</span><span class="p">,</span>
+                    <span class="s2">"warnings_by_section"</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">"production_well"</span><span class="p">:</span> <span class="n">warnings_section1A</span><span class="p">,</span>
+                        <span class="s2">"injection_well"</span><span class="p">:</span> <span class="n">warnings_section1B</span><span class="p">,</span>
+                        <span class="s2">"plant"</span><span class="p">:</span> <span class="n">warnings_section2</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">),</span>
+            <span class="mi">200</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error validating NLOG tagnames: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"warnings"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"warnings_by_section"</span><span class="p">:</span> <span class="p">{}}),</span> <span class="mi">200</span></div>
+
+
+
+<span class="c1"># Mapping for parameter display labels (mirrored from JS for backend validation)</span>
+<span class="n">PARAM_DISPLAY_LABELS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"prod_vol_water"</span><span class="p">:</span> <span class="s2">"Produced water volume"</span><span class="p">,</span>
+    <span class="s2">"prod_temp_avg_weighted"</span><span class="p">:</span> <span class="s2">"Average produced temperature (weighted)"</span><span class="p">,</span>
+    <span class="s2">"prod_pres_avg"</span><span class="p">:</span> <span class="s2">"Production pressure (average)"</span><span class="p">,</span>
+    <span class="s2">"prod_pres_min"</span><span class="p">:</span> <span class="s2">"Production pressure (minimum)"</span><span class="p">,</span>
+    <span class="s2">"prod_wh_pres"</span><span class="p">:</span> <span class="s2">"Wellhead pressure"</span><span class="p">,</span>
+    <span class="s2">"prod_oil_vol"</span><span class="p">:</span> <span class="s2">"Produced oil volume"</span><span class="p">,</span>
+    <span class="s2">"prod_gas_vol"</span><span class="p">:</span> <span class="s2">"Produced gas volume"</span><span class="p">,</span>
+    <span class="s2">"prod_condens_vol"</span><span class="p">:</span> <span class="s2">"Produced condensate volume"</span><span class="p">,</span>
+    <span class="s2">"prod_inhibit_vol"</span><span class="p">:</span> <span class="s2">"Produced inhibitor volume"</span><span class="p">,</span>
+    <span class="s2">"inj_vol_water"</span><span class="p">:</span> <span class="s2">"Injected water volume"</span><span class="p">,</span>
+    <span class="s2">"inj_temp_avg_weighted"</span><span class="p">:</span> <span class="s2">"Average injection temperature (weighted)"</span><span class="p">,</span>
+    <span class="s2">"inj_pres_avg"</span><span class="p">:</span> <span class="s2">"Injection pressure (average)"</span><span class="p">,</span>
+    <span class="s2">"inj_pres_max"</span><span class="p">:</span> <span class="s2">"Injection pressure (maximum)"</span><span class="p">,</span>
+    <span class="s2">"inj_inhibit_vol"</span><span class="p">:</span> <span class="s2">"Injected inhibitor volume"</span><span class="p">,</span>
+    <span class="s2">"tot_heat_MJ"</span><span class="p">:</span> <span class="s2">"Total heat [MJ]"</span><span class="p">,</span>
+    <span class="s2">"tot_heat_MJ_inlet_temp"</span><span class="p">:</span> <span class="s2">"Heat exchanger inlet temperature"</span><span class="p">,</span>
+    <span class="s2">"tot_heat_MJ_outlet_temp"</span><span class="p">:</span> <span class="s2">"Heat exchanger outlet temperature"</span><span class="p">,</span>
+    <span class="s2">"tot_heat_MJ_flow"</span><span class="p">:</span> <span class="s2">"Heat exchanger flow"</span><span class="p">,</span>
+    <span class="s2">"tot_oper_hours"</span><span class="p">:</span> <span class="s2">"Total operating hours"</span><span class="p">,</span>
+    <span class="s2">"tot_oper_hours_flow"</span><span class="p">:</span> <span class="s2">"Total operating hours (flow-weighted)"</span><span class="p">,</span>
+    <span class="s2">"tot_el_cons_KWh"</span><span class="p">:</span> <span class="s2">"Total electric consumption [kWh]"</span><span class="p">,</span>
+    <span class="s2">"tot_el_cons_KWh_power"</span><span class="p">:</span> <span class="s2">"Electric consumption – cumulative energy meter [kWh]"</span><span class="p">,</span>
+    <span class="s2">"tot_el_cons_KWh_voltage"</span><span class="p">:</span> <span class="s2">"Electric consumption – voltage"</span><span class="p">,</span>
+    <span class="s2">"tot_el_cons_KWh_current"</span><span class="p">:</span> <span class="s2">"Electric consumption – current"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="save_section_json">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.save_section_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_section_json</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rows</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Save rows to the JSON file in ``folder / filename``.</span>
+
+<span class="sd">    Create the file if it does not exist and overwrite existing content.</span>
+<span class="sd">    """</span>
+    <span class="n">file_path</span> <span class="o">=</span> <span class="n">folder</span> <span class="o">/</span> <span class="n">filename</span>
+    <span class="n">file_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="delete_nlog_section_json_files">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.delete_nlog_section_json_files">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_nlog_section_json_files</span><span class="p">(</span><span class="n">folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">include_defaults</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Delete saved NLOG section files, optionally including project default files."""</span>
+    <span class="k">for</span> <span class="n">default_name</span><span class="p">,</span> <span class="n">target_name</span> <span class="ow">in</span> <span class="n">NLOG_SECTION_FILE_PAIRS</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="p">((</span><span class="n">default_name</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span> <span class="k">if</span> <span class="n">include_defaults</span> <span class="k">else</span> <span class="p">(</span><span class="n">target_name</span><span class="p">,)):</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">folder</span> <span class="o">/</span> <span class="n">filename</span>
+            <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">file_path</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="reset_nlog_settings">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.reset_nlog_settings">[docs]</a>
+<span class="nd">@app_reportgenerator</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/reportgenerator/reset_nlog_settings"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">reset_nlog_settings</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Reset NLOG tagname settings to the default files."""</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ProjectName"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">project_name</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"error"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Missing ProjectName."</span><span class="p">}),</span> <span class="mi">400</span>
+
+    <span class="n">project_root</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="n">project_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">project_root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">project_path</span> <span class="o">/</span> <span class="n">project_name</span> <span class="o">/</span> <span class="s2">"report_generator"</span>
+    <span class="n">folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Remove project defaults first so fresh template defaults are copied and normalized.</span>
+    <span class="n">delete_nlog_section_json_files</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">include_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">ensure_nlog_default_files</span><span class="p">(</span><span class="n">project_path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">)</span>
+
+    <span class="c1"># Remove saved files so get_nlog_tagnames_df recreates them from the fresh defaults.</span>
+    <span class="n">delete_nlog_section_json_files</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">include_defaults</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">inj_wells</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_injection_wells</span><span class="p">()</span>
+    <span class="n">prod_wells</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_production_wells</span><span class="p">()</span>
+    <span class="n">esps</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_esps</span><span class="p">()</span>
+    <span class="n">hexs</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_hexs</span><span class="p">()</span>
+    <span class="n">booster_pumps</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_booster_pumps</span><span class="p">()</span>
+    <span class="n">injection_pumps</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_injection_pumps</span><span class="p">()</span>
+    <span class="n">aquifers</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">get_aquifers</span><span class="p">()</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">get_nlog_tagnames_df</span><span class="p">(</span>
+        <span class="n">folder</span><span class="o">=</span><span class="n">folder</span><span class="p">,</span>
+        <span class="n">inj_wells</span><span class="o">=</span><span class="n">inj_wells</span><span class="p">,</span>
+        <span class="n">prod_wells</span><span class="o">=</span><span class="n">prod_wells</span><span class="p">,</span>
+        <span class="n">esps</span><span class="o">=</span><span class="n">esps</span><span class="p">,</span>
+        <span class="n">hexs</span><span class="o">=</span><span class="n">hexs</span><span class="p">,</span>
+        <span class="n">booster_pumps</span><span class="o">=</span><span class="n">booster_pumps</span><span class="p">,</span>
+        <span class="n">injection_pumps</span><span class="o">=</span><span class="n">injection_pumps</span><span class="p">,</span>
+        <span class="n">aquifers</span><span class="o">=</span><span class="n">aquifers</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"ok"</span><span class="p">})</span></div>
+
+
+
+<div class="viewcode-block" id="save_nlog_settings">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.html#gemini_interface.blueprint.app_reportgenerator.routes.save_nlog_settings">[docs]</a>
+<span class="nd">@app_reportgenerator</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/reportgenerator/save_nlog_settings"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_nlog_settings</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Save NLOG tagname settings for all report sections."""</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"ProjectName"</span><span class="p">)</span>
+    <span class="n">project_root</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="n">project_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">project_root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+
+    <span class="n">folder</span> <span class="o">=</span> <span class="n">project_path</span> <span class="o">/</span> <span class="n">project_name</span> <span class="o">/</span> <span class="s2">"report_generator"</span>
+    <span class="n">folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">rows_section1A</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rows_section1A"</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">rows_section1B</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rows_section1B"</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">rows_section2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rows_section2"</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="c1"># Save the three files</span>
+    <span class="n">save_section_json</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"tagnames_section1A.json"</span><span class="p">,</span> <span class="n">rows_section1A</span><span class="p">)</span>
+    <span class="n">save_section_json</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"tagnames_section1B.json"</span><span class="p">,</span> <span class="n">rows_section1B</span><span class="p">)</span>
+    <span class="n">save_section_json</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s2">"tagnames_section2.json"</span><span class="p">,</span> <span class="n">rows_section2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"ok"</span><span class="p">})</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

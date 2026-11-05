@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.cooling_common.config &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.cooling_common.config</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.cooling_common.config</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Explicit screening parameters (sources A002/A003/A006/A007/A013).</span>
+
+<span class="sd">All temperature envelopes below are analyst screening domains, not supplier ratings.</span>
+<span class="sd">Capacities/flows default to zero: equipment must be explicitly installed/supplied.</span>
+<span class="sd">Ratios are W per W of the named duty; water cp is independent of Rules brine cp.</span>
+<span class="sd">See 03_COMPONENT_EQUATIONS and the parameter handoff for bounds/provenance.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+
+
+<div class="viewcode-block" id="WaterSettings">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.config.html#gemini_model.cooling_common.config.WaterSettings">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WaterSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Effective-treatment/no-drift screening model, specification 11/A013."""</span>
+
+    <span class="n">cycles</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">density_kg_m3</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1000.0</span>
+    <span class="n">latent_heat_j_kg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.45e6</span>
+    <span class="n">latent_fraction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span>
+    <span class="n">max_makeup_water_m3h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">max_blowdown_m3h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="ElectricSettings">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.config.html#gemini_model.cooling_common.config.ElectricSettings">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ElectricSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Compressor-only COP with separate auxiliaries, A006/A007."""</span>
+
+    <span class="n">capacity_w</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">cop</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.0</span>
+    <span class="n">condenser</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"water"</span>
+    <span class="n">cop_boundary</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"compressor_only"</span>
+    <span class="n">air_fan_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.02</span>
+    <span class="n">sink_min_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">10.0</span>
+    <span class="n">sink_max_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">40.0</span>
+    <span class="n">supply_min_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">supply_max_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">25.0</span></div>
+
+
+
+<div class="viewcode-block" id="AbsorptionSettings">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.config.html#gemini_model.cooling_common.config.AbsorptionSettings">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AbsorptionSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Single-effect constant COP; explicit provisional domain, A006/A007."""</span>
+
+    <span class="n">capacity_w</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">cop_th</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span>
+    <span class="n">internal_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">hot_supply_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">75.0</span>
+    <span class="n">hot_min_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">70.0</span>
+    <span class="n">hot_max_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">95.0</span>
+    <span class="n">hot_return_min_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">65.0</span>
+    <span class="n">sink_min_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">sink_max_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">35.0</span>
+    <span class="n">supply_min_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">supply_max_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">25.0</span>
+    <span class="n">hx_approach_k</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">hx_ua_w_k</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">hot_pump_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.005</span></div>
+
+
+
+<div class="viewcode-block" id="TowerSettings">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.config.html#gemini_model.cooling_common.config.TowerSettings">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TowerSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Declared capacity/flow and constant approach; not a tower performance map."""</span>
+
+    <span class="n">capacity_w</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">circulation_m3s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">approach_k</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span>
+    <span class="n">max_return_c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">40.0</span>
+    <span class="n">fan_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0126</span>
+    <span class="n">pump_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.005</span>
+    <span class="n">pump_heat_to_water</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span></div>
+
+
+
+<div class="viewcode-block" id="CoolingSettings">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.config.html#gemini_model.cooling_common.config.CoolingSettings">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CoolingSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Three options; optional free cooling is deliberately disabled (D002)."""</span>
+
+    <span class="n">option</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"water"</span>
+    <span class="n">electric</span><span class="p">:</span> <span class="n">ElectricSettings</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ElectricSettings</span><span class="p">)</span>
+    <span class="n">absorption</span><span class="p">:</span> <span class="n">AbsorptionSettings</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">AbsorptionSettings</span><span class="p">)</span>
+    <span class="n">tower</span><span class="p">:</span> <span class="n">TowerSettings</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">TowerSettings</span><span class="p">)</span>
+    <span class="n">water</span><span class="p">:</span> <span class="n">WaterSettings</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WaterSettings</span><span class="p">)</span>
+    <span class="n">water_cp_j_kg_k</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4180.0</span>
+    <span class="n">chilled_pump_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">chilled_pump_heat_to_water</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">free_cooling_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">source_ids</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"A002"</span><span class="p">,</span> <span class="s2">"A003"</span><span class="p">,</span> <span class="s2">"A006"</span><span class="p">,</span> <span class="s2">"A007"</span><span class="p">,</span> <span class="s2">"A013"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate_settings">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.config.html#gemini_model.cooling_common.config.validate_settings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_settings</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reject malformed settings; physical shortfalls are handled by the kernel."""</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">fields</span><span class="p">,</span> <span class="n">is_dataclass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">finite</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">is_dataclass</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"_c"</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">273.15</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Temperature settings must be above absolute zero"</span><span class="p">)</span>
+                <span class="n">finite</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Nonfinite setting"</span><span class="p">)</span>
+
+    <span class="n">finite</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">option</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"water"</span><span class="p">,</span> <span class="s2">"air"</span><span class="p">,</span> <span class="s2">"absorption"</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Unknown cooling option"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">free_cooling_enabled</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Optional M3 free cooling is not implemented"</span><span class="p">)</span>
+    <span class="n">e</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">electric</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">absorption</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">tower</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">water</span>
+    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">condenser</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"water"</span><span class="p">,</span> <span class="s2">"air"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">e</span><span class="o">.</span><span class="n">cop_boundary</span> <span class="o">!=</span> <span class="s2">"compressor_only"</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Use compressor_only COP; package COP requires item reconciliation"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">option</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"water"</span><span class="p">,</span> <span class="s2">"air"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">e</span><span class="o">.</span><span class="n">condenser</span> <span class="o">!=</span> <span class="n">s</span><span class="o">.</span><span class="n">option</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Option and electric condenser must agree"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">cop</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">a</span><span class="o">.</span><span class="n">cop_th</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">a</span><span class="o">.</span><span class="n">cop_th</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Positive electric COP and single-effect thermal COP in (0,1] required"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">w</span><span class="o">.</span><span class="n">cycles</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">w</span><span class="o">.</span><span class="n">latent_fraction</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Cycles must exceed one; latent fraction must be in [0,1]"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">density_kg_m3</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">latent_heat_j_kg</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">water_cp_j_kg_k</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Fluid properties must be positive"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">capacity_w</span><span class="p">,</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">capacity_w</span><span class="p">,</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">hx_ua_w_k</span><span class="p">,</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">hx_approach_k</span><span class="p">,</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">capacity_w</span><span class="p">,</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">circulation_m3s</span><span class="p">,</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">approach_k</span><span class="p">,</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">fan_ratio</span><span class="p">,</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">pump_ratio</span><span class="p">,</span>
+        <span class="n">e</span><span class="o">.</span><span class="n">air_fan_ratio</span><span class="p">,</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">internal_ratio</span><span class="p">,</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">hot_pump_ratio</span><span class="p">,</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">chilled_pump_ratio</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Capacities, flows, approaches and auxiliary ratios must be nonnegative"</span>
+            <span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">max_makeup_water_m3h</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">max_blowdown_m3h</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Water limits must be nonnegative or None (unchecked)"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">t</span><span class="o">.</span><span class="n">pump_heat_to_water</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">s</span><span class="o">.</span><span class="n">chilled_pump_heat_to_water</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Heat fractions must be in [0,1]"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">sink_min_c</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">sink_max_c</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">supply_min_c</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">supply_max_c</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">hot_min_c</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_max_c</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">sink_min_c</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">sink_max_c</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">supply_min_c</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">supply_max_c</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">lo</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">273.15</span> <span class="ow">or</span> <span class="n">hi</span> <span class="o">&lt;</span> <span class="n">lo</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid temperature envelope"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_return_min_c</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">273.15</span> <span class="ow">or</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_supply_c</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">273.15</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid hot-loop temperature"</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

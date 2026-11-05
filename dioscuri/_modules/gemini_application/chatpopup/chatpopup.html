@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_application.chatpopup.chatpopup &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_application.chatpopup.chatpopup</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_application.chatpopup.chatpopup</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Interactive chat pop-up application using local Ollama.</span>
+
+<span class="sd">Supports document ingestion into ChromaDB and retrieval-augmented generation.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">chromadb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">langid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyPDFLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ollama</span><span class="w"> </span><span class="kn">import</span> <span class="n">Client</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.application_abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApplicationAbstract</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"</span><span class="si">%(levelname)s</span><span class="s2">:</span><span class="si">%(name)s</span><span class="s2">:</span><span class="si">%(message)s</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ChunkRecord">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChunkRecord">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChunkRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A single text chunk with id and metadata for storage and citation."""</span>
+
+    <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="ChatPopup">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChatPopup</span><span class="p">(</span><span class="n">ApplicationAbstract</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Retrieval-augmented chat application built on ChromaDB + Ollama."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize configuration fields; actual clients are created in initialize_model()."""</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Ollama client (created in initialize_model)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ollama_client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Client</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Ollama embedding model name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ollama_embeddings_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Ollama generation model name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ollama_llm_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Ollama server host</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ollama_host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Ollama server port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ollama_port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Chroma client object (created in initialize_model)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chroma_client</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Chroma collection handle (created in initialize_model)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chroma_collection</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Chroma server host (used when chromadb_use_http=True)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chromadb_host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Chroma server port (used when chromadb_use_http=True)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chromadb_port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Chroma collection name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Use Chroma via HTTP (True) or local persistent storage (False)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chromadb_use_http</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Local Chroma persistence directory (used when chromadb_use_http=False)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chroma_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Directory containing documents to ingest</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Optional prompt template (the class uses a built-in strict RAG prompt by default)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Chunk size for general use (words)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span>
+
+        <span class="c1"># Chunk overlap for general use (words)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_overlap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">40</span>
+
+        <span class="c1"># Chunk size for embedding (words; conservative for embedding context limits)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">120</span>
+
+        <span class="c1"># Chunk overlap for embedding (words)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_chunk_overlap</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
+
+        <span class="c1"># Minimum similarity needed to keep a retrieved chunk (cosine similarity)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">similarity_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.70</span>
+
+        <span class="c1"># Number of chunks selected after reranking (candidates for prompt)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_relevant_docs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span>
+
+        <span class="c1"># Number of initial retrieval candidates from Chroma before reranking</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_candidates</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">24</span>
+
+        <span class="c1"># MMR tradeoff: higher favors relevance, lower favors diversity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mmr_lambda</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.65</span>
+
+        <span class="c1"># Maximum number of chunks included in the final LLM context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_context_chunks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span>
+
+        <span class="c1"># Maximum characters included in the final LLM context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_context_chars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12000</span>
+
+        <span class="c1"># Number of texts per embedding request to Ollama/Azure</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embedding_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span>
+
+        <span class="c1"># Number of vectors per add() call to Chroma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chroma_add_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">512</span>
+
+        <span class="c1"># Enable extra debug logging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Manifest filename used to track ingested files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manifest_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">".rag_manifest.json"</span>
+
+<div class="viewcode-block" id="ChatPopup.init_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.init_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Apply parameters from a dict and initialize models and database clients."""</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_model</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.calculate">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.calculate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compatibility method for the parent framework."""</span>
+        <span class="k">return</span> <span class="s2">"Output calculated"</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.initialize_model">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.initialize_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Create LLM/embedding clients and open the Chroma collection."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ollama_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_ollama_client</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chroma_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_chroma_client</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"collection_name must be set"</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chroma_collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chroma_client</span><span class="o">.</span><span class="n">get_or_create_collection</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"hnsw:space"</span><span class="p">:</span> <span class="s2">"cosine"</span><span class="p">},</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="k">else</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">"ChatPopup initialized. chromadb_use_http=</span><span class="si">%s</span><span class="s2">, collection=</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chromadb_use_http</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_ollama_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create an Ollama client."""</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Using Ollama at http://</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ollama_host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ollama_port</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Client</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="sa">f</span><span class="s2">"http://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ollama_host</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ollama_port</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_chroma_client</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create a Chroma client using HTTP or local persistence."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chromadb_use_http</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">chromadb_host</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">chromadb_port</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"chromadb_host and chromadb_port must be set when chromadb_use_http=True"</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">chromadb</span><span class="o">.</span><span class="n">HttpClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chromadb_host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chromadb_port</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">chroma_dir</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"chroma_dir must be set when chromadb_use_http=False"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">chromadb</span><span class="o">.</span><span class="n">PersistentClient</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chroma_dir</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ChatPopup.delete_collection">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.delete_collection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Delete the current Chroma collection."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"collection_name must be set"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chroma_client</span><span class="o">.</span><span class="n">delete_collection</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.manifest_path">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.manifest_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">manifest_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the absolute path to the ingestion manifest file."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"docs_dir must be set"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.load_manifest">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.load_manifest">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Load the manifest containing file signatures for incremental ingestion."""</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_path</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"files"</span><span class="p">:</span> <span class="p">{}}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">"files"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"files"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">"files"</span><span class="p">:</span> <span class="p">{}}</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"Failed to read manifest; starting fresh."</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"files"</span><span class="p">:</span> <span class="p">{}}</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.save_manifest">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.save_manifest">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_manifest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Write manifest to disk atomically."""</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manifest_path</span><span class="p">()</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">".tmp"</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">manifest</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.file_signature">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.file_signature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return a lightweight signature used to detect file changes."""</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"mtime"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">st_mtime</span><span class="p">),</span> <span class="s2">"size"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">st_size</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.chunksplitter_for_embeddings">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.chunksplitter_for_embeddings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chunksplitter_for_embeddings</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">max_words</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">overlap_words</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Split text into overlapping word chunks suitable for embedding models."""</span>
+        <span class="k">if</span> <span class="n">max_words</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">overlap_words</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"overlap_words must be &gt;= 0"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">overlap_words</span> <span class="o">&gt;=</span> <span class="n">max_words</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"overlap_words must be smaller than max_words"</span><span class="p">)</span>
+
+        <span class="n">words</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\S+"</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">words</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">step</span> <span class="o">=</span> <span class="n">max_words</span> <span class="o">-</span> <span class="n">overlap_words</span>
+        <span class="n">chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">),</span> <span class="n">step</span><span class="p">):</span>
+            <span class="n">chunk_words</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="n">max_words</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk_words</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chunk_words</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="o">+</span> <span class="n">max_words</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">):</span>
+                <span class="k">break</span>
+
+        <span class="k">return</span> <span class="n">chunks</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.load_pdf_pages">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.load_pdf_pages">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_pdf_pages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Load a PDF and return a list of (page_index, page_text)."""</span>
+        <span class="n">loader</span> <span class="o">=</span> <span class="n">PyPDFLoader</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">documents</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"page"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">doc</span><span class="o">.</span><span class="n">page_content</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.load_txt">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.load_txt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Load a UTF-8 text file."""</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.get_embedding">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.get_embedding">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_embedding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Embed a user query string for retrieval."""</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ollama_client</span><span class="o">.</span><span class="n">embeddings</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ollama_embeddings_model</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">user_message</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s2">"embedding"</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.is_context_error">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.is_context_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_context_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return True if an exception indicates an embedding context-length overflow."""</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">"exceeds the context length"</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">"context length"</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.embed_one_ollama">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.embed_one_ollama">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_one_ollama</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Embed one text, shrinking it iteratively if Ollama rejects it as too long."""</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="p">(</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">words</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\S+"</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">words</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">min_words</span> <span class="o">=</span> <span class="mi">24</span>
+        <span class="n">max_attempts</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_attempts</span><span class="p">):</span>
+            <span class="n">attempt_text</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">[:</span><span class="n">n</span><span class="p">])</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ollama_client</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span>
+                    <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ollama_embeddings_model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="p">[</span><span class="n">attempt_text</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"embeddings"</span><span class="p">,</span> <span class="p">[[]])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_context_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                    <span class="k">raise</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_words</span><span class="p">,</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">min_words</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ollama_client</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span>
+                            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ollama_embeddings_model</span><span class="p">,</span>
+                            <span class="nb">input</span><span class="o">=</span><span class="p">[</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">words</span><span class="p">[:</span><span class="n">min_words</span><span class="p">])],</span>
+                        <span class="p">)</span>
+                        <span class="k">return</span> <span class="n">resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"embeddings"</span><span class="p">,</span> <span class="p">[[]])[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e2</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_context_error</span><span class="p">(</span><span class="n">e2</span><span class="p">):</span>
+                            <span class="k">return</span> <span class="p">[]</span>
+                        <span class="k">raise</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.safe_ollama_embed_batch">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.safe_ollama_embed_batch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">safe_ollama_embed_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Embed a batch; if the batch fails, embed items individually with shrink-on-failure."""</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ollama_client</span><span class="o">.</span><span class="n">embed</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ollama_embeddings_model</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">texts</span><span class="p">)</span>
+            <span class="n">embeds</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"embeddings"</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">embeds</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Ollama returned </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">embeds</span><span class="p">)</span><span class="si">}</span><span class="s2"> embeddings for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span><span class="si">}</span><span class="s2"> inputs."</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">embeds</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_context_error</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                <span class="k">raise</span>
+            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">embed_one_ollama</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">texts</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.get_embedding_list">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.get_embedding_list">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_embedding_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Embed a list of chunks using batching."""</span>
+        <span class="n">embeddings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">bs</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">embedding_batch_size</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">),</span> <span class="n">bs</span><span class="p">):</span>
+            <span class="n">embeddings</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">safe_ollama_embed_batch</span><span class="p">(</span><span class="n">chunks</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">bs</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">embeddings</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.detect_language">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.detect_language">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect_language</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Detect language of a text sample. Returns 'en', 'nl' etc. ."""</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="p">(</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sample</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"unknown"</span>
+
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\s+"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="n">sample</span><span class="p">)[:</span><span class="mi">2500</span><span class="p">]</span>
+
+        <span class="n">lang</span><span class="p">,</span> <span class="n">score</span> <span class="o">=</span> <span class="n">langid</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lang</span> <span class="k">if</span> <span class="n">lang</span> <span class="k">else</span> <span class="s2">"unknown"</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.translate_to_english">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.translate_to_english">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">translate_to_english</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Translate text to English while preserving numbers and table-like structure."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">return</span> <span class="s2">""</span>
+
+        <span class="c1"># Translate in chunks to avoid context limits</span>
+        <span class="n">max_words</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"translation_chunk_size"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">))</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"translation_chunk_overlap"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_overlap</span><span class="p">))</span>
+
+        <span class="n">chunks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunksplitter_for_embeddings</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">max_words</span><span class="o">=</span><span class="n">max_words</span><span class="p">,</span> <span class="n">overlap_words</span><span class="o">=</span><span class="n">overlap</span><span class="p">)</span>
+        <span class="n">out_chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+            <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">"You are a translation engine.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">"Translate the following text FROM DUTCH TO ENGLISH.</span><span class="se">\n\n</span><span class="s2">"</span>
+                <span class="s2">"Rules:</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">"- Output ONLY the translated English text.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">"- Do NOT add explanations, comments, or prefixes.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">"- Do NOT repeat the instructions.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">"- Preserve all numbers, units, names, and addresses exactly.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">"- Preserve line breaks and table-like formatting.</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="s2">"- If a word is already English or a proper name, keep it unchanged.</span><span class="se">\n\n</span><span class="s2">"</span>
+                <span class="s2">"DUTCH TEXT:</span><span class="se">\n</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">ch</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+                <span class="s2">"ENGLISH:"</span>
+            <span class="p">)</span>
+
+            <span class="n">translated</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ollama_client</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+                    <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ollama_translation_llm</span><span class="p">,</span>
+                    <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+                    <span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">options</span><span class="o">=</span><span class="p">{</span>
+                        <span class="s2">"temperature"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="s2">"top_p"</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+                        <span class="s2">"num_predict"</span><span class="p">:</span> <span class="mi">2048</span><span class="p">,</span>
+                        <span class="s2">"stop"</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="s2">"Here is"</span><span class="p">,</span>
+                            <span class="s2">"Here’s"</span><span class="p">,</span>
+                            <span class="s2">"Translation:"</span><span class="p">,</span>
+                            <span class="s2">"Translated text:"</span><span class="p">,</span>
+                            <span class="s2">"Note:"</span><span class="p">,</span>
+                        <span class="p">],</span>
+                    <span class="p">},</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">model_dump</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"response"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">out_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">translated</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">return</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_chunks</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.maybe_translate_text">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.maybe_translate_text">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">maybe_translate_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Detect language and translate to English if needed."""</span>
+        <span class="n">lang</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">detect_language</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+        <span class="c1"># If Dutch, translate. You can extend this to translate any non-English.</span>
+        <span class="k">if</span> <span class="n">lang</span> <span class="o">==</span> <span class="s2">"nl"</span><span class="p">:</span>
+            <span class="n">translated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translate_to_english</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">translated</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">text</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.update_data">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.update_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Ingest new/changed files into Chroma and delete removed files using a local manifest."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"docs_dir must be set"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No directory found: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">tic_total</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_manifest</span><span class="p">()</span>
+        <span class="n">known_files</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">manifest</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"files"</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="n">all_files</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">f</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".pdf"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".txt"</span><span class="p">))</span>
+        <span class="p">]</span>
+
+        <span class="n">new_or_changed</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">current_signatures</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">all_files</span><span class="p">:</span>
+            <span class="n">fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+            <span class="n">sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_signature</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+            <span class="n">current_signatures</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span> <span class="o">=</span> <span class="n">sig</span>
+            <span class="k">if</span> <span class="n">fn</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_files</span> <span class="ow">or</span> <span class="n">known_files</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sig</span><span class="p">:</span>
+                <span class="n">new_or_changed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+        <span class="n">deleted_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">fn</span> <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">known_files</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">fn</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">current_signatures</span><span class="p">]</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">"Ingestion scan: </span><span class="si">%d</span><span class="s2"> total files, </span><span class="si">%d</span><span class="s2"> new/changed, </span><span class="si">%d</span><span class="s2"> deleted"</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">all_files</span><span class="p">),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">new_or_changed</span><span class="p">),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">deleted_files</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">missing</span> <span class="ow">in</span> <span class="n">deleted_files</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">chroma_collection</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="p">{</span><span class="s2">"source"</span><span class="p">:</span> <span class="n">missing</span><span class="p">})</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Deleted vectors for missing file: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"Failed to delete vectors for missing file: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">missing</span><span class="p">)</span>
+            <span class="n">known_files</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">missing</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_or_changed</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"No new/changed files. Done."</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_manifest</span><span class="p">({</span><span class="s2">"files"</span><span class="p">:</span> <span class="n">known_files</span><span class="p">})</span>
+            <span class="k">return</span>
+
+        <span class="n">chunk_records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ChunkRecord</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">new_or_changed</span><span class="p">:</span>
+            <span class="n">fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docs_dir</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">chroma_collection</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="p">{</span><span class="s2">"source"</span><span class="p">:</span> <span class="n">fn</span><span class="p">})</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"Failed to delete old vectors for changed file: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".txt"</span><span class="p">):</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_txt</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+                    <span class="n">chunk_records</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_text_with_metadata</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">current_signatures</span><span class="p">[</span><span class="n">fn</span><span class="p">])</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">page_num</span><span class="p">,</span> <span class="n">page_text</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_pdf_pages</span><span class="p">(</span><span class="n">fp</span><span class="p">):</span>
+                        <span class="n">processed_text</span><span class="p">,</span> <span class="n">lang</span><span class="p">,</span> <span class="n">translated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maybe_translate_text</span><span class="p">(</span><span class="n">page_text</span><span class="p">)</span>
+
+                        <span class="n">chunk_records</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">chunk_text_with_metadata</span><span class="p">(</span>
+                                <span class="n">fn</span><span class="p">,</span>
+                                <span class="n">page_num</span><span class="p">,</span>
+                                <span class="n">processed_text</span><span class="p">,</span>
+                                <span class="n">current_signatures</span><span class="p">[</span><span class="n">fn</span><span class="p">],</span>
+                                <span class="n">lang</span><span class="o">=</span><span class="n">lang</span><span class="p">,</span>
+                                <span class="n">translated</span><span class="o">=</span><span class="n">translated</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+
+                <span class="n">known_files</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_signatures</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Prepared chunks for </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">"Failed reading/chunking file: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk_records</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"No chunks produced. Nothing to ingest."</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_manifest</span><span class="p">({</span><span class="s2">"files"</span><span class="p">:</span> <span class="n">known_files</span><span class="p">})</span>
+            <span class="k">return</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">"Embedding </span><span class="si">%d</span><span class="s2"> chunks (batch=</span><span class="si">%d</span><span class="s2">)..."</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk_records</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding_batch_size</span>
+        <span class="p">)</span>
+        <span class="n">tic_embed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">texts</span> <span class="o">=</span> <span class="p">[</span><span class="n">cr</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">cr</span> <span class="ow">in</span> <span class="n">chunk_records</span><span class="p">]</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_embedding_list</span><span class="p">(</span><span class="n">texts</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk_records</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Embedding count mismatch: got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">" for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk_records</span><span class="p">)</span><span class="si">}</span><span class="s2"> chunks"</span>
+            <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Embeddings done in </span><span class="si">%.3f</span><span class="s2">s"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tic_embed</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Adding to Chroma (batch=</span><span class="si">%d</span><span class="s2">)..."</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chroma_add_batch_size</span><span class="p">)</span>
+        <span class="n">tic_add</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">bs_add</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chroma_add_batch_size</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk_records</span><span class="p">),</span> <span class="n">bs_add</span><span class="p">):</span>
+            <span class="n">batch_recs</span> <span class="o">=</span> <span class="n">chunk_records</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">bs_add</span><span class="p">]</span>
+            <span class="n">batch_emb</span> <span class="o">=</span> <span class="n">embeddings</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">bs_add</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chroma_collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                <span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">chunk_id</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">batch_recs</span><span class="p">],</span>
+                <span class="n">documents</span><span class="o">=</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">batch_recs</span><span class="p">],</span>
+                <span class="n">embeddings</span><span class="o">=</span><span class="n">batch_emb</span><span class="p">,</span>
+                <span class="n">metadatas</span><span class="o">=</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">metadata</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">batch_recs</span><span class="p">],</span>
+            <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Chroma add done in </span><span class="si">%.3f</span><span class="s2">s"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tic_add</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_manifest</span><span class="p">({</span><span class="s2">"files"</span><span class="p">:</span> <span class="n">known_files</span><span class="p">})</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Update complete in </span><span class="si">%.3f</span><span class="s2">s"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tic_total</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.chunk_text_with_metadata">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.chunk_text_with_metadata">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chunk_text_with_metadata</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">page</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">file_sig</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">lang</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"unknown"</span><span class="p">,</span>
+        <span class="n">translated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ChunkRecord</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Normalize and chunk page text, then attach metadata for citations and filtering."""</span>
+        <span class="n">cleaned</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[ \t]+"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">,</span> <span class="n">text</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="n">cleaned</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\n{3,}"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">cleaned</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">max_words</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"embedding_chunk_size"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span> <span class="ow">or</span> <span class="mi">200</span><span class="p">))</span>
+        <span class="n">overlap</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"embedding_chunk_overlap"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_overlap</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">chunks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunksplitter_for_embeddings</span><span class="p">(</span>
+            <span class="n">cleaned</span><span class="p">,</span> <span class="n">max_words</span><span class="o">=</span><span class="n">max_words</span><span class="p">,</span> <span class="n">overlap_words</span><span class="o">=</span><span class="n">overlap</span>
+        <span class="p">)</span>
+
+        <span class="n">safe_chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">hard_cap</span> <span class="o">=</span> <span class="n">max_words</span>
+        <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+            <span class="n">wc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\S+"</span><span class="p">,</span> <span class="n">ch</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">wc</span> <span class="o">&lt;=</span> <span class="n">hard_cap</span><span class="p">:</span>
+                <span class="n">safe_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">safe_chunks</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">chunksplitter_for_embeddings</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="n">max_words</span><span class="o">=</span><span class="n">hard_cap</span><span class="p">,</span> <span class="n">overlap_words</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="n">records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ChunkRecord</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">safe_chunks</span><span class="p">):</span>
+            <span class="n">chunk_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">::p</span><span class="si">{</span><span class="n">page</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">::c</span><span class="si">{</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">"</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">"source"</span><span class="p">:</span> <span class="n">source</span><span class="p">,</span>
+                <span class="s2">"page"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">page</span><span class="p">),</span>
+                <span class="s2">"chunk"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span>
+                <span class="s2">"mtime"</span><span class="p">:</span> <span class="n">file_sig</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mtime"</span><span class="p">),</span>
+                <span class="s2">"size"</span><span class="p">:</span> <span class="n">file_sig</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">),</span>
+                <span class="s2">"words"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\S+"</span><span class="p">,</span> <span class="n">ch</span><span class="p">)),</span>
+                <span class="s2">"lang"</span><span class="p">:</span> <span class="n">lang</span><span class="p">,</span>
+                <span class="s2">"translated"</span><span class="p">:</span> <span class="nb">bool</span><span class="p">(</span><span class="n">translated</span><span class="p">),</span>
+            <span class="p">}</span>
+            <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ChunkRecord</span><span class="p">(</span><span class="n">chunk_id</span><span class="o">=</span><span class="n">chunk_id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">ch</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">meta</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">records</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.cosine_sim">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.cosine_sim">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cosine_sim</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">b</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Compute cosine similarity without numpy."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">b</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="n">dot</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">na</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">nb</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+            <span class="n">fx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">fy</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">dot</span> <span class="o">+=</span> <span class="n">fx</span> <span class="o">*</span> <span class="n">fy</span>
+            <span class="n">na</span> <span class="o">+=</span> <span class="n">fx</span> <span class="o">*</span> <span class="n">fx</span>
+            <span class="n">nb</span> <span class="o">+=</span> <span class="n">fy</span> <span class="o">*</span> <span class="n">fy</span>
+        <span class="k">if</span> <span class="n">na</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">nb</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">dot</span> <span class="o">/</span> <span class="p">((</span><span class="n">na</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">nb</span><span class="o">**</span><span class="mf">0.5</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.mmr_rerank">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.mmr_rerank">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mmr_rerank</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">query_emb</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">candidates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+        <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">lam</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Select a diverse set of relevant chunks using Max Marginal Relevance (MMR)."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="n">candidates</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sim"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">selected</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">remaining</span> <span class="o">=</span> <span class="n">candidates</span><span class="p">[:]</span>
+
+        <span class="k">while</span> <span class="n">remaining</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">top_k</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">selected</span><span class="p">:</span>
+                <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remaining</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="k">continue</span>
+
+            <span class="n">best_idx</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">best_score</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e9</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cand</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">remaining</span><span class="p">):</span>
+                <span class="n">rel</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sim"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+                <span class="n">div</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">cand_emb</span> <span class="o">=</span> <span class="n">cand</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"emb"</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">:</span>
+                    <span class="n">div</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">div</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cosine_sim</span><span class="p">(</span><span class="n">cand_emb</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"emb"</span><span class="p">,</span> <span class="p">[])))</span>
+                <span class="n">score</span> <span class="o">=</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">rel</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">div</span>
+                <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="n">best_score</span><span class="p">:</span>
+                    <span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
+                    <span class="n">best_idx</span> <span class="o">=</span> <span class="n">i</span>
+
+            <span class="n">selected</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remaining</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">best_idx</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">selected</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.filter_context">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.filter_context">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Extract and filter Chroma query results by similarity threshold."""</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">first_list</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">val</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="n">first</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">first</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">first</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">first</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span> <span class="k">else</span> <span class="n">first</span>
+
+        <span class="n">docs</span> <span class="o">=</span> <span class="n">first_list</span><span class="p">(</span><span class="s2">"documents"</span><span class="p">)</span>
+        <span class="n">metas</span> <span class="o">=</span> <span class="n">first_list</span><span class="p">(</span><span class="s2">"metadatas"</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">first_list</span><span class="p">(</span><span class="s2">"ids"</span><span class="p">)</span>
+        <span class="n">dists</span> <span class="o">=</span> <span class="n">first_list</span><span class="p">(</span><span class="s2">"distances"</span><span class="p">)</span>
+        <span class="n">embs</span> <span class="o">=</span> <span class="n">first_list</span><span class="p">(</span><span class="s2">"embeddings"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">embs</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">embs</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">docs</span><span class="p">):</span>
+            <span class="n">embs</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">docs</span><span class="p">)</span>
+
+        <span class="p">(</span><span class="n">filtered_docs</span><span class="p">,</span> <span class="n">filtered_metas</span><span class="p">,</span> <span class="n">filtered_ids</span><span class="p">,</span> <span class="n">filtered_sims</span><span class="p">,</span> <span class="n">filtered_embs</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[],</span>
+            <span class="p">[],</span>
+            <span class="p">[],</span>
+            <span class="p">[],</span>
+            <span class="p">[],</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">doc</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">doc_id</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">emb</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">docs</span><span class="p">,</span> <span class="n">metas</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">dists</span><span class="p">,</span> <span class="n">embs</span><span class="p">):</span>
+            <span class="n">sim</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sim</span> <span class="o">&gt;=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">similarity_threshold</span><span class="p">):</span>
+                <span class="n">filtered_docs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
+                <span class="n">filtered_metas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+                <span class="n">filtered_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">doc_id</span><span class="p">)</span>
+                <span class="n">filtered_sims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+                <span class="n">filtered_embs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">emb</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">"Retrieved </span><span class="si">%d</span><span class="s2"> candidates, </span><span class="si">%d</span><span class="s2"> passed threshold </span><span class="si">%.3f</span><span class="s2">"</span><span class="p">,</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">docs</span><span class="p">),</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">filtered_docs</span><span class="p">),</span>
+                <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">similarity_threshold</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"documents"</span><span class="p">:</span> <span class="n">filtered_docs</span><span class="p">,</span>
+            <span class="s2">"metadatas"</span><span class="p">:</span> <span class="n">filtered_metas</span><span class="p">,</span>
+            <span class="s2">"ids"</span><span class="p">:</span> <span class="n">filtered_ids</span><span class="p">,</span>
+            <span class="s2">"similarities"</span><span class="p">:</span> <span class="n">filtered_sims</span><span class="p">,</span>
+            <span class="s2">"embeddings"</span><span class="p">:</span> <span class="n">filtered_embs</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.get_response">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.get_response">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Generate an answer from the selected LLM."""</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ollama_client</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ollama_llm_model</span><span class="p">,</span>
+            <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span>
+            <span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"temperature"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"num_ctx"</span><span class="p">:</span> <span class="mi">8192</span><span class="p">},</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"response"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.build_prompt">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.build_prompt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_prompt</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">user_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">selected</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""Build RAG prompt and return structured citation items for UI display."""</span>
+        <span class="n">ctx_parts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">citation_items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">total_chars</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_context_chunks</span><span class="p">]:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"doc"</span><span class="p">]</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"meta"</span><span class="p">]</span> <span class="ow">or</span> <span class="p">{}</span>
+            <span class="n">cid</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span>
+
+            <span class="n">src</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"source"</span><span class="p">,</span> <span class="s2">"unknown"</span><span class="p">)</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"page"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"chunk"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="c1"># This stays in-context so the LLM can cite inside the answer if it wants</span>
+            <span class="n">cite</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">src</span><span class="si">}</span><span class="s2"> p</span><span class="si">{</span><span class="n">page</span><span class="si">}</span><span class="s2"> c</span><span class="si">{</span><span class="n">chunk</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">cid</span><span class="si">}</span><span class="s2">]"</span>
+            <span class="n">snippet</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+            <span class="n">add_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">snippet</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">cite</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span>
+            <span class="k">if</span> <span class="n">total_chars</span> <span class="o">+</span> <span class="n">add_len</span> <span class="o">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_context_chars</span><span class="p">):</span>
+                <span class="k">break</span>
+
+            <span class="n">ctx_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">cite</span><span class="si">}</span><span class="s2">]</span><span class="se">\n</span><span class="si">{</span><span class="n">snippet</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="c1"># Structured citation info for the frontend</span>
+            <span class="n">citation_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"source"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">src</span><span class="p">),</span>
+                    <span class="s2">"page"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">page</span><span class="p">)</span> <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">"chunk"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span> <span class="k">if</span> <span class="n">chunk</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s2">"id"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">cid</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+            <span class="n">total_chars</span> <span class="o">+=</span> <span class="n">add_len</span>
+
+        <span class="n">context_block</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ctx_parts</span><span class="p">)</span>
+
+        <span class="n">prompt</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">"You are a careful assistant. Answer the user's question"</span>
+            <span class="s2">" using ONLY the provided context.</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"If the answer is not contained in the context, reply exactly:"</span>
+            <span class="s1">' "I don</span><span class="se">\'</span><span class="s1">t know." </span><span class="se">\n</span><span class="s1">'</span>
+            <span class="s2">"Do NOT add a bibliography or citations section.</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"Be concise and factual. If the user asks for a table or list,"</span>
+            <span class="s2">" format it clearly.</span><span class="se">\n\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"CONTEXT:</span><span class="se">\n</span><span class="si">{</span><span class="n">context_block</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"QUESTION:</span><span class="se">\n</span><span class="si">{</span><span class="n">user_message</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+            <span class="s2">"ANSWER:"</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">citation_items</span></div>
+
+
+<div class="viewcode-block" id="ChatPopup.process_prompt">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.chatpopup.chatpopup.html#gemini_application.chatpopup.chatpopup.ChatPopup.process_prompt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Answer a question by retrieving relevant chunks and generating a grounded response."""</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Processing prompt..."</span><span class="p">)</span>
+
+        <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">query_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_embedding</span><span class="p">(</span><span class="n">user_message</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Query embedding computed in </span><span class="si">%.3f</span><span class="s2">s"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tic</span><span class="p">)</span>
+
+        <span class="n">n_candidates</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">retrieve_candidates</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_candidates</span>
+            <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_relevant_docs</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chroma_collection</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="n">query_embeddings</span><span class="o">=</span><span class="n">query_emb</span><span class="p">,</span>
+            <span class="n">n_results</span><span class="o">=</span><span class="n">n_candidates</span><span class="p">,</span>
+            <span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">"documents"</span><span class="p">,</span> <span class="s2">"metadatas"</span><span class="p">,</span> <span class="s2">"distances"</span><span class="p">,</span> <span class="s2">"embeddings"</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">"Chroma query returned in </span><span class="si">%.3f</span><span class="s2">s (n_results=</span><span class="si">%d</span><span class="s2">)"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tic</span><span class="p">,</span> <span class="n">n_candidates</span>
+        <span class="p">)</span>
+
+        <span class="n">filtered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_context</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="n">docs</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="s2">"documents"</span><span class="p">]</span>
+        <span class="n">metas</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="s2">"metadatas"</span><span class="p">]</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="s2">"ids"</span><span class="p">]</span>
+        <span class="n">sims</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="s2">"similarities"</span><span class="p">]</span>
+        <span class="n">embs</span> <span class="o">=</span> <span class="n">filtered</span><span class="p">[</span><span class="s2">"embeddings"</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">docs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"answer"</span><span class="p">:</span> <span class="s2">"I don't know."</span><span class="p">,</span> <span class="s2">"citations"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"sources"</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span><span class="s2">"doc"</span><span class="p">:</span> <span class="n">d</span><span class="p">,</span> <span class="s2">"meta"</span><span class="p">:</span> <span class="n">m</span><span class="p">,</span> <span class="s2">"id"</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s2">"sim"</span><span class="p">:</span> <span class="n">s</span><span class="p">,</span> <span class="s2">"emb"</span><span class="p">:</span> <span class="n">e</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">docs</span><span class="p">,</span> <span class="n">metas</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">sims</span><span class="p">,</span> <span class="n">embs</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="c1"># If Chroma didn't return embeddings, compute them for MMR reranking</span>
+        <span class="n">missing_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="s2">"emb"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">missing_idx</span><span class="p">:</span>
+            <span class="n">texts_to_embed</span> <span class="o">=</span> <span class="p">[</span><span class="n">candidates</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s2">"doc"</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">missing_idx</span><span class="p">]</span>
+            <span class="n">new_embs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_embedding_list</span><span class="p">(</span><span class="n">texts_to_embed</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">missing_idx</span><span class="p">,</span> <span class="n">new_embs</span><span class="p">):</span>
+                <span class="n">candidates</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s2">"emb"</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span> <span class="k">if</span> <span class="n">e</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># keep None if embedding failed</span>
+
+        <span class="k">if</span> <span class="n">missing_idx</span><span class="p">:</span>
+            <span class="c1"># fallback: just take top by similarity, no MMR</span>
+            <span class="n">selected</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">"sim"</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span>
+                <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_relevant_docs</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mmr_rerank</span><span class="p">(</span>
+                <span class="n">query_emb</span><span class="o">=</span><span class="n">query_emb</span><span class="p">,</span>
+                <span class="n">candidates</span><span class="o">=</span><span class="n">candidates</span><span class="p">,</span>
+                <span class="n">top_k</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_relevant_docs</span><span class="p">),</span>
+                <span class="n">lam</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mmr_lambda</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="n">prompt</span><span class="p">,</span> <span class="n">citation_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_prompt</span><span class="p">(</span><span class="n">user_message</span><span class="p">,</span> <span class="n">selected</span><span class="p">)</span>
+
+        <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Response generated in </span><span class="si">%.3f</span><span class="s2">s"</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">tic</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"I don't know."</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"answer"</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">"citations"</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="c1"># Deduplicate citations by (source, page) while preserving order</span>
+        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">deduped</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">citation_items</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s2">"source"</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="s2">"page"</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">deduped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"answer"</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">"citations"</span><span class="p">:</span> <span class="n">deduped</span><span class="p">}</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

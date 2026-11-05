@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.1. Pump: Electrical Submersible Pump (ESP) &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5.2. Well: Pressure and Temperature Hydraulics" href="model_well_hydraulics.html" />
+    <link rel="prev" title="5. Models" href="index_models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_applications.html">4. Applications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_models.html">5. Models</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.1. Pump: Electrical Submersible Pump (ESP)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">5.1.1. Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">5.1.2. Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inputs">5.1.3. Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#outputs">5.1.4. Outputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#correlations">5.1.5. Correlations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="model_well_hydraulics.html">5.2. Well: Pressure and Temperature Hydraulics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_fluid_pvt.html">5.3. Fluid: PVT Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_reservoir.html">5.4. Reservoir Performance Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_corrosion.html">5.5. Corrosion: CO2 Corrosion Rate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_erosion.html">5.6. Erosion: Erosional Velocity/Rate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_surface_equipment.html">5.7. Surface Equipment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_models.html"><span class="section-number">5. </span>Models</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">5.1. </span>Pump: Electrical Submersible Pump (ESP)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/model_well_esp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pump-electrical-submersible-pump-esp">
+<h1><span class="section-number">5.1. </span>Pump: Electrical Submersible Pump (ESP)<a class="headerlink" href="#pump-electrical-submersible-pump-esp" title="Link to this heading"></a></h1>
+<section id="description">
+<h2><span class="section-number">5.1.1. </span>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">gemini_model.pump.esp.ESP</span></code> model estimates the performance of an
+Electrical Submersible Pump (ESP): the head it generates, the shaft power it
+consumes, and its efficiency, as a function of flow rate and drive frequency.</p>
+<p>ESPs are installed in production wells to provide additional lift when the
+reservoir pressure is not sufficient to bring the fluid to the surface. The
+model is a <strong>static model</strong>: given the current flow rate and frequency, it
+returns the corresponding head/power/efficiency without needing any internal
+state.</p>
+<p>Reference: TNO 2022 R11363 <em>“Model-based monitoring of geothermal assets,
+case study: electrical submersible pumps”</em>.</p>
+<p>This model underpins the <a class="reference internal" href="application_esp.html"><span class="doc">ESP Performance</span></a> application.</p>
+</section>
+<section id="parameters">
+<h2><span class="section-number">5.1.2. </span>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">no_stages</span></code></p></td>
+<td><p>Number of pump stages (-)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">head_coeff</span></code></p></td>
+<td><p>6 polynomial coefficients fitting head vs. flow (US units, bbl/d → ft)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">power_coeff</span></code></p></td>
+<td><p>6 polynomial coefficients fitting power vs. flow (US units, bbl/d → bhp)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pump_name</span></code></p></td>
+<td><p><em>(optional)</em> pump model identifier, for reference only</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs">
+<h2><span class="section-number">5.1.3. </span>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pump_freq</span></code></p></td>
+<td><p>Drive frequency (Hz)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pump_flow</span></code></p></td>
+<td><p>Flow rate through the pump (m³/s)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs">
+<h2><span class="section-number">5.1.4. </span>Outputs<a class="headerlink" href="#outputs" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pump_head</span></code></p></td>
+<td><p>Pump head (Pa)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pump_power</span></code></p></td>
+<td><p>Shaft power (W)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pump_eff</span></code></p></td>
+<td><p>Pump efficiency (%)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="correlations">
+<h2><span class="section-number">5.1.5. </span>Correlations<a class="headerlink" href="#correlations" title="Link to this heading"></a></h2>
+<p>The manufacturer performance curves are fitted (in US field units) as
+6th-order polynomials in flow rate expressed in barrels per day. The input
+flow rate is first converted from m³/s to bbl/d:</p>
+<div class="math notranslate nohighlight">
+\[Q_{bbl/d} = Q\,\left(543439.650564\right)\]</div>
+<p>The fitted polynomials are evaluated at <span class="math notranslate nohighlight">\(Q_{bbl/d}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[P_{head}(Q_{bbl/d}) = \sum_{i=0}^{5} a_i\,Q_{bbl/d}^{\,i}
+\qquad
+P_{power}(Q_{bbl/d}) = \sum_{i=0}^{5} b_i\,Q_{bbl/d}^{\,i}\]</div>
+<p>where <span class="math notranslate nohighlight">\(a_i\)</span> are the <code class="docutils literal notranslate"><span class="pre">head_coeff</span></code> and <span class="math notranslate nohighlight">\(b_i\)</span> are the
+<code class="docutils literal notranslate"><span class="pre">power_coeff</span></code>. Head and power scale with the drive frequency following the
+pump affinity laws (head with <span class="math notranslate nohighlight">\(n^2\)</span>, power with <span class="math notranslate nohighlight">\(n^3\)</span>, where
+<span class="math notranslate nohighlight">\(n\)</span> is the frequency ratio to 60 Hz), and are converted to SI units:</p>
+<div class="math notranslate nohighlight">
+\[H = N_{stages}\,\left(\frac{f}{60}\right)^2 P_{head}(Q_{bbl/d})
+    \times 2988.30167 \quad \text{[Pa]}\]</div>
+<div class="math notranslate nohighlight">
+\[P = N_{stages}\,\left(\frac{f}{60}\right)^3 P_{power}(Q_{bbl/d})
+    \times 745.7 \quad \text{[W]}\]</div>
+<p>Efficiency is derived from flow, head, and power using the standard
+hydraulic power relation (with a unit-conversion factor and returned as a
+percentage):</p>
+<div class="math notranslate nohighlight">
+\[\eta = 100\,\frac{Q_{bbl/d}}{135773}\,\frac{H}{P}\,
+    \frac{745.7}{2988.30167} \qquad \text{[\%]}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\eta = 0\)</span> if <span class="math notranslate nohighlight">\(P &lt; 0.1\)</span> W to avoid division by
+near-zero power.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(N_{stages}\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">no_stages</span></code></p></td>
+<td><p>Number of pump stages (-)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(f\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pump_freq</span></code></p></td>
+<td><p>Drive frequency (input, Hz)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(Q\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pump_flow</span></code></p></td>
+<td><p>Flow rate through the pump (input, m³/s)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(H\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pump_head</span></code></p></td>
+<td><p>Pump head (output, Pa)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(P\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pump_power</span></code></p></td>
+<td><p>Shaft power (output, W)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\eta\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pump_eff</span></code></p></td>
+<td><p>Pump efficiency (output, %)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index_models.html" class="btn btn-neutral float-left" title="5. Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="model_well_hydraulics.html" class="btn btn-neutral float-right" title="5.2. Well: Pressure and Temperature Hydraulics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

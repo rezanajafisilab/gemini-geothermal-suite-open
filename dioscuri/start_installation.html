@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.2. Installation &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2.3. Login Page" href="start_login.html" />
+    <link rel="prev" title="2.1. Quick Start (Beginners)" href="start_installation_quickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_getting_started.html">2. Getting started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="start_installation_quickstart.html">2.1. Quick Start (Beginners)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.2. Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gemini-suite-setup">2.2.1. GEMINI Suite Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#starting-the-stack">2.2.1.1. Starting the stack</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#local-development-setup">2.2.2. Local Development Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#prerequisites">2.2.2.1. Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clone-the-repository">2.2.2.2. 1. Clone the repository</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configure-environment-variables">2.2.2.3. 2. Configure environment variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-python-dependencies">2.2.2.4. 3. Install Python dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#start-the-supporting-services-docker">2.2.2.5. 4. Start the supporting services (Docker)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#run-the-application">2.2.2.6. 5. Run the application</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuring-a-plant">2.2.2.7. Configuring a plant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-framework-module-populating-time-series-data">2.2.2.8. Running the framework module (populating time-series data)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-tests-linting-and-formatting">2.2.2.9. Running tests, linting and formatting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#background-workers-celery-flower">2.2.2.10. Background workers (Celery/Flower)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#troubleshooting">2.2.2.11. Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#chat-assistant-setup">2.2.3. Chat Assistant Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#model-configuration">2.2.3.1. Model configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#recommended-models">2.2.3.2. Recommended Models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="start_login.html">2.3. Login Page</a></li>
+<li class="toctree-l2"><a class="reference internal" href="start_main_page.html">2.4. Main Page Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="start_projects.html">2.5. Projects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_getting_started.html"><span class="section-number">2. </span>Getting started</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2.2. </span>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/start_installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1><span class="section-number">2.2. </span>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>New to GEMINI or just want to try it out quickly? See the <a class="reference internal" href="start_installation_quickstart.html#quickstart-installation"><span class="std std-ref">Quick Start (Beginners)</span></a> page
+for a shorter, beginner-friendly version of these instructions. Come back here for full detail
+on every service, environment variable, and the local development workflow.</p>
+</div>
+<section id="gemini-suite-setup">
+<span id="id1"></span><h2><span class="section-number">2.2.1. </span>GEMINI Suite Setup<a class="headerlink" href="#gemini-suite-setup" title="Link to this heading"></a></h2>
+<p>GEMINI Digital Twin relies on several supporting services (Grafana, MySQL, InfluxDB, Redis,
+MongoDB, ChromaDB and, optionally, Ollama) that are packaged together in this repository’s
+<code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code>. Basic Docker knowledge is recommended – see the official
+<a class="reference external" href="https://docs.docker.com/">Docker documentation</a> for fundamentals.</p>
+<p>Prerequisites:</p>
+<ul class="simple">
+<li><p>Docker Desktop: <a class="reference external" href="https://docs.docker.com/engine/install/">https://docs.docker.com/engine/install/</a></p></li>
+<li><p>Docker Compose: <a class="reference external" href="https://docs.docker.com/compose/install/">https://docs.docker.com/compose/install/</a></p></li>
+</ul>
+<p>The full service definitions live in <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> at the repo root. Here’s what each
+one is for:</p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>Grafana</dt><dd><p>Visualization platform for time-series dashboards and alerts. Embedded in the app’s
+Timeseries Viewer tab.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>MySQLDB</dt><dd><p>Relational database for user, configuration, and project metadata. <strong>Required.</strong></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>InfluxDB</dt><dd><p>Time-series database used for geothermal operational data, written by the framework module
+and read by Grafana. <strong>Required.</strong></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Redis</dt><dd><p>In-memory broker/backend for Celery task queues. <strong>Required</strong> for most analysis tabs (ESP,
+production well performance, injection well monitoring, well integrity monitoring) and the
+AI Chat Assistant.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>MongoDB</dt><dd><p>Document database used for uploaded report and document storage. Optional – only needed for
+the report upload/download feature.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ChromaDB</dt><dd><p>Vector database used by RAG workflows for semantic document retrieval. Optional – only
+needed for the AI Chat Assistant (see <a class="reference internal" href="#chat-assistant-setup"><span class="std std-ref">Chat Assistant Setup</span></a>).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Ollama</dt><dd><p>Runtime for local LLM and embedding model execution. Optional – only needed for the AI Chat
+Assistant.</p>
+</dd>
+</dl>
+</li>
+</ol>
+<section id="starting-the-stack">
+<h3><span class="section-number">2.2.1.1. </span>Starting the stack<a class="headerlink" href="#starting-the-stack" title="Link to this heading"></a></h3>
+<p>Run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</pre></div>
+</div>
+<p>After startup, open the GEMINI GUI on the configured frontend port.</p>
+</section>
+</section>
+<section id="local-development-setup">
+<span id="id2"></span><h2><span class="section-number">2.2.2. </span>Local Development Setup<a class="headerlink" href="#local-development-setup" title="Link to this heading"></a></h2>
+<p>Besides running the supporting services with the <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> described above, the
+GEMINI application itself can be run directly from source for development purposes, using Poetry
+for dependency management.</p>
+<section id="prerequisites">
+<h3><span class="section-number">2.2.2.1. </span>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h3>
+<p>Make sure the following tools are installed on your machine before you start:</p>
+<ul class="simple">
+<li><p><strong>Python 3.11</strong> (the project pins <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">=</span> <span class="pre">&quot;^3.11&quot;</span></code> in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>)</p></li>
+<li><p><strong>Poetry</strong> (<a class="reference external" href="https://python-poetry.org/">https://python-poetry.org/</a>) for dependency management (installed automatically by
+the install scripts below, or install manually with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">poetry</span></code>)</p></li>
+<li><p><strong>Docker</strong> and <strong>Docker Compose</strong> (to run the supporting services: Grafana, MySQL, InfluxDB,
+Redis, MongoDB, ChromaDB and Ollama)</p></li>
+<li><p><strong>Git</strong> for cloning the repository</p></li>
+</ul>
+<p><strong>Ollama</strong> (<a class="reference external" href="https://ollama.com/">https://ollama.com/</a>) can be used to run the LLM/embedding models locally. The <code class="docutils literal notranslate"><span class="pre">ollama</span></code> service is included in <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> and started
+by default along with the other supporting services.</p>
+</section>
+<section id="clone-the-repository">
+<h3><span class="section-number">2.2.2.2. </span>1. Clone the repository<a class="headerlink" href="#clone-the-repository" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/GEMINI-Digital-Twin/gemini-geothermal-suite-open.git
+<span class="nb">cd</span><span class="w"> </span>gemini-geothermal-suite-open
+</pre></div>
+</div>
+</section>
+<section id="configure-environment-variables">
+<h3><span class="section-number">2.2.2.3. </span>2. Configure environment variables<a class="headerlink" href="#configure-environment-variables" title="Link to this heading"></a></h3>
+<p>This repo uses a single <code class="docutils literal notranslate"><span class="pre">.env</span></code> file in the repo root, read both by Docker Compose (via
+<code class="docutils literal notranslate"><span class="pre">env_file:</span></code> in <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code>) and automatically, via <code class="docutils literal notranslate"><span class="pre">python-dotenv</span></code>, by every local
+Python entry point (<code class="docutils literal notranslate"><span class="pre">src/gemini_interface/app.py</span></code>, <code class="docutils literal notranslate"><span class="pre">src/gemini_framework/app.py</span></code>, and the
+Celery worker). You do not need to manually export variables into your shell before running
+<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">src/gemini_interface/app.py</span></code> – <code class="docutils literal notranslate"><span class="pre">.env</span></code> is loaded automatically as soon as
+the process starts.</p>
+<p>Create it from the template:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>.env.template<span class="w"> </span>.env
+</pre></div>
+</div>
+<p>On Windows (PowerShell):</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nb">Copy-Item</span> <span class="p">.</span><span class="n">env</span><span class="p">.</span><span class="n">template</span> <span class="p">.</span><span class="n">env</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">.env.template</span></code> is organized into a <strong>Required</strong> section (needed to run the GUI, framework
+module, and Celery-backed analysis tabs) and an <strong>Optional</strong> section (report upload/download via
+MongoDB; the AI Chat Assistant via ChromaDB/Ollama – see <a class="reference internal" href="#chat-assistant-setup"><span class="std std-ref">Chat Assistant Setup</span></a>). Fill in
+the Required section; leave the Optional section blank unless you use those features. See the
+complete, working example (including the Optional section) in the <a class="reference internal" href="start_installation_quickstart.html#quickstart-installation"><span class="std std-ref">Quick Start (Beginners)</span></a>
+guide.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MONGODB_USERNAME</span></code>/<code class="docutils literal notranslate"><span class="pre">PASSWORD</span></code> and <code class="docutils literal notranslate"><span class="pre">MONGO_INITDB_ROOT_*</span></code> can stay blank for a no-auth Mongo
+setup (fine for local development) – only fill them in (with matching values on both sides) if
+you want Mongo authentication enabled. See <a class="reference internal" href="#chat-assistant-setup"><span class="std std-ref">Chat Assistant Setup</span></a> for the Ollama model
+values and how to pull the models into the container.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Hostnames (<code class="docutils literal notranslate"><span class="pre">GEMINI_MYSQLDB_URL</span></code>, <code class="docutils literal notranslate"><span class="pre">MONGODB_HOST</span></code>, <code class="docutils literal notranslate"><span class="pre">INFLUXDB_URL</span></code>, <code class="docutils literal notranslate"><span class="pre">CELERY_BROKER_URL</span></code>,
+<code class="docutils literal notranslate"><span class="pre">CHROMADB_HOST</span></code>, <code class="docutils literal notranslate"><span class="pre">OLLAMA_HOST</span></code>) depend on where the app runs: use <code class="docutils literal notranslate"><span class="pre">localhost</span></code> (with the
+host-published port) when running with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span></code>, or the Docker Compose service name
+(e.g. <code class="docutils literal notranslate"><span class="pre">mysqldb</span></code>, <code class="docutils literal notranslate"><span class="pre">influxdb</span></code>, <code class="docutils literal notranslate"><span class="pre">redis</span></code>) when running the app itself inside Docker. Mixing
+these up is the most common setup error – see <a class="reference internal" href="#troubleshooting"><span class="std std-ref">Troubleshooting</span></a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">GRAFANA_URL</span></code> must also be reachable at that exact URL from your browser, or the Timeseries
+Viewer tab won’t work. Never commit your <code class="docutils literal notranslate"><span class="pre">.env</span></code> file – it’s already excluded via
+<code class="docutils literal notranslate"><span class="pre">.gitignore</span></code>.</p>
+</div>
+<p>See <a class="reference internal" href="#troubleshooting"><span class="std std-ref">Troubleshooting</span></a> for common errors after changing <code class="docutils literal notranslate"><span class="pre">.env</span></code>.</p>
+</section>
+<section id="install-python-dependencies">
+<h3><span class="section-number">2.2.2.4. </span>3. Install Python dependencies<a class="headerlink" href="#install-python-dependencies" title="Link to this heading"></a></h3>
+<p>The project uses Poetry for dependency management. Convenience scripts are provided under
+<code class="docutils literal notranslate"><span class="pre">ci/windows</span></code> and <code class="docutils literal notranslate"><span class="pre">ci/linux</span></code>.</p>
+<p><strong>Windows:</strong></p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">ci</span><span class="p">\</span><span class="n">windows</span><span class="p">\</span><span class="n">run_installation</span><span class="p">.</span><span class="n">bat</span>        <span class="c"># runtime dependencies only</span>
+<span class="n">ci</span><span class="p">\</span><span class="n">windows</span><span class="p">\</span><span class="n">run_installation_dev</span><span class="p">.</span><span class="n">bat</span>    <span class="c"># runtime + development dependencies (tests, linters, docs)</span>
+</pre></div>
+</div>
+<p><strong>Linux/macOS:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>ci/linux/run_installation.sh
+</pre></div>
+</div>
+<p>These scripts run the equivalent of:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip
+pip<span class="w"> </span>install<span class="w"> </span>poetry
+poetry<span class="w"> </span>lock
+poetry<span class="w"> </span>install<span class="w">            </span><span class="c1"># add "--only main" to skip dev dependencies</span>
+</pre></div>
+</div>
+</section>
+<section id="start-the-supporting-services-docker">
+<h3><span class="section-number">2.2.2.5. </span>4. Start the supporting services (Docker)<a class="headerlink" href="#start-the-supporting-services-docker" title="Link to this heading"></a></h3>
+<p>The suite depends on several backing services (Grafana, MySQL, InfluxDB, Redis, MongoDB,
+ChromaDB, and optionally Ollama), defined in <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code>. Start them with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</pre></div>
+</div>
+<p>or, using the provided script on Windows:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">ci</span><span class="p">\</span><span class="n">windows</span><span class="p">\</span><span class="n">run_docker</span><span class="p">.</span><span class="n">bat</span>
+</pre></div>
+</div>
+<p>This will start Grafana (port 3000, dashboards), MySQL (port 3306, relational data), InfluxDB
+(ports 8086/8088, time-series process data), Redis (port 6379, Celery broker/result backend),
+MongoDB (port 27017, document storage) and ChromaDB (port 8000, vector store for the AI chat
+assistant).</p>
+</section>
+<section id="run-the-application">
+<h3><span class="section-number">2.2.2.6. </span>5. Run the application<a class="headerlink" href="#run-the-application" title="Link to this heading"></a></h3>
+<p>Start the Flask web interface (entry point is <code class="docutils literal notranslate"><span class="pre">src/gemini_interface/app.py</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>src/gemini_interface/app.py
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">.env</span></code> is loaded automatically (via <code class="docutils literal notranslate"><span class="pre">python-dotenv</span></code>) as soon as the process starts, so no
+manual env export is required – just make sure <code class="docutils literal notranslate"><span class="pre">.env</span></code> exists in the repo root and the Docker
+Compose services from step 4 are already running.</p>
+<p>The app reads <code class="docutils literal notranslate"><span class="pre">GEMINI_FRONTEND_PORT</span></code> from <code class="docutils literal notranslate"><span class="pre">.env</span></code> (defaults are only applied if the variable
+is set) and listens on <code class="docutils literal notranslate"><span class="pre">0.0.0.0</span></code>. Once running, open your browser at:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="o">&lt;</span><span class="n">GEMINI_FRONTEND_PORT</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Always use <code class="docutils literal notranslate"><span class="pre">http://localhost:&lt;port&gt;</span></code>, not <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:&lt;port&gt;</span></code>. See “Accessing
+Grafana from the Timeseries Viewer” below for why this matters.</p>
+</div>
+<p>Log in using the <code class="docutils literal notranslate"><span class="pre">GEMINI_ADMIN_EMAIL</span></code> / <code class="docutils literal notranslate"><span class="pre">GEMINI_ADMIN_PASSWORD</span></code> configured in your <code class="docutils literal notranslate"><span class="pre">.env</span></code>
+file.</p>
+<section id="accessing-grafana-from-the-timeseries-viewer">
+<h4><span class="section-number">2.2.2.6.1. </span>Accessing Grafana from the Timeseries Viewer<a class="headerlink" href="#accessing-grafana-from-the-timeseries-viewer" title="Link to this heading"></a></h4>
+<p>The Timeseries Viewer tab embeds Grafana in an iframe pointing at <code class="docutils literal notranslate"><span class="pre">GRAFANA_URL</span></code>. Two things
+are required for this to work correctly:</p>
+<ol class="arabic simple">
+<li><p><strong>Use consistent hostnames.</strong> Access the whole app via
+<code class="docutils literal notranslate"><span class="pre">http://localhost:&lt;GEMINI_FRONTEND_PORT&gt;</span></code> (not <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:...</span></code>), matching the
+hostname used in <code class="docutils literal notranslate"><span class="pre">GRAFANA_URL=http://localhost:3000</span></code>. Mismatched hostnames are treated as
+different origins by the browser, so Grafana’s login session won’t be visible inside the
+iframe and it will keep bouncing back to the login form.</p></li>
+<li><p><strong>Configure Grafana’s own InfluxDB data source using the Docker service name</strong>, not
+<code class="docutils literal notranslate"><span class="pre">localhost</span></code>. Grafana runs inside the <code class="docutils literal notranslate"><span class="pre">gemini</span></code> Docker network, so from inside the Grafana
+container, <code class="docutils literal notranslate"><span class="pre">localhost</span></code> refers to the Grafana container itself, not your host machine. When
+adding the InfluxDB data source in Grafana’s UI (<code class="docutils literal notranslate"><span class="pre">Connections</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Data</span> <span class="pre">sources</span></code>), use
+<code class="docutils literal notranslate"><span class="pre">http://influxdb:8086/</span></code> as the URL.</p></li>
+</ol>
+</section>
+</section>
+<section id="configuring-a-plant">
+<h3><span class="section-number">2.2.2.7. </span>Configuring a plant<a class="headerlink" href="#configuring-a-plant" title="Link to this heading"></a></h3>
+<p>Plant-specific configuration lives under <code class="docutils literal notranslate"><span class="pre">gemini-project/</span></code>. Each plant is a folder containing a
+<code class="docutils literal notranslate"><span class="pre">plant.conf</span></code> file and <code class="docutils literal notranslate"><span class="pre">.param</span></code> files describing individual assets (reservoir, wells, pumps,
+heat exchangers, filters, degassers, etc.), plus a <code class="docutils literal notranslate"><span class="pre">diagram.json</span></code> describing the plant topology.
+A <code class="docutils literal notranslate"><span class="pre">_template</span></code> folder is provided with blank templates for each asset type to help you set up a
+new plant. Set <code class="docutils literal notranslate"><span class="pre">GEMINI_PLANT</span></code> in your <code class="docutils literal notranslate"><span class="pre">.env</span></code> to the name of the folder you want to load (e.g.
+<code class="docutils literal notranslate"><span class="pre">geothermal_example</span></code>).</p>
+</section>
+<section id="running-the-framework-module-populating-time-series-data">
+<h3><span class="section-number">2.2.2.8. </span>Running the framework module (populating time-series data)<a class="headerlink" href="#running-the-framework-module-populating-time-series-data" title="Link to this heading"></a></h3>
+<p>The Flask app (<code class="docutils literal notranslate"><span class="pre">gemini_interface</span></code>) alone lets you log in and browse the UI, but the Timeseries
+Viewer/dashboards stay empty until the <strong>framework</strong> module (<code class="docutils literal notranslate"><span class="pre">gemini_framework</span></code>) has processed
+plant data into InfluxDB. It reads raw data for the configured <code class="docutils literal notranslate"><span class="pre">GEMINI_PLANT</span></code>, runs the physics
+model modules, and writes the results, then exits (it performs one processing step per run, not a
+continuous loop). Run it any time you want to process the latest data, with the Docker services
+already running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>src/gemini_framework/app.py
+</pre></div>
+</div>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">ci</span><span class="p">\</span><span class="n">windows</span><span class="p">\</span><span class="n">run_gemini_module</span><span class="p">.</span><span class="n">bat</span>        <span class="c"># Windows</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>ci/linux/run_gemini_module.sh<span class="w">      </span><span class="c1"># Linux/macOS</span>
+</pre></div>
+</div>
+</section>
+<section id="running-tests-linting-and-formatting">
+<h3><span class="section-number">2.2.2.9. </span>Running tests, linting and formatting<a class="headerlink" href="#running-tests-linting-and-formatting" title="Link to this heading"></a></h3>
+<p><strong>Tests</strong> (pytest with coverage):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>-v<span class="w"> </span>--cov<span class="w"> </span>-p<span class="w"> </span>no:faulthandler
+<span class="c1"># or</span>
+ci<span class="se">\w</span>indows<span class="se">\r</span>un_test.bat<span class="w">        </span><span class="c1"># Windows</span>
+bash<span class="w"> </span>ci/linux/run_test.sh<span class="w">      </span><span class="c1"># Linux</span>
+</pre></div>
+</div>
+<p><strong>Linting</strong> (flake8, black, isort in check mode):</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">ci</span><span class="p">\</span><span class="n">windows</span><span class="p">\</span><span class="n">run_linter</span><span class="p">.</span><span class="n">bat</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>bash<span class="w"> </span>ci/linux/run_linter.sh
+</pre></div>
+</div>
+<p><strong>Auto-formatting</strong> (black + isort, Windows only script provided):</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">ci</span><span class="p">\</span><span class="n">windows</span><span class="p">\</span><span class="n">run_formatting</span><span class="p">.</span><span class="n">bat</span>
+</pre></div>
+</div>
+</section>
+<section id="background-workers-celery-flower">
+<h3><span class="section-number">2.2.2.10. </span>Background workers (Celery/Flower)<a class="headerlink" href="#background-workers-celery-flower" title="Link to this heading"></a></h3>
+<p>Celery is <strong>required</strong> for most interactive analysis tabs – ESP analysis, production well
+performance (VLP/IPR), injection well monitoring (Hall integral, skin lines), well integrity
+monitoring (caliper log processing, corrosion prediction/optimization/forecasting), and the AI
+Chat Assistant (RAG response generation). These all queue their work as Celery tasks against the
+Redis broker started via Docker Compose; without a running worker, those actions queue but never
+complete. You can skip this section only if you just want to browse the dashboard, plant
+settings, and Timeseries Viewer without using those analysis features.</p>
+<p>Start a Celery worker:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">ci</span><span class="p">\</span><span class="n">windows</span><span class="p">\</span><span class="n">run_celery</span><span class="p">.</span><span class="n">bat</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>celery<span class="w"> </span>--app<span class="w"> </span>src.gemini_interface.blueprint.celerytasks.celery<span class="w"> </span>worker<span class="w"> </span>--loglevel<span class="o">=</span>info
+</pre></div>
+</div>
+<p>Optionally, start the Flower monitoring dashboard to inspect Celery tasks:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">ci</span><span class="p">\</span><span class="n">windows</span><span class="p">\</span><span class="n">run_flower</span><span class="p">.</span><span class="n">bat</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>celery<span class="w"> </span>-A<span class="w"> </span>src.gemini_interface.blueprint.celerytasks.celery<span class="w"> </span>flower
+</pre></div>
+</div>
+</section>
+<section id="troubleshooting">
+<span id="id3"></span><h3><span class="section-number">2.2.2.11. </span>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h3>
+<dl>
+<dt><strong>“Unknown database ‘None’” (MySQL / SQLAlchemy) when running the app</strong></dt><dd><p><code class="docutils literal notranslate"><span class="pre">MYSQL_DATABASE</span></code> is blank in <code class="docutils literal notranslate"><span class="pre">.env</span></code>. It’s read by both the <code class="docutils literal notranslate"><span class="pre">mysqldb</span></code> container (to
+create the database) and the app (to build its connection string). Fill it in, then reset the
+volume (see below) since the container already initialized without it.</p>
+</dd>
+<dt><strong>InfluxDB “401 Unauthorized” when running the framework module</strong></dt><dd><p><code class="docutils literal notranslate"><span class="pre">INFLUXDB_USERNAME</span></code>/<code class="docutils literal notranslate"><span class="pre">PASSWORD</span></code> don’t match what the <code class="docutils literal notranslate"><span class="pre">influxdb</span></code> container was actually
+initialized with (<code class="docutils literal notranslate"><span class="pre">DOCKER_INFLUXDB_INIT_USERNAME</span></code>/<code class="docutils literal notranslate"><span class="pre">PASSWORD</span></code>). This commonly happens after
+changing a password in <code class="docutils literal notranslate"><span class="pre">.env</span></code> without resetting the volume – see below.</p>
+</dd>
+<dt><strong>InfluxDB “could not find bucket” (404) when running the framework module</strong></dt><dd><p><code class="docutils literal notranslate"><span class="pre">INFLUXDB_BUCKET</span></code> doesn’t match <code class="docutils literal notranslate"><span class="pre">DOCKER_INFLUXDB_INIT_BUCKET</span></code> – the app is asking for a
+bucket name that was never actually created in the container. Set <code class="docutils literal notranslate"><span class="pre">INFLUXDB_BUCKET</span></code> to the
+same value as <code class="docutils literal notranslate"><span class="pre">DOCKER_INFLUXDB_INIT_BUCKET</span></code> in <code class="docutils literal notranslate"><span class="pre">.env</span></code> (same rule applies to
+<code class="docutils literal notranslate"><span class="pre">INFLUXDB_ORG</span></code>/<code class="docutils literal notranslate"><span class="pre">DOCKER_INFLUXDB_INIT_ORG</span></code>).</p>
+</dd>
+<dt><strong>MongoDB / report blueprint fails at app startup with</strong> <code class="docutils literal notranslate"><span class="pre">ValueError:</span> <span class="pre">invalid</span> <span class="pre">literal</span> <span class="pre">for</span> <span class="pre">int()</span></code></dt><dd><p><code class="docutils literal notranslate"><span class="pre">MONGODB_PORT</span></code> was left blank. The report blueprint connects to MongoDB eagerly at import
+time (even if you never use the report feature), so <code class="docutils literal notranslate"><span class="pre">MONGODB_HOST</span></code>/<code class="docutils literal notranslate"><span class="pre">MONGODB_PORT</span></code> must
+always be filled in – see the Required section of <code class="docutils literal notranslate"><span class="pre">.env.template</span></code>.</p>
+</dd>
+<dt><strong>Reset Docker volumes after changing container-init variables</strong></dt><dd><p><code class="docutils literal notranslate"><span class="pre">MYSQL_DATABASE</span></code>, <code class="docutils literal notranslate"><span class="pre">MYSQL_ROOT_PASSWORD</span></code>, <code class="docutils literal notranslate"><span class="pre">DOCKER_INFLUXDB_INIT_*</span></code> and
+<code class="docutils literal notranslate"><span class="pre">MONGO_INITDB_ROOT_*</span></code> only take effect the <strong>first</strong> time their container initializes its
+data volume. If you change one of these after already starting the stack once, the container
+keeps its old state. Fix by resetting the volumes and restarting:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span>-v
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</pre></div>
+</div>
+</dd>
+<dt><strong>``getaddrinfo failed`` / “Can’t connect to MySQL server on ‘mysqldb’”</strong></dt><dd><p>You used a Docker Compose service name (e.g. <code class="docutils literal notranslate"><span class="pre">mysqldb</span></code>) as a hostname from a process running
+outside Docker. Use <code class="docutils literal notranslate"><span class="pre">localhost</span></code> instead when running the app with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span></code> – see the
+hostname rules under “Configure environment variables” above.</p>
+</dd>
+<dt><strong>Grafana keeps looping back to its login screen inside the Timeseries Viewer</strong></dt><dd><p>Access the app via <code class="docutils literal notranslate"><span class="pre">http://localhost:&lt;port&gt;</span></code>, not <code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:&lt;port&gt;</span></code>. See
+“Accessing Grafana from the Timeseries Viewer” above for the full explanation.</p>
+</dd>
+</dl>
+</section>
+</section>
+<section id="chat-assistant-setup">
+<span id="id4"></span><h2><span class="section-number">2.2.3. </span>Chat Assistant Setup<a class="headerlink" href="#chat-assistant-setup" title="Link to this heading"></a></h2>
+<p>The Chat Assistant setup is mostly automatic. The Ollama service is hosted in
+the optional Docker container named <code class="docutils literal notranslate"><span class="pre">ollama</span></code>. Start this container before
+using the RAG pipeline, for example by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</pre></div>
+</div>
+<p>The provided compose file starts Ollama together with the other GEMINI
+services. The <code class="docutils literal notranslate"><span class="pre">ollama</span></code> service must remain running for the RAG pipeline to be
+functional.</p>
+<p>Models must be pulled (downloaded) into the Ollama service before they can be
+used. For a quick start on Windows, run
+<code class="docutils literal notranslate"><span class="pre">ci\windows\run_ollama_models.bat</span></code>. A shell script for Linux/macOS is
+also provided at <code class="docutils literal notranslate"><span class="pre">ci/linux/run_ollama_models.sh</span></code>. The script checks that Docker is
+reachable and that the <code class="docutils literal notranslate"><span class="pre">ollama</span></code> container is running, then pulls all three
+recommended models: <code class="docutils literal notranslate"><span class="pre">llama3.2</span></code>, <code class="docutils literal notranslate"><span class="pre">snowflake-arctic-embed</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">zongwei/gemma3-translator:4b</span></code>. Run this script only after
+<code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">compose</span> <span class="pre">up</span></code> completes.</p>
+<p>If you prefer to pull models manually (or are on Linux/macOS), make sure the
+<code class="docutils literal notranslate"><span class="pre">ollama</span></code> container is running and then run the pull command inside the
+container, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>ollama<span class="w"> </span>ollama<span class="w"> </span>pull<span class="w"> </span>llama3.2
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">llama3.2</span></code> with the model you want to install. Only Ollama-supported
+models can be used by the Chat Assistant.</p>
+<section id="model-configuration">
+<h3><span class="section-number">2.2.3.1. </span>Model configuration<a class="headerlink" href="#model-configuration" title="Link to this heading"></a></h3>
+<p>The full RAG pipeline needs three models: an LLM for response generation, an
+embedding model, and an LLM for translation. These models are configured in the
+<code class="docutils literal notranslate"><span class="pre">.env</span></code> file with the following parameters:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">LLM_MODEL_VERSION</span><span class="o">=</span>llama3.2
+<span class="nv">EMBED_MODEL_VERSION</span><span class="o">=</span>snowflake-arctic-embed
+<span class="nv">TRANSLATION_LLM_MODEL</span><span class="o">=</span>zongwei/gemma3-translator:4b
+</pre></div>
+</div>
+<p>You may choose other models, but only models supported by Ollama can be used.
+If you change any configured model, pull that model into the <code class="docutils literal notranslate"><span class="pre">ollama</span></code>
+container as well. The translation model (<code class="docutils literal notranslate"><span class="pre">TRANSLATION_LLM_MODEL</span></code>) translates
+non-English documents before embedding and generation.</p>
+<p>Example (pull <code class="docutils literal notranslate"><span class="pre">mistral-nemo</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>ollama<span class="w"> </span>ollama<span class="w"> </span>pull<span class="w"> </span>mistral-nemo
+</pre></div>
+</div>
+</section>
+<section id="recommended-models">
+<h3><span class="section-number">2.2.3.2. </span>Recommended Models<a class="headerlink" href="#recommended-models" title="Link to this heading"></a></h3>
+<p>The following models were validated during development and are recommended:</p>
+<p><strong>Response Generation Models (LLM_MODEL_VERSION)</strong></p>
+<ul class="simple">
+<li><p>llama3.2
+A lightweight and fast model that provides good performance with low latency.</p></li>
+<li><p>mistral-nemo
+A larger and more accurate model that returns responses more slowly.</p></li>
+</ul>
+<p><strong>Embedding Model (EMBED_MODEL_VERSION)</strong></p>
+<ul class="simple">
+<li><p>snowflake-arctic-embed
+The recommended model for generating embeddings used by the RAG pipeline.</p></li>
+</ul>
+<p><strong>Translation Model (TRANSLATION_LLM_MODEL)</strong></p>
+<ul class="simple">
+<li><p>zongwei/gemma3-translator:4b
+The recommended model for translating non-English documents before they are
+embedded and used for response generation.</p></li>
+</ul>
+<p>These defaults provide a practical balance between latency and response quality.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="start_installation_quickstart.html" class="btn btn-neutral float-left" title="2.1. Quick Start (Beginners)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="start_login.html" class="btn btn-neutral float-right" title="2.3. Login Page" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

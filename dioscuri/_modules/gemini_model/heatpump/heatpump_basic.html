@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.heatpump.heatpump_basic &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.heatpump.heatpump_basic</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.heatpump.heatpump_basic</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""HeatpumpBasic model.</span>
+
+<span class="sd">Heatpump model based on Carnot-efficiency model or a Lorenz-efficiency model.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">Carnot COP equation:</span>
+<span class="sd">    COP_carnot = eta_carnot * (Th / (Th - Ts))</span>
+<span class="sd">    where Th and Ts are the (constant) condenser and evaporator temperatures [K].</span>
+<span class="sd">    See: Carnot, S. (1824). "Reflexions sur la puissance motrice du feu."</span>
+<span class="sd">    Also: Cengel, Y. A., &amp; Boles, M. A. (2015). "Thermodynamics: An Engineering</span>
+<span class="sd">    Approach" (8th ed.), McGraw-Hill, Chapter 11 (Refrigeration Cycles).</span>
+
+<span class="sd">Lorenz COP equation:</span>
+<span class="sd">    COP_lorenz = eta_lorenz * (Th / (Th - Ts))</span>
+<span class="sd">    where Th and Ts are the logarithmic mean temperatures of the heat sink</span>
+<span class="sd">    (condenser) and heat source (evaporator) glide, respectively:</span>
+<span class="sd">    Th = (Th_in - Th_out) / ln(Th_in / Th_out) and</span>
+<span class="sd">    Ts = (Ts_in - Ts_out) / ln(Ts_in / Ts_out).</span>
+<span class="sd">    The Lorenz cycle extends the Carnot cycle to non-isothermal heat exchange</span>
+<span class="sd">    (glide), which is relevant for heat pumps with secondary fluids.</span>
+<span class="sd">    See: Lorenz, H. (1894). "Die Ermittlung der Grenzwerte der thermodynamischen</span>
+<span class="sd">    Energieumwandlung." Zeitschrift fur die gesamte Kalte-Industrie.</span>
+<span class="sd">    Also: Kuo, C. S. et al. (2005). "Analysis of a Lorenz refrigeration cycle</span>
+<span class="sd">    for heat pumps," and ASHRAE Handbook - Fundamentals, Chapter on</span>
+<span class="sd">    Thermodynamics and Refrigeration Cycles.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.model_abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaticModel</span>
+
+
+<div class="viewcode-block" id="HeatpumpBasic">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heatpump.heatpump_basic.html#gemini_model.heatpump.heatpump_basic.HeatpumpBasic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HeatpumpBasic</span><span class="p">(</span><span class="n">StaticModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""HeatpumpBasic model."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Model initialization.</span>
+
+<span class="sd">        Sets up default parameters for the heat pump model, including the</span>
+<span class="sd">        operating mode ("carnot" or "lorenz"), efficiency factors relative to</span>
+<span class="sd">        the ideal Carnot/Lorenz COP, a nominal COP used as the optimizer's</span>
+<span class="sd">        initial guess, fluid properties (specific heat and density for the</span>
+<span class="sd">        hot/sink and source loops), the target hot side outlet temperature,</span>
+<span class="sd">        and the minimum allowed source side outlet temperature.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"mode"</span><span class="p">:</span> <span class="s2">"carnot"</span><span class="p">,</span>
+            <span class="s2">"eta_carnot"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">"eta_lorenz"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">"COP_0"</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>
+            <span class="s2">"Cp_h"</span><span class="p">:</span> <span class="mi">4181</span><span class="p">,</span>  <span class="c1"># J/kg.K</span>
+            <span class="s2">"Cp_s"</span><span class="p">:</span> <span class="mi">4181</span><span class="p">,</span>  <span class="c1"># J/kg.K</span>
+            <span class="s2">"rho_h"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>  <span class="c1"># kg/m3</span>
+            <span class="s2">"rho_s"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>  <span class="c1"># kg/m3</span>
+            <span class="s2">"Th_out_target"</span><span class="p">:</span> <span class="mi">80</span><span class="p">,</span>  <span class="c1"># °C</span>
+            <span class="s2">"Ts_in_minimum"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>  <span class="c1"># °C</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="HeatpumpBasic.update_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heatpump.heatpump_basic.html#gemini_model.heatpump.heatpump_basic.HeatpumpBasic.update_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update model parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters: dict</span>
+<span class="sd">            Parameters dict as defined by the model.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="HeatpumpBasic.initialize_state">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heatpump.heatpump_basic.html#gemini_model.heatpump.heatpump_basic.HeatpumpBasic.initialize_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Generate an initial state based on user parameters.</span>
+
+<span class="sd">        Not applicable: HeatpumpBasic is a static model with no internal</span>
+<span class="sd">        state, so this method is a no-op.</span>
+<span class="sd">        """</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="HeatpumpBasic.update_state">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heatpump.heatpump_basic.html#gemini_model.heatpump.heatpump_basic.HeatpumpBasic.update_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update the state based on input u and state x.</span>
+
+<span class="sd">        Not applicable: HeatpumpBasic is a static model with no internal</span>
+<span class="sd">        state, so this method is a no-op.</span>
+<span class="sd">        """</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="HeatpumpBasic.calculate_output">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heatpump.heatpump_basic.html#gemini_model.heatpump.heatpump_basic.HeatpumpBasic.calculate_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate output based on input u and state x.</span>
+
+<span class="sd">        Converts inputs (temperatures in degC, volumetric flows in m3/s) to</span>
+<span class="sd">        SI units (K, kg/s), solves for the operating point via `_calculate`,</span>
+<span class="sd">        and stores the results (COP, outlet temperatures, thermal production</span>
+<span class="sd">        and electrical consumption) in `self.output`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        u: dict</span>
+<span class="sd">            Model inputs: "Th_in" (degC), "Ts_in" (degC), "hot_flow_rate"</span>
+<span class="sd">            (m3/s, hot/sink side), "source_flow_rate" (m3/s, source side).</span>
+<span class="sd">            Optional "hot_pressure_in"/"source_pressure_in" (bar) are echoed</span>
+<span class="sd">            back unchanged as "hot_pressure_out"/"source_pressure_out" (this</span>
+<span class="sd">            model does not compute a pressure drop), so a downstream</span>
+<span class="sd">            pressure chain is not broken when connecting through a heat pump.</span>
+<span class="sd">        x: state</span>
+<span class="sd">            Model state (unused, model is static).</span>
+<span class="sd">        """</span>
+        <span class="c1"># get input</span>
+        <span class="n">Th_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Th_out_target"</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span>  <span class="c1"># Convert to Kelvin</span>
+        <span class="n">Th_in</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"Th_in"</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span>  <span class="c1"># Convert to Kelvin</span>
+        <span class="n">Ts_in</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"Ts_in"</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span>  <span class="c1"># Convert to Kelvin</span>
+        <span class="n">hot_flow_rate</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"hot_flow_rate"</span><span class="p">]</span>  <span class="c1"># m3/s</span>
+        <span class="n">source_flow_rate</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"source_flow_rate"</span><span class="p">]</span>  <span class="c1"># m3/s</span>
+        <span class="n">mh</span> <span class="o">=</span> <span class="n">hot_flow_rate</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"rho_h"</span><span class="p">]</span>  <span class="c1"># kg/s</span>
+        <span class="n">ms</span> <span class="o">=</span> <span class="n">source_flow_rate</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"rho_s"</span><span class="p">]</span>  <span class="c1"># kg/s</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate</span><span class="p">(</span><span class="n">Th_out</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"COP"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"Th_out"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">273.15</span>  <span class="c1"># Convert back to Celsius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"Ts_out"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mf">273.15</span>  <span class="c1"># Convert back to Celsius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"Thermal_production"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"electrical_consumption"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"hot_flow_rate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">hot_flow_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"hot_flow_rate_m3h"</span><span class="p">]</span> <span class="o">=</span> <span class="n">hot_flow_rate</span> <span class="o">*</span> <span class="mf">3600.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"source_flow_rate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_flow_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"source_flow_rate_m3h"</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_flow_rate</span> <span class="o">*</span> <span class="mf">3600.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"power_th"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"power_el"</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"emission"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="s2">"hot_pressure_in"</span> <span class="ow">in</span> <span class="n">u</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"hot_pressure_in"</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"hot_pressure_in"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"hot_pressure_out"</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"hot_pressure_in"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">"source_pressure_in"</span> <span class="ow">in</span> <span class="n">u</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"source_pressure_in"</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"source_pressure_in"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"source_pressure_out"</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"source_pressure_in"</span><span class="p">]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Th_out</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Solve for the heat pump operating point.</span>
+
+<span class="sd">        (COP, outlet temperatures, thermal production and electrical</span>
+<span class="sd">        consumption).</span>
+
+<span class="sd">        Uses `scipy.optimize.minimize` (Nelder-Mead) to jointly solve the</span>
+<span class="sd">        thermodynamic efficiency equation (Carnot or Lorenz, selected via</span>
+<span class="sd">        `self.parameters['mode']`) together with the energy balance equation</span>
+<span class="sd">        (Qh = Qs + electrical work, expressed as COP = Qh/(Qh-Qs)).</span>
+
+<span class="sd">        If the resulting source outlet temperature `Ts_out` drops below</span>
+<span class="sd">        `Ts_in_minimum`, the problem is re-solved with `Ts_out` fixed at that</span>
+<span class="sd">        minimum and `Th_out` (the target hot outlet temperature) allowed to</span>
+<span class="sd">        drop instead, via `carnot_model2`/`lorenz_model2`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Th_out: float</span>
+<span class="sd">            Target hot side (sink) outlet temperature [K].</span>
+<span class="sd">        Th_in: float</span>
+<span class="sd">            Hot side (sink) inlet temperature [K].</span>
+<span class="sd">        Ts_in: float</span>
+<span class="sd">            Source side inlet temperature [K].</span>
+<span class="sd">        mh: float</span>
+<span class="sd">            Hot side (sink) mass flow rate [kg/s].</span>
+<span class="sd">        ms: float</span>
+<span class="sd">            Source side mass flow rate [kg/s].</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            (COP, Th_out, Ts_out, thermal_production, electrical_consumption)</span>
+<span class="sd">        """</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">lorenz_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Th_out</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">"""Residual function for the Lorenz-efficiency model.</span>
+
+<span class="sd">            Solves for (COP, Ts_out) given a fixed target Th_out.</span>
+
+<span class="sd">            Combines two residuals: J1 enforces the Lorenz COP equation</span>
+<span class="sd">            COP = eta_lorenz * (Th / (Th - Ts)), where Th and Ts are the</span>
+<span class="sd">            logarithmic mean temperatures of the sink and source glide</span>
+<span class="sd">            (see module reference for the Lorenz cycle); J2 enforces the</span>
+<span class="sd">            energy balance COP = Qh / (Qh - Qs).</span>
+<span class="sd">            """</span>
+            <span class="n">COP</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">Ts_out</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">Qh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Cp_h"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Th_out</span> <span class="o">-</span> <span class="n">Th_in</span><span class="p">)</span> <span class="o">*</span> <span class="n">mh</span>
+            <span class="n">Qs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Cp_s"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ts_in</span> <span class="o">-</span> <span class="n">Ts_out</span><span class="p">)</span> <span class="o">*</span> <span class="n">ms</span>
+
+            <span class="n">Th</span> <span class="o">=</span> <span class="p">(</span><span class="n">Th_in</span> <span class="o">-</span> <span class="n">Th_out</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Th_in</span> <span class="o">/</span> <span class="n">Th_out</span><span class="p">)</span>
+            <span class="n">Ts</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ts_in</span> <span class="o">-</span> <span class="n">Ts_out</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Ts_in</span> <span class="o">/</span> <span class="n">Ts_out</span><span class="p">)</span>
+
+            <span class="n">J1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">COP</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"eta_lorenz"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Th</span> <span class="o">/</span> <span class="p">(</span><span class="n">Th</span> <span class="o">-</span> <span class="n">Ts</span><span class="p">))))</span>
+            <span class="n">J2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">COP</span> <span class="o">-</span> <span class="n">Qh</span> <span class="o">/</span> <span class="p">(</span><span class="n">Qh</span> <span class="o">-</span> <span class="n">Qs</span><span class="p">))</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">J1</span> <span class="o">+</span> <span class="n">J2</span>
+            <span class="k">return</span> <span class="n">J</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">lorenz_model2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Ts_out</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">"""Residual function for the Lorenz-efficiency model.</span>
+
+<span class="sd">            Solves for (COP, Th_out) given a fixed minimum source outlet</span>
+<span class="sd">            temperature Ts_out (used when the unconstrained solution</span>
+<span class="sd">            violates Ts_in_minimum). See `lorenz_model` for the underlying</span>
+<span class="sd">            equations.</span>
+<span class="sd">            """</span>
+            <span class="n">COP</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">Th_out</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">Qh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Cp_h"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Th_out</span> <span class="o">-</span> <span class="n">Th_in</span><span class="p">)</span> <span class="o">*</span> <span class="n">mh</span>
+            <span class="n">Qs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Cp_s"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ts_in</span> <span class="o">-</span> <span class="n">Ts_out</span><span class="p">)</span> <span class="o">*</span> <span class="n">ms</span>
+
+            <span class="n">Th</span> <span class="o">=</span> <span class="p">(</span><span class="n">Th_in</span> <span class="o">-</span> <span class="n">Th_out</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Th_in</span> <span class="o">/</span> <span class="n">Th_out</span><span class="p">)</span>
+            <span class="n">Ts</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ts_in</span> <span class="o">-</span> <span class="n">Ts_out</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Ts_in</span> <span class="o">/</span> <span class="n">Ts_out</span><span class="p">)</span>
+
+            <span class="n">J1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">COP</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"eta_lorenz"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Th</span> <span class="o">/</span> <span class="p">(</span><span class="n">Th</span> <span class="o">-</span> <span class="n">Ts</span><span class="p">))))</span>
+            <span class="n">J2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">COP</span> <span class="o">-</span> <span class="n">Qh</span> <span class="o">/</span> <span class="p">(</span><span class="n">Qh</span> <span class="o">-</span> <span class="n">Qs</span><span class="p">))</span>
+            <span class="n">J</span> <span class="o">=</span> <span class="n">J1</span> <span class="o">+</span> <span class="n">J2</span>
+            <span class="k">return</span> <span class="n">J</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">carnot_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Th_out</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">"""Residual function for the Carnot-efficiency model.</span>
+
+<span class="sd">            Solves for (COP, Ts_out) given a fixed target Th_out.</span>
+
+<span class="sd">            Combines two residuals: J1 enforces the Carnot COP equation</span>
+<span class="sd">            COP = eta_carnot * (Th / (Th - Ts)), where Th = Th_out and</span>
+<span class="sd">            Ts = Ts_in are treated as constant condenser/evaporator</span>
+<span class="sd">            temperatures (see module reference for the Carnot cycle);</span>
+<span class="sd">            J2 enforces the energy balance COP = Qh / (Qh - Qs).</span>
+<span class="sd">            """</span>
+            <span class="n">COP</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">Ts_out</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">Qh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Cp_h"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Th_out</span> <span class="o">-</span> <span class="n">Th_in</span><span class="p">)</span> <span class="o">*</span> <span class="n">mh</span>
+            <span class="n">Qs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Cp_s"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ts_in</span> <span class="o">-</span> <span class="n">Ts_out</span><span class="p">)</span> <span class="o">*</span> <span class="n">ms</span>
+
+            <span class="n">Th</span> <span class="o">=</span> <span class="n">Th_out</span>
+            <span class="n">Ts</span> <span class="o">=</span> <span class="n">Ts_in</span>
+
+            <span class="n">J1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">COP</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"eta_carnot"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Th</span> <span class="o">/</span> <span class="p">(</span><span class="n">Th</span> <span class="o">-</span> <span class="n">Ts</span><span class="p">))))</span>
+            <span class="n">J2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">COP</span> <span class="o">-</span> <span class="n">Qh</span> <span class="o">/</span> <span class="p">(</span><span class="n">Qh</span> <span class="o">-</span> <span class="n">Qs</span><span class="p">))</span>
+
+            <span class="n">J</span> <span class="o">=</span> <span class="n">J1</span> <span class="o">+</span> <span class="n">J2</span>
+
+            <span class="k">return</span> <span class="n">J</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">carnot_model2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Ts_out</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">"""Residual function for the Carnot-efficiency model.</span>
+
+<span class="sd">            Solves for (COP, Th_out) given a fixed minimum source outlet</span>
+<span class="sd">            temperature Ts_out (used when the unconstrained solution</span>
+<span class="sd">            violates Ts_in_minimum). See `carnot_model` for the underlying</span>
+<span class="sd">            equations.</span>
+<span class="sd">            """</span>
+            <span class="n">COP</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">Th_out</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">Qh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Cp_h"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Th_out</span> <span class="o">-</span> <span class="n">Th_in</span><span class="p">)</span> <span class="o">*</span> <span class="n">mh</span>
+            <span class="n">Qs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Cp_s"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ts_in</span> <span class="o">-</span> <span class="n">Ts_out</span><span class="p">)</span> <span class="o">*</span> <span class="n">ms</span>
+
+            <span class="n">Th</span> <span class="o">=</span> <span class="n">Th_out</span>
+            <span class="n">Ts</span> <span class="o">=</span> <span class="n">Ts_in</span>
+
+            <span class="n">J1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">COP</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"eta_carnot"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Th</span> <span class="o">/</span> <span class="p">(</span><span class="n">Th</span> <span class="o">-</span> <span class="n">Ts</span><span class="p">))))</span>
+            <span class="n">J2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">COP</span> <span class="o">-</span> <span class="n">Qh</span> <span class="o">/</span> <span class="p">(</span><span class="n">Qh</span> <span class="o">-</span> <span class="n">Qs</span><span class="p">))</span>
+
+            <span class="n">J</span> <span class="o">=</span> <span class="n">J1</span> <span class="o">+</span> <span class="n">J2</span>
+
+            <span class="k">return</span> <span class="n">J</span>
+
+        <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"COP_0"</span><span class="p">],</span> <span class="n">Ts_in</span> <span class="o">-</span> <span class="mi">10</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"mode"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"carnot"</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                <span class="n">carnot_model</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Th_out</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s2">"Nelder-Mead"</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                <span class="n">lorenz_model</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Th_out</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s2">"Nelder-Mead"</span>
+            <span class="p">)</span>
+
+        <span class="n">COP</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Ts_out</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">Ts_out</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Ts_in_minimum"</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">:</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"COP_0"</span><span class="p">],</span> <span class="n">Th_out</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"mode"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"carnot"</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                    <span class="n">carnot_model2</span><span class="p">,</span>
+                    <span class="n">x0</span><span class="p">,</span>
+                    <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Ts_in_minimum"</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">),</span>
+                    <span class="n">method</span><span class="o">=</span><span class="s2">"Nelder-Mead"</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                    <span class="n">lorenz_model2</span><span class="p">,</span>
+                    <span class="n">x0</span><span class="p">,</span>
+                    <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Ts_in_minimum"</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span> <span class="n">Th_in</span><span class="p">,</span> <span class="n">Ts_in</span><span class="p">,</span> <span class="n">mh</span><span class="p">,</span> <span class="n">ms</span><span class="p">),</span>
+                    <span class="n">method</span><span class="o">=</span><span class="s2">"Nelder-Mead"</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">COP</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">Th_out</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">Ts_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Ts_in_minimum"</span><span class="p">]</span> <span class="o">+</span> <span class="mf">273.15</span>
+
+        <span class="n">thermal_production</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"Cp_h"</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">Th_out</span> <span class="o">-</span> <span class="n">Th_in</span><span class="p">)</span> <span class="o">*</span> <span class="n">mh</span>
+        <span class="n">electrical_consumption</span> <span class="o">=</span> <span class="n">thermal_production</span> <span class="o">/</span> <span class="n">COP</span>
+
+        <span class="k">return</span> <span class="n">COP</span><span class="p">,</span> <span class="n">Th_out</span><span class="p">,</span> <span class="n">Ts_out</span><span class="p">,</span> <span class="n">thermal_production</span><span class="p">,</span> <span class="n">electrical_consumption</span>
+
+<div class="viewcode-block" id="HeatpumpBasic.get_output">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heatpump.heatpump_basic.html#gemini_model.heatpump.heatpump_basic.HeatpumpBasic.get_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get output of the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Output dict with keys "COP", "Th_out" (°C), "Ts_out" (°C),</span>
+<span class="sd">            "Thermal_production" (W) and "electrical_consumption" (W),</span>
+<span class="sd">            as populated by `calculate_output`.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

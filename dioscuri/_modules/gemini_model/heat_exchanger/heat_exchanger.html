@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.heat_exchanger.heat_exchanger &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.heat_exchanger.heat_exchanger</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.heat_exchanger.heat_exchanger</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Plate heat exchanger model.</span>
+
+<span class="sd">Estimates the primary-side pressure drop (linear flow resistance) and</span>
+<span class="sd">both outlet temperatures using the NTU-effectiveness method for a</span>
+<span class="sd">parallel- or counter-flow plate heat exchanger.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.model_abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaticModel</span>
+
+
+<div class="viewcode-block" id="HeatExchanger">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heat_exchanger.heat_exchanger.html#gemini_model.heat_exchanger.heat_exchanger.HeatExchanger">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">HeatExchanger</span><span class="p">(</span><span class="n">StaticModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Plate heat exchanger pressure drop and NTU-effectiveness model."""</span>
+
+    <span class="n">DEFAULT_FLUID_DENSITY</span> <span class="o">=</span> <span class="mf">1050.0</span>  <span class="c1"># kg/m3</span>
+    <span class="n">DEFAULT_SPECIFIC_HEAT</span> <span class="o">=</span> <span class="mf">4200.0</span>  <span class="c1"># J/(kg.K)</span>
+    <span class="n">_MIN_CAPACITY_RATE</span> <span class="o">=</span> <span class="mf">1e-9</span>  <span class="c1"># W/K, guards against division by zero</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Model initialization."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="HeatExchanger.update_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heat_exchanger.heat_exchanger.html#gemini_model.heat_exchanger.heat_exchanger.HeatExchanger.update_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update model parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters: dict</span>
+<span class="sd">            Parameters dict as defined by the model.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="HeatExchanger.initialize_state">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heat_exchanger.heat_exchanger.html#gemini_model.heat_exchanger.heat_exchanger.HeatExchanger.initialize_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Generate an initial state based on user parameters."""</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="HeatExchanger.update_state">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heat_exchanger.heat_exchanger.html#gemini_model.heat_exchanger.heat_exchanger.HeatExchanger.update_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update the state based on input u and state x."""</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="HeatExchanger.calculate_output">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heat_exchanger.heat_exchanger.html#gemini_model.heat_exchanger.heat_exchanger.HeatExchanger.calculate_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate output based on input u.</span>
+
+<span class="sd">        ``secondary_flow_rate`` is the secondary-side flow through this</span>
+<span class="sd">        heat exchanger. If the secondary network's flow is shared with</span>
+<span class="sd">        other consumers (e.g. a co-located CHP), use a ``Splitter``</span>
+<span class="sd">        component to allocate it before feeding it into this model. Both</span>
+<span class="sd">        the primary and secondary flow rates are conserved across the</span>
+<span class="sd">        heat exchanger (no mass is added or removed) and are echoed back</span>
+<span class="sd">        as outputs so they can be passed on, in series, to downstream</span>
+<span class="sd">        components on the same flow path (e.g. a Boiler fed by this same,</span>
+<span class="sd">        now-heated, secondary flow).</span>
+<span class="sd">        """</span>
+        <span class="n">pressure_in</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"pressure_in"</span><span class="p">]</span>
+        <span class="n">primary_flow_rate</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"primary_flow_rate"</span><span class="p">]</span>
+        <span class="n">secondary_flow_rate</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"secondary_flow_rate"</span><span class="p">]</span>
+
+        <span class="n">flow_resistance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"flow_resistance"</span><span class="p">]</span>
+        <span class="n">pressure_out</span> <span class="o">=</span> <span class="n">pressure_in</span> <span class="o">-</span> <span class="n">primary_flow_rate</span> <span class="o">*</span> <span class="n">flow_resistance</span>
+
+        <span class="n">heat_duty</span><span class="p">,</span> <span class="n">primary_temperature_out</span><span class="p">,</span> <span class="n">secondary_temperature_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effectiveness_ntu</span><span class="p">(</span>
+            <span class="n">u</span><span class="p">[</span><span class="s2">"primary_temperature_in"</span><span class="p">],</span>
+            <span class="n">u</span><span class="p">[</span><span class="s2">"secondary_temperature_in"</span><span class="p">],</span>
+            <span class="n">primary_flow_rate</span><span class="p">,</span>
+            <span class="n">secondary_flow_rate</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"pressure_in"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pressure_in</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"pressure_out"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pressure_out</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"primary_temperature_out"</span><span class="p">]</span> <span class="o">=</span> <span class="n">primary_temperature_out</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"secondary_temperature_out"</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_temperature_out</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"primary_flow_rate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">primary_flow_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"secondary_flow_rate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_flow_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"heat_duty"</span><span class="p">]</span> <span class="o">=</span> <span class="n">heat_duty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"power_el"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"power_th"</span><span class="p">]</span> <span class="o">=</span> <span class="n">heat_duty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"emission"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_effectiveness_ntu</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">primary_temperature_in</span><span class="p">,</span>
+        <span class="n">secondary_temperature_in</span><span class="p">,</span>
+        <span class="n">primary_flow_rate</span><span class="p">,</span>
+        <span class="n">secondary_flow_rate</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Compute heat duty and outlet temperatures with the NTU-effectiveness method."""</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fluid_density"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_FLUID_DENSITY</span><span class="p">)</span>
+        <span class="n">cw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"specific_heat"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_SPECIFIC_HEAT</span><span class="p">)</span>
+
+        <span class="n">mass_flow_primary</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">primary_flow_rate</span>  <span class="c1"># kg/s</span>
+        <span class="n">mass_flow_secondary</span> <span class="o">=</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">secondary_flow_rate</span>  <span class="c1"># kg/s</span>
+
+        <span class="n">capacity_primary</span> <span class="o">=</span> <span class="n">mass_flow_primary</span> <span class="o">*</span> <span class="n">cw</span>  <span class="c1"># W/K</span>
+        <span class="n">capacity_secondary</span> <span class="o">=</span> <span class="n">mass_flow_secondary</span> <span class="o">*</span> <span class="n">cw</span>  <span class="c1"># W/K</span>
+        <span class="n">capacity_min</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">capacity_primary</span><span class="p">,</span> <span class="n">capacity_secondary</span><span class="p">)</span>
+        <span class="n">capacity_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">capacity_primary</span><span class="p">,</span> <span class="n">capacity_secondary</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">capacity_min</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MIN_CAPACITY_RATE</span><span class="p">:</span>
+            <span class="c1"># no (effective) flow on one side: no heat is exchanged</span>
+            <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">primary_temperature_in</span><span class="p">,</span> <span class="n">secondary_temperature_in</span>
+
+        <span class="n">ntu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"heat_transfer_coefficient"</span><span class="p">]</span> <span class="o">/</span> <span class="n">capacity_min</span>
+        <span class="n">capacity_ratio</span> <span class="o">=</span> <span class="n">capacity_min</span> <span class="o">/</span> <span class="n">capacity_max</span>
+        <span class="n">heat_duty_max</span> <span class="o">=</span> <span class="n">capacity_min</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="n">secondary_temperature_in</span> <span class="o">-</span> <span class="n">primary_temperature_in</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"flow_configuration"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"parallel"</span><span class="p">:</span>
+            <span class="n">effectiveness</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">ntu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">capacity_ratio</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">capacity_ratio</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># counter-flow configuration</span>
+            <span class="k">if</span> <span class="n">capacity_ratio</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">effectiveness</span> <span class="o">=</span> <span class="n">ntu</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">ntu</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">capacity_ratio</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">:</span>
+                <span class="n">effectiveness</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">ntu</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Counter-flow, Cr &lt; 1 (standard e-NTU formula, continuous with the</span>
+                <span class="c1"># Cr == 1 special case above as Cr -&gt; 1).</span>
+                <span class="n">effectiveness</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">ntu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">capacity_ratio</span><span class="p">)))</span> <span class="o">/</span> <span class="p">(</span>
+                    <span class="mi">1</span> <span class="o">-</span> <span class="n">capacity_ratio</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">ntu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">capacity_ratio</span><span class="p">))</span>
+                <span class="p">)</span>
+
+        <span class="n">heat_duty</span> <span class="o">=</span> <span class="n">effectiveness</span> <span class="o">*</span> <span class="n">heat_duty_max</span>
+        <span class="n">primary_temperature_out</span> <span class="o">=</span> <span class="n">primary_temperature_in</span> <span class="o">-</span> <span class="n">heat_duty</span> <span class="o">/</span> <span class="n">capacity_primary</span>
+        <span class="n">secondary_temperature_out</span> <span class="o">=</span> <span class="n">secondary_temperature_in</span> <span class="o">+</span> <span class="n">heat_duty</span> <span class="o">/</span> <span class="n">capacity_secondary</span>
+
+        <span class="k">return</span> <span class="n">heat_duty</span><span class="p">,</span> <span class="n">primary_temperature_out</span><span class="p">,</span> <span class="n">secondary_temperature_out</span>
+
+<div class="viewcode-block" id="HeatExchanger.get_output">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.heat_exchanger.heat_exchanger.html#gemini_model.heat_exchanger.heat_exchanger.HeatExchanger.get_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get output of the model."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

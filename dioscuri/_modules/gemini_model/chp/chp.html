@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.chp.chp &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.chp.chp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.chp.chp</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Gas-fired combined heat and power (CHP) model.</span>
+
+<span class="sd">Estimates the electrical power, heat output and CO2 emissions of a</span>
+<span class="sd">gas-fired CHP unit burning a given gas flow. If the gas or water</span>
+<span class="sd">flow is shared with other consumers (e.g. a co-located ``Boiler``), the</span>
+<span class="sd">allocation between them should be handled by a ``Splitter`` component.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.model_abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaticModel</span>
+
+
+<div class="viewcode-block" id="CHP">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.chp.chp.html#gemini_model.chp.chp.CHP">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CHP</span><span class="p">(</span><span class="n">StaticModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Gas-fired CHP electrical/heat output and emission model."""</span>
+
+    <span class="n">DEFAULT_GAS_DENSITY</span> <span class="o">=</span> <span class="mf">0.7</span>  <span class="c1"># kg/Nm3, used only if gas_volumetric_flow_rate is given</span>
+    <span class="n">DEFAULT_FLUID_DENSITY</span> <span class="o">=</span> <span class="mf">1050.0</span>  <span class="c1"># kg/m3</span>
+    <span class="n">DEFAULT_SPECIFIC_HEAT</span> <span class="o">=</span> <span class="mf">4200.0</span>  <span class="c1"># J/(kg.K)</span>
+    <span class="n">JOULE_PER_GJ</span> <span class="o">=</span> <span class="mf">1e9</span>
+    <span class="n">ELECTRICAL_POWER_FRACTION</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span>  <span class="c1"># fraction of fuel power converted to electricity</span>
+    <span class="n">_MIN_MASS_FLOW</span> <span class="o">=</span> <span class="mf">1e-9</span>  <span class="c1"># kg/s, guards against division by zero</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Model initialization."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="CHP.update_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.chp.chp.html#gemini_model.chp.chp.CHP.update_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update model parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters: dict</span>
+<span class="sd">            Parameters dict as defined by the model.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="CHP.initialize_state">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.chp.chp.html#gemini_model.chp.chp.CHP.initialize_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Generate an initial state based on user parameters."""</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CHP.update_state">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.chp.chp.html#gemini_model.chp.chp.CHP.update_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update the state based on input u and state x."""</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CHP.calculate_output">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.chp.chp.html#gemini_model.chp.chp.CHP.calculate_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate output based on input u.</span>
+
+<span class="sd">        The gas flow burned by this CHP unit can be given either as a</span>
+<span class="sd">        mass flow, ``u["gas_flow_rate"]`` (kg/s), or as a volumetric</span>
+<span class="sd">        flow, ``u["gas_volumetric_flow_rate"]`` (m3/s), which is</span>
+<span class="sd">        converted to a mass flow using the ``gas_density`` parameter</span>
+<span class="sd">        (default 0.7 kg/Nm3). Provide exactly one of the two.</span>
+<span class="sd">        ``u["water_flow_rate"]`` is the water-side flow through this CHP</span>
+<span class="sd">        unit. If either flow is shared with other consumers (e.g. a</span>
+<span class="sd">        co-located Boiler), use a ``Splitter`` component to allocate it</span>
+<span class="sd">        before feeding it into this model. ``water_flow_rate`` is echoed</span>
+<span class="sd">        back as an output so it can be passed on, in series, to a</span>
+<span class="sd">        downstream component on the same water flow path.</span>
+<span class="sd">        """</span>
+        <span class="n">temperature_in</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"temperature_in"</span><span class="p">]</span>
+        <span class="n">water_flow_rate</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"water_flow_rate"</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s2">"gas_flow_rate"</span> <span class="ow">in</span> <span class="n">u</span><span class="p">:</span>
+            <span class="n">gas_mass_flow_rate</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"gas_flow_rate"</span><span class="p">]</span>  <span class="c1"># kg/s</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gas_density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"gas_density"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_GAS_DENSITY</span><span class="p">)</span>
+            <span class="n">gas_mass_flow_rate</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"gas_volumetric_flow_rate"</span><span class="p">]</span> <span class="o">*</span> <span class="n">gas_density</span>  <span class="c1"># kg/s</span>
+
+        <span class="n">fluid_density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fluid_density"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_FLUID_DENSITY</span><span class="p">)</span>
+        <span class="n">cw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"specific_heat"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_SPECIFIC_HEAT</span><span class="p">)</span>
+
+        <span class="n">gas_energy_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"caloric_value"</span><span class="p">]</span> <span class="o">*</span> <span class="n">gas_mass_flow_rate</span>  <span class="c1"># W</span>
+        <span class="n">fuel_power</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"efficiency_factor"</span><span class="p">]</span> <span class="o">*</span> <span class="n">gas_energy_flow</span>
+        <span class="n">power_el</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ELECTRICAL_POWER_FRACTION</span> <span class="o">*</span> <span class="n">fuel_power</span>
+        <span class="n">power_th</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ELECTRICAL_POWER_FRACTION</span><span class="p">)</span> <span class="o">*</span> <span class="n">fuel_power</span>
+
+        <span class="n">mass_flow_water</span> <span class="o">=</span> <span class="n">fluid_density</span> <span class="o">*</span> <span class="n">water_flow_rate</span>  <span class="c1"># kg/s</span>
+        <span class="k">if</span> <span class="n">mass_flow_water</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MIN_MASS_FLOW</span><span class="p">:</span>
+            <span class="n">temperature_out</span> <span class="o">=</span> <span class="n">temperature_in</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">temperature_out</span> <span class="o">=</span> <span class="n">temperature_in</span> <span class="o">+</span> <span class="n">power_th</span> <span class="o">/</span> <span class="p">(</span><span class="n">cw</span> <span class="o">*</span> <span class="n">mass_flow_water</span><span class="p">)</span>
+
+        <span class="n">emission</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"gas_emission_factor"</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">JOULE_PER_GJ</span> <span class="o">*</span> <span class="n">gas_energy_flow</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"temperature_in"</span><span class="p">]</span> <span class="o">=</span> <span class="n">temperature_in</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"temperature_out"</span><span class="p">]</span> <span class="o">=</span> <span class="n">temperature_out</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"water_flow_rate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">water_flow_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"power_el"</span><span class="p">]</span> <span class="o">=</span> <span class="n">power_el</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"power_th"</span><span class="p">]</span> <span class="o">=</span> <span class="n">power_th</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"emission"</span><span class="p">]</span> <span class="o">=</span> <span class="n">emission</span></div>
+
+
+<div class="viewcode-block" id="CHP.get_output">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.chp.chp.html#gemini_model.chp.chp.CHP.get_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get output of the model."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

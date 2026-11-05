@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.4.2.7.1. gemini_interface.blueprint.app_reportgenerator.routes &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.4.2.8. gemini_interface.blueprint.app_tagbrowser" href="gemini_interface.blueprint.app_tagbrowser.html" />
+    <link rel="prev" title="6.4.2.7. gemini_interface.blueprint.app_reportgenerator" href="gemini_interface.blueprint.app_reportgenerator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_interface.app.html">6.4.1. gemini_interface.app</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_interface.blueprint.html">6.4.2. gemini_interface.blueprint</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_builder.html">6.4.2.1. gemini_interface.blueprint.app_builder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_chatpopup.html">6.4.2.2. gemini_interface.blueprint.app_chatpopup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_esp.html">6.4.2.3. gemini_interface.blueprint.app_esp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_injectionwellmonitoring.html">6.4.2.4. gemini_interface.blueprint.app_injectionwellmonitoring</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_parameters_overview.html">6.4.2.5. gemini_interface.blueprint.app_parameters_overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_productionwellperformance.html">6.4.2.6. gemini_interface.blueprint.app_productionwellperformance</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="gemini_interface.blueprint.app_reportgenerator.html">6.4.2.7. gemini_interface.blueprint.app_reportgenerator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_tagbrowser.html">6.4.2.8. gemini_interface.blueprint.app_tagbrowser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_well_schematics.html">6.4.2.9. gemini_interface.blueprint.app_well_schematics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_wellintegrity_monitoring.html">6.4.2.10. gemini_interface.blueprint.app_wellintegrity_monitoring</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.auth.html">6.4.2.11. gemini_interface.blueprint.auth</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.celerytasks.html">6.4.2.12. gemini_interface.blueprint.celerytasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.dashboard.html">6.4.2.13. gemini_interface.blueprint.dashboard</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.dbmodels.html">6.4.2.14. gemini_interface.blueprint.dbmodels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.project.html">6.4.2.15. gemini_interface.blueprint.project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.report.html">6.4.2.16. gemini_interface.blueprint.report</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.routes.html">6.4.2.17. gemini_interface.blueprint.routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.setting_plant.html">6.4.2.18. gemini_interface.blueprint.setting_plant</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_interface.create_app.html">6.4.3. gemini_interface.create_app</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_interface.html"><span class="section-number">6.4. </span>gemini_interface</a></li>
+          <li class="breadcrumb-item"><a href="gemini_interface.blueprint.html"><span class="section-number">6.4.2. </span>gemini_interface.blueprint</a></li>
+          <li class="breadcrumb-item"><a href="gemini_interface.blueprint.app_reportgenerator.html"><span class="section-number">6.4.2.7. </span>gemini_interface.blueprint.app_reportgenerator</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.4.2.7.1. </span>gemini_interface.blueprint.app_reportgenerator.routes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_interface.blueprint.app_reportgenerator.routes.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_interface.blueprint.app_reportgenerator.routes">
+<span id="gemini-interface-blueprint-app-reportgenerator-routes"></span><h1><span class="section-number">6.4.2.7.1. </span>gemini_interface.blueprint.app_reportgenerator.routes<a class="headerlink" href="#module-gemini_interface.blueprint.app_reportgenerator.routes" title="Link to this heading"></a></h1>
+<p>App Report Generator Application Routes.</p>
+<hr class="docutils" />
+<p>This module handles the generation of the report of the plant automatically.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.delete_nlog_section_json_files" title="gemini_interface.blueprint.app_reportgenerator.routes.delete_nlog_section_json_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_nlog_section_json_files</span></code></a>(folder[, ...])</p></td>
+<td><p>Delete saved NLOG section files, optionally including project default files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.ensure_nlog_default_files" title="gemini_interface.blueprint.app_reportgenerator.routes.ensure_nlog_default_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ensure_nlog_default_files</span></code></a>(project_root, ...)</p></td>
+<td><p>Ensure NLOG default section files exist for a project.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.generate_nlog_report" title="gemini_interface.blueprint.app_reportgenerator.routes.generate_nlog_report"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_nlog_report</span></code></a>()</p></td>
+<td><p>Generate the NLOG report excel object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.generate_report" title="gemini_interface.blueprint.app_reportgenerator.routes.generate_report"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_report</span></code></a>()</p></td>
+<td><p>Generate the report pdf object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.get_all_units" title="gemini_interface.blueprint.app_reportgenerator.routes.get_all_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_all_units</span></code></a>()</p></td>
+<td><p>Return sorted list of all available unit names.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.get_nlog_tagnames" title="gemini_interface.blueprint.app_reportgenerator.routes.get_nlog_tagnames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_nlog_tagnames</span></code></a>()</p></td>
+<td><p>Return NLOG tagname settings for all report sections.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.get_unit_tagnames" title="gemini_interface.blueprint.app_reportgenerator.routes.get_unit_tagnames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_unit_tagnames</span></code></a>()</p></td>
+<td><p>Retrieve all available tagnames for a given unit in format 'tagname.category'.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.load_plant" title="gemini_interface.blueprint.app_reportgenerator.routes.load_plant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_plant</span></code></a>()</p></td>
+<td><p>Load the plant object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.reset_nlog_settings" title="gemini_interface.blueprint.app_reportgenerator.routes.reset_nlog_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_nlog_settings</span></code></a>()</p></td>
+<td><p>Reset NLOG tagname settings to the default files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.save_nlog_settings" title="gemini_interface.blueprint.app_reportgenerator.routes.save_nlog_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_nlog_settings</span></code></a>()</p></td>
+<td><p>Save NLOG tagname settings for all report sections.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.save_section_json" title="gemini_interface.blueprint.app_reportgenerator.routes.save_section_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_section_json</span></code></a>(folder, filename, rows)</p></td>
+<td><p>Save rows to the JSON file in <code class="docutils literal notranslate"><span class="pre">folder</span> <span class="pre">/</span> <span class="pre">filename</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_reportgenerator.routes.validate_nlog_tagnames" title="gemini_interface.blueprint.app_reportgenerator.routes.validate_nlog_tagnames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_nlog_tagnames</span></code></a>()</p></td>
+<td><p>Validate tagnames against available unit tagnames; return warnings organized by section.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.delete_nlog_section_json_files">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">delete_nlog_section_json_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#delete_nlog_section_json_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.delete_nlog_section_json_files" title="Link to this definition"></a></dt>
+<dd><p>Delete saved NLOG section files, optionally including project default files.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.ensure_nlog_default_files">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">ensure_nlog_default_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#ensure_nlog_default_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.ensure_nlog_default_files" title="Link to this definition"></a></dt>
+<dd><p>Ensure NLOG default section files exist for a project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.generate_nlog_report">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">generate_nlog_report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#generate_nlog_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.generate_nlog_report" title="Link to this definition"></a></dt>
+<dd><p>Generate the NLOG report excel object.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.generate_report">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">generate_report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#generate_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.generate_report" title="Link to this definition"></a></dt>
+<dd><p>Generate the report pdf object.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.get_all_units">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">get_all_units</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#get_all_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.get_all_units" title="Link to this definition"></a></dt>
+<dd><p>Return sorted list of all available unit names.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.get_nlog_tagnames">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">get_nlog_tagnames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#get_nlog_tagnames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.get_nlog_tagnames" title="Link to this definition"></a></dt>
+<dd><p>Return NLOG tagname settings for all report sections.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.get_unit_tagnames">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">get_unit_tagnames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#get_unit_tagnames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.get_unit_tagnames" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all available tagnames for a given unit in format ‘tagname.category’.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.load_plant">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">load_plant</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#load_plant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.load_plant" title="Link to this definition"></a></dt>
+<dd><p>Load the plant object.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.reset_nlog_settings">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">reset_nlog_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#reset_nlog_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.reset_nlog_settings" title="Link to this definition"></a></dt>
+<dd><p>Reset NLOG tagname settings to the default files.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.save_nlog_settings">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">save_nlog_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#save_nlog_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.save_nlog_settings" title="Link to this definition"></a></dt>
+<dd><p>Save NLOG tagname settings for all report sections.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.save_section_json">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">save_section_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#save_section_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.save_section_json" title="Link to this definition"></a></dt>
+<dd><p>Save rows to the JSON file in <code class="docutils literal notranslate"><span class="pre">folder</span> <span class="pre">/</span> <span class="pre">filename</span></code>.</p>
+<p>Create the file if it does not exist and overwrite existing content.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_reportgenerator.routes.validate_nlog_tagnames">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_reportgenerator.routes.</span></span><span class="sig-name descname"><span class="pre">validate_nlog_tagnames</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_reportgenerator/routes.html#validate_nlog_tagnames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_reportgenerator.routes.validate_nlog_tagnames" title="Link to this definition"></a></dt>
+<dd><p>Validate tagnames against available unit tagnames; return warnings organized by section.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_interface.blueprint.app_reportgenerator.html" class="btn btn-neutral float-left" title="6.4.2.7. gemini_interface.blueprint.app_reportgenerator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_interface.blueprint.app_tagbrowser.html" class="btn btn-neutral float-right" title="6.4.2.8. gemini_interface.blueprint.app_tagbrowser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

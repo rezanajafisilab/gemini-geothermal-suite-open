@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.2. Production well performance &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4.3. Injectivity Application" href="application_injectivity.html" />
+    <link rel="prev" title="4.1. Time Series Viewer" href="application_grafana.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_applications.html">4. Applications</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="application_grafana.html">4.1. Time Series Viewer</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.2. Production well performance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">4.2.1. Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inflow-performance-relationship-ipr">4.2.2. Inflow Performance Relationship (IPR)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vertical-lift-performance-vlp">4.2.3. Vertical Lift Performance (VLP)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nodal-analysis">4.2.4. Nodal Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="application_injectivity.html">4.3. Injectivity Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_parameters_overview.html">4.4. Parameters overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_esp.html">4.5. ESP Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_well_schematics.html">4.6. Well Schematics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_wellintegrity.html">4.7. Well Integrity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_rag.html">4.8. Chat Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_report_generator.html">4.9. Report Generator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_applications.html"><span class="section-number">4. </span>Applications</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4.2. </span>Production well performance</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/application_production_well_performance.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="production-well-performance">
+<h1><span class="section-number">4.2. </span>Production well performance<a class="headerlink" href="#production-well-performance" title="Link to this heading"></a></h1>
+<section id="description">
+<h2><span class="section-number">4.2.1. </span>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>This application supports real-time and engineering analysis of production well
+behavior in geothermal reservoirs. It combines IPR, VLP, and nodal analysis.</p>
+</section>
+<section id="inflow-performance-relationship-ipr">
+<h2><span class="section-number">4.2.2. </span>Inflow Performance Relationship (IPR)<a class="headerlink" href="#inflow-performance-relationship-ipr" title="Link to this heading"></a></h2>
+<p>The Inflow Performance Relationship (IPR) describes flowing bottomhole pressure
+(<span class="math notranslate nohighlight">\(P_{wf}\)</span>) as a function of production rate (<span class="math notranslate nohighlight">\(Q\)</span>). It is used for
+well productivity analysis and operating point selection.</p>
+<a class="reference internal image-reference" href="_images/application_production_IPR.JPG"><img alt="_images/application_production_IPR.JPG" class="align-center" src="_images/application_production_IPR.JPG" style="width: 50%;" /></a>
+<p>In the IPR curve, the y-intercept represents reservoir pressure at zero flow.
+The slope parameter <span class="math notranslate nohighlight">\(K\)</span> is the productivity index.</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}P_{wf} = P_{res} - \frac{Q}{K}\\K = \frac{Q}{P_{res} - P_{wf}}\end{aligned}\end{align} \]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P_{res}\)</span> is the reservoir pressure</p></li>
+<li><p><span class="math notranslate nohighlight">\(P_{wf}\)</span> is the flowing bottomhole pressure</p></li>
+<li><p><span class="math notranslate nohighlight">\(Q\)</span> is the flow rate</p></li>
+<li><p><span class="math notranslate nohighlight">\(K\)</span> is the productivity index</p></li>
+</ul>
+</section>
+<section id="vertical-lift-performance-vlp">
+<h2><span class="section-number">4.2.3. </span>Vertical Lift Performance (VLP)<a class="headerlink" href="#vertical-lift-performance-vlp" title="Link to this heading"></a></h2>
+<p>Vertical Lift Performance (VLP) describes bottomhole pressure as a function of
+tubing flow rate. It depends on well depth/trajectory, tubing geometry, fluid
+properties, and multiphase behavior.</p>
+<p>Boundary conditions:</p>
+<ul class="simple">
+<li><p>without ESP: wellhead pressure <span class="math notranslate nohighlight">\(P_{wh}\)</span></p></li>
+<li><p>with ESP: ESP intake pressure</p></li>
+</ul>
+<p>To calculate the pressure drop along the tubing, two correlations are used based on fluid phase: single-phase or two-phase.</p>
+<p>For single-phase flow, pressure loss includes gravitational and friction
+components.</p>
+<div class="math notranslate nohighlight">
+\[\Delta P_{grav} = \rho_{l} g \sin \theta\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\Delta P_{grav}\)</span> is the gravitational pressure drop</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rho_{l}\)</span> is the liquid local density</p></li>
+<li><p><span class="math notranslate nohighlight">\(g\)</span> is the local acceleration due to gravity</p></li>
+<li><p><span class="math notranslate nohighlight">\(\theta\)</span> is the tubing inclination</p></li>
+</ul>
+<p>The frictional pressure drop is proportional to the square of the flow velocity and inversely proportional to the pipe diameter, as described by the Darcy-Weisbach equation.</p>
+<div class="math notranslate nohighlight">
+\[\Delta P_{fric} = \lambda \frac{1}{2} \rho_{l} \frac{u^2}{D}\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\lambda\)</span> is the friction factor or flow coefficient</p></li>
+<li><p><span class="math notranslate nohighlight">\(u\)</span> is the mean velocity</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rho_l\)</span> is the liquid local density</p></li>
+<li><p><span class="math notranslate nohighlight">\(D\)</span> is the pipe diameter</p></li>
+</ul>
+<p>The friction factor <span class="math notranslate nohighlight">\(\lambda\)</span> depends on the Reynolds number
+<span class="math notranslate nohighlight">\(Re\)</span> and is computed directly (no iteration) with the explicit
+Swamee-Jain approximation of the Colebrook-White equation:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\lambda = \frac{0.25}{\left[\log_{10}\left(\dfrac{K}{3.7 D} +
+    \dfrac{5.74}{Re^{0.9}}\right)\right]^2}\\Re = \frac{u D \rho_l}{\eta_l}\end{aligned}\end{align} \]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Re\)</span> is the Reynolds number</p></li>
+<li><p><span class="math notranslate nohighlight">\(u\)</span> is the mean velocity</p></li>
+<li><p><span class="math notranslate nohighlight">\(D\)</span> is the pipe diameter</p></li>
+<li><p><span class="math notranslate nohighlight">\(K\)</span> is the pipe roughness</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_l\)</span> is the liquid dynamic viscosity</p></li>
+</ul>
+<p>Thus, total pressure loss is calculated by:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\Delta P_{total} = \Delta P_{fric} + \Delta P_{grav}\\P_{wf} = P_{wh} + \Delta P_{total}\end{aligned}\end{align} \]</div>
+<p>For two-phase flow in inclined pipes, liquid holdup must be included. Holdup
+depends on flow angle and flow regime (segregated, intermittent, distributed).</p>
+</section>
+<section id="nodal-analysis">
+<h2><span class="section-number">4.2.4. </span>Nodal Analysis<a class="headerlink" href="#nodal-analysis" title="Link to this heading"></a></h2>
+<p>Nodal analysis combines IPR and VLP. The intersection defines the operating
+point and corresponding flow rate.</p>
+<a class="reference internal image-reference" href="_images/application_production_IPR_VLP.JPG"><img alt="_images/application_production_IPR_VLP.JPG" class="align-center" src="_images/application_production_IPR_VLP.JPG" style="width: 50%;" /></a>
+<p>The operating flow rate can be found by minimizing the difference between
+<span class="math notranslate nohighlight">\(P_{wf}\)</span> from IPR and <span class="math notranslate nohighlight">\(P_{wf}\)</span> from VLP.</p>
+<div class="math notranslate nohighlight">
+\[\text{min}_Q (P_{wf,1} - P_{wf,2}) ^2\]</div>
+<p>For systems without ESP, use wellhead pressure <span class="math notranslate nohighlight">\(P_{wh}\)</span> as topside
+boundary condition. If unavailable, use tank/pipeline pressure with additional
+pressure-drop corrections. For systems with ESP, use intake pressure.</p>
+<a class="reference internal image-reference" href="_images/application_production_nodal.JPG"><img alt="_images/application_production_nodal.JPG" class="align-center" src="_images/application_production_nodal.JPG" style="width: 50%;" /></a>
+<p>In real-time monitoring, discrepancies between measured and calculated
+<span class="math notranslate nohighlight">\(P_{wf}\)</span> can indicate changing well conditions. If downhole pressure is not
+available, compare nodal-analysis flow rate with measured flow rate to detect
+potential additional resistance in the well.</p>
+<p>Users can adjust reservoir, well, and ESP parameters to evaluate impact on:</p>
+<ul class="simple">
+<li><p>operating flow rate</p></li>
+<li><p>bottomhole pressure</p></li>
+<li><p>ESP head, intake/discharge pressure</p></li>
+<li><p>power and efficiency</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/application_production.JPG"><img alt="_images/application_production.JPG" class="align-center" src="_images/application_production.JPG" style="width: 100%;" /></a>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="application_grafana.html" class="btn btn-neutral float-left" title="4.1. Time Series Viewer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="application_injectivity.html" class="btn btn-neutral float-right" title="4.3. Injectivity Application" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_interface.blueprint.app_esp.routes &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_interface.blueprint.app_esp.routes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_interface.blueprint.app_esp.routes</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">ESP Application Routes.</span>
+
+<span class="sd">======================</span>
+
+<span class="sd">This module handles ESP (Electric Submersible Pump) analysis and monitoring functionality including</span>
+<span class="sd">pump head curve calculations and ESP performance analysis.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">celery</span><span class="w"> </span><span class="kn">import</span> <span class="n">Celery</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.esp.esp</span><span class="w"> </span><span class="kn">import</span> <span class="n">ESPApp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_framework.modules.esp.unit</span><span class="w"> </span><span class="kn">import</span> <span class="n">ESPUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_interface.blueprint.celerytasks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">esp_app_calibrate_pumphead_data</span><span class="p">,</span>
+    <span class="n">esp_app_get_pumphead_data</span><span class="p">,</span>
+    <span class="n">esp_app_predict_failure</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Create the ESP application blueprint</span>
+<span class="n">app_esp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">"app_esp"</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Initialize Celery for background task processing</span>
+<span class="n">celery</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span>
+    <span class="s2">"gemini-celery-app"</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CELERY_RESULT_BACKEND"</span><span class="p">,</span> <span class="s2">"redis://localhost:6379"</span><span class="p">),</span>
+    <span class="n">broker</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CELERY_BROKER_URL"</span><span class="p">,</span> <span class="s2">"redis://localhost:6379"</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># Global application instance for ESP operations</span>
+<span class="n">app_instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="load_plant">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.load_plant">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/esp/load_plant"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_plant</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Load a plant into the ESP application instance."""</span>
+    <span class="k">global</span> <span class="n">app_instance</span>
+
+    <span class="n">app_instance</span> <span class="o">=</span> <span class="n">ESPApp</span><span class="p">()</span>
+
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"field_name"</span><span class="p">]</span>
+    <span class="n">project_folder_path</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">]</span>
+
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">load_plant</span><span class="p">(</span><span class="n">project_folder_path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">"OK"</span></div>
+
+
+
+<div class="viewcode-block" id="get_esp_list">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.get_esp_list">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/esp/get_esp_list"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_esp_list</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Get list of ESP units in the loaded plant."""</span>
+    <span class="n">esp_unit_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">ESPUnit</span><span class="p">):</span>
+            <span class="n">esp_unit_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">esp_unit_list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="calculate_pump_curve">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.calculate_pump_curve">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/esp/calculate_pump_curve"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_pump_curve</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Calculate pump head curves for ESP analysis."""</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"parameters"</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">],</span> <span class="s2">"boundary"</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"boundary"</span><span class="p">]}</span>
+
+    <span class="n">project_folder_path</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">project_path</span>
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">esp_name</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="n">task</span> <span class="o">=</span> <span class="n">esp_app_get_pumphead_data</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="n">project_folder_path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">esp_name</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+
+    <span class="n">task_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">task_id</span></div>
+
+
+
+<div class="viewcode-block" id="get_results_pump_curve">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.get_results_pump_curve">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/esp/get_results_pump_curve"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_results_pump_curve</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Get results from the pump curve calculation task."""</span>
+    <span class="n">task_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"task_id"</span><span class="p">]</span>
+    <span class="n">task_result</span> <span class="o">=</span> <span class="n">celery</span><span class="o">.</span><span class="n">AsyncResult</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result_data</span> <span class="o">=</span> <span class="n">task_result</span><span class="o">.</span><span class="n">result</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+            <span class="n">result_data</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_data</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">result_data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Error reading result: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"task_id"</span><span class="p">:</span> <span class="n">task_id</span><span class="p">,</span> <span class="s2">"task_status"</span><span class="p">:</span> <span class="n">task_result</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s2">"task_result"</span><span class="p">:</span> <span class="n">result_data</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_esp_parameters">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.get_esp_parameters">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/esp/get_esp_parameters"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_esp_parameters</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Get parameters for the selected ESP unit."""</span>
+    <span class="n">esp_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"esp_name"</span><span class="p">]</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">select_unit</span><span class="p">(</span><span class="n">esp_name</span><span class="p">)</span>
+
+    <span class="n">esp_par</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">parameters</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"esp_par"</span><span class="p">:</span> <span class="n">esp_par</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="calibrate_esp_factor">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.calibrate_esp_factor">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/esp/calibrate_esp_factor"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calibrate_esp_factor</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Calibrate ESP correction factors."""</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"parameters"</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">],</span> <span class="s2">"boundary"</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"boundary"</span><span class="p">]}</span>
+
+    <span class="n">project_folder_path</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">project_path</span>
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">esp_name</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="n">task</span> <span class="o">=</span> <span class="n">esp_app_calibrate_pumphead_data</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span>
+        <span class="n">project_folder_path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">esp_name</span><span class="p">,</span> <span class="n">inputs</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_results_calibration_factor">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.get_results_calibration_factor">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/esp/get_results_calibration_factor"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_results_calibration_factor</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Get results from the ESP calibration factor task."""</span>
+    <span class="n">task_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"task_id"</span><span class="p">]</span>
+    <span class="n">task_result</span> <span class="o">=</span> <span class="n">celery</span><span class="o">.</span><span class="n">AsyncResult</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result_data</span> <span class="o">=</span> <span class="n">task_result</span><span class="o">.</span><span class="n">result</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+            <span class="n">result_data</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_data</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">result_data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Error reading result: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"task_id"</span><span class="p">:</span> <span class="n">task_id</span><span class="p">,</span> <span class="s2">"task_status"</span><span class="p">:</span> <span class="n">task_result</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s2">"task_result"</span><span class="p">:</span> <span class="n">result_data</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="update_correction_factors">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.update_correction_factors">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/esp/update_correction_factors"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_correction_factors</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Update ESP correction factors in the project parameters."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">field_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"field_name"</span><span class="p">]</span>
+        <span class="n">component_name</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"esp_name"</span><span class="p">]</span>
+        <span class="n">esp_correction_factor</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"esp_correction_factor"</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">esp_correction_factor</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">";"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">esp_correction_factor</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Invalid input"</span><span class="p">}),</span> <span class="mi">400</span>
+
+        <span class="n">project_folder_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">],</span> <span class="n">field_name</span><span class="p">)</span>
+        <span class="n">param_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">project_folder_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">.param"</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">param_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">jsonfile</span><span class="p">:</span>
+            <span class="n">component_content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">jsonfile</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">"parameters"</span> <span class="ow">in</span> <span class="n">component_content</span> <span class="ow">and</span> <span class="s2">"property"</span> <span class="ow">in</span> <span class="n">component_content</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">]:</span>
+            <span class="n">component_content</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">][</span><span class="s2">"property"</span><span class="p">][</span><span class="s2">"esp_correction_factor"</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">esp_correction_factor</span>
+            <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Invalid input"</span><span class="p">}),</span> <span class="mi">500</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">param_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">jsonfile</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">component_content</span><span class="p">,</span> <span class="n">jsonfile</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Correction factor updated successfully."</span><span class="p">})</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"Internal server error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">}),</span> <span class="mi">500</span></div>
+
+
+
+<div class="viewcode-block" id="predict_failure">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.predict_failure">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/esp/predict_failure"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">predict_failure</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Predict ESP failures using ML model."""</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"parameters"</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"parameters"</span><span class="p">],</span> <span class="s2">"boundary"</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"boundary"</span><span class="p">]}</span>
+
+    <span class="n">project_folder_path</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">project_path</span>
+    <span class="n">project_name</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">esp_name</span> <span class="o">=</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="n">task</span> <span class="o">=</span> <span class="n">esp_app_predict_failure</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="n">project_folder_path</span><span class="p">,</span> <span class="n">project_name</span><span class="p">,</span> <span class="n">esp_name</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_results_failure_prediction">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_esp.routes.html#gemini_interface.blueprint.app_esp.routes.get_results_failure_prediction">[docs]</a>
+<span class="nd">@app_esp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/esp/get_results_failure_prediction"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_results_failure_prediction</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Get results from the failure prediction task."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"task_id"</span><span class="p">]</span>
+        <span class="n">task_result</span> <span class="o">=</span> <span class="n">celery</span><span class="o">.</span><span class="n">AsyncResult</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result_data</span> <span class="o">=</span> <span class="n">task_result</span><span class="o">.</span><span class="n">result</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+                <span class="n">result_data</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_data</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">result_data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Error reading result: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"task_id"</span><span class="p">:</span> <span class="n">task_id</span><span class="p">,</span> <span class="s2">"task_status"</span><span class="p">:</span> <span class="n">task_result</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s2">"task_result"</span><span class="p">:</span> <span class="n">result_data</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"error"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"Error processing request: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">}),</span> <span class="mi">500</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

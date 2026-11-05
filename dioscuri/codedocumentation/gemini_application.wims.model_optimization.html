@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.3.8.8. gemini_application.wims.model_optimization &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.4. gemini_interface" href="gemini_interface.html" />
+    <link rel="prev" title="6.3.8.7. gemini_application.wims.erosion_model" href="gemini_application.wims.erosion_model.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.application_abstract.html">6.3.1. gemini_application.application_abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.chatpopup.html">6.3.2. gemini_application.chatpopup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.esp.html">6.3.3. gemini_application.esp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.injectionwell.html">6.3.4. gemini_application.injectionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.productionwell.html">6.3.5. gemini_application.productionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.reportgenerator.html">6.3.6. gemini_application.reportgenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.tagbrowser.html">6.3.7. gemini_application.tagbrowser</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_application.wims.html">6.3.8. gemini_application.wims</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.common.html">6.3.8.1. gemini_application.wims.common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_logs.html">6.3.8.2. gemini_application.wims.corrosion_from_logs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_prod_data.html">6.3.8.3. gemini_application.wims.corrosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_model.html">6.3.8.4. gemini_application.wims.corrosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_prod_data.html">6.3.8.5. gemini_application.wims.erosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_tally.html">6.3.8.6. gemini_application.wims.erosion_from_tally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_model.html">6.3.8.7. gemini_application.wims.erosion_model</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">6.3.8.8. gemini_application.wims.model_optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.html"><span class="section-number">6.3. </span>gemini_application</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.wims.html"><span class="section-number">6.3.8. </span>gemini_application.wims</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.3.8.8. </span>gemini_application.wims.model_optimization</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_application.wims.model_optimization.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_application.wims.model_optimization">
+<span id="gemini-application-wims-model-optimization"></span><h1><span class="section-number">6.3.8.8. </span>gemini_application.wims.model_optimization<a class="headerlink" href="#module-gemini_application.wims.model_optimization" title="Link to this heading"></a></h1>
+<p>Per-joint CO2 corrosion parameter calibration using SciPy minimize.</p>
+<p>The modelled corrosion rate comes from the production-data path
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">build_prod_corrosion_context()</span></code> + the corrosion correlation) and the
+measured target from caliper logs
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">get_measured_corrosion_rate_from_logs()</span></code>).  Because each joint’s modelled
+rate depends only on its own parameters and its own precomputed
+pressure/temperature/CO2, and each log-to-log interval is independent, the
+total sum-of-squared-errors is fully separable: the calibration solves one
+small SLSQP problem per (joint, interval) over a shared, precomputed context
+instead of one large coupled optimization.  A well with three logs therefore
+yields a distinct parameter set for the log1-&gt;log2 and log2-&gt;log3 intervals.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.model_optimization.OptCO2Corrosion" title="gemini_application.wims.model_optimization.OptCO2Corrosion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OptCO2Corrosion</span></code></a>(inputs, outputs, ...[, ...])</p></td>
+<td><p>Calibrate per-joint CO2 corrosion parameters against log-measured rates.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="gemini_application.wims.model_optimization.OptCO2Corrosion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gemini_application.wims.model_optimization.</span></span><span class="sig-name descname"><span class="pre">OptCO2Corrosion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrosion_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">co2_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_joint_start_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_store_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/model_optimization.html#OptCO2Corrosion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.model_optimization.OptCO2Corrosion" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Calibrate per-joint CO2 corrosion parameters against log-measured rates.</p>
+<p>Initialise the optimizer and precompute everything reusable.</p>
+<p>The expensive, parameter-independent work (VLP/PVT/CO2) and the measured
+target are computed once here; the per-joint solves reuse them.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.model_optimization.OptCO2Corrosion.calibrate">
+<span class="sig-name descname"><span class="pre">calibrate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/model_optimization.html#OptCO2Corrosion.calibrate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.model_optimization.OptCO2Corrosion.calibrate" title="Link to this definition"></a></dt>
+<dd><p>Calibrate per-(joint, interval) parameters against log-measured rates.</p>
+<p>Solves one independent 4-variable problem for every (joint, interval)
+pair that has a measured rate – so a well with three logs yields a
+separate parameter set for the log1-&gt;log2 and log2-&gt;log3 intervals.
+Stores the uncalibrated and calibrated modelled rates and the measured
+target in <code class="docutils literal notranslate"><span class="pre">outputs</span></code>, persists the per-interval parameters, and returns
+a summary dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxiter</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum SLSQP iterations per (joint, interval) pair.</p></li>
+<li><p><strong>progress_callback</strong> (<em>callable</em><em> or </em><em>None</em>) – Optional <code class="docutils literal notranslate"><span class="pre">fn(completed,</span> <span class="pre">total,</span> <span class="pre">per_joint)</span></code> invoked after each pair
+is solved.  <code class="docutils literal notranslate"><span class="pre">per_joint</span></code> is the growing list of per-(joint,
+interval) records (so callers can render live progress).  Exceptions
+raised by the callback are swallowed so progress reporting never
+breaks the calibration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Summary dict that includes <code class="docutils literal notranslate"><span class="pre">&quot;per_joint&quot;</span></code> – one record per
+(joint, interval) with <code class="docutils literal notranslate"><span class="pre">interval</span></code>/<code class="docutils literal notranslate"><span class="pre">rate_col</span></code> tags, params
+(A,B,C,D,E), and before/after SSE – used for the final error
+plot and coefficient table.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.model_optimization.OptCO2Corrosion.denormalize_params">
+<span class="sig-name descname"><span class="pre">denormalize_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norm_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/model_optimization.html#OptCO2Corrosion.denormalize_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.model_optimization.OptCO2Corrosion.denormalize_params" title="Link to this definition"></a></dt>
+<dd><p>Convert normalized parameters [0, 1] to real-valued.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.model_optimization.OptCO2Corrosion.normalize_params">
+<span class="sig-name descname"><span class="pre">normalize_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/model_optimization.html#OptCO2Corrosion.normalize_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.model_optimization.OptCO2Corrosion.normalize_params" title="Link to this definition"></a></dt>
+<dd><p>Convert real-valued parameters to normalized [0, 1].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.model_optimization.OptCO2Corrosion.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/model_optimization.html#OptCO2Corrosion.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.model_optimization.OptCO2Corrosion.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot measured vs modelled (uncalibrated and calibrated) corrosion.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_application.wims.erosion_model.html" class="btn btn-neutral float-left" title="6.3.8.7. gemini_application.wims.erosion_model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_interface.html" class="btn btn-neutral float-right" title="6.4. gemini_interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

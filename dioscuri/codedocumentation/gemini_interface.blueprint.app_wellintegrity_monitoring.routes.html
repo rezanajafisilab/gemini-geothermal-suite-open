@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.4.2.10.1. gemini_interface.blueprint.app_wellintegrity_monitoring.routes &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.4.2.11. gemini_interface.blueprint.auth" href="gemini_interface.blueprint.auth.html" />
+    <link rel="prev" title="6.4.2.10. gemini_interface.blueprint.app_wellintegrity_monitoring" href="gemini_interface.blueprint.app_wellintegrity_monitoring.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_interface.app.html">6.4.1. gemini_interface.app</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_interface.blueprint.html">6.4.2. gemini_interface.blueprint</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_builder.html">6.4.2.1. gemini_interface.blueprint.app_builder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_chatpopup.html">6.4.2.2. gemini_interface.blueprint.app_chatpopup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_esp.html">6.4.2.3. gemini_interface.blueprint.app_esp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_injectionwellmonitoring.html">6.4.2.4. gemini_interface.blueprint.app_injectionwellmonitoring</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_parameters_overview.html">6.4.2.5. gemini_interface.blueprint.app_parameters_overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_productionwellperformance.html">6.4.2.6. gemini_interface.blueprint.app_productionwellperformance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_reportgenerator.html">6.4.2.7. gemini_interface.blueprint.app_reportgenerator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_tagbrowser.html">6.4.2.8. gemini_interface.blueprint.app_tagbrowser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.app_well_schematics.html">6.4.2.9. gemini_interface.blueprint.app_well_schematics</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="gemini_interface.blueprint.app_wellintegrity_monitoring.html">6.4.2.10. gemini_interface.blueprint.app_wellintegrity_monitoring</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.auth.html">6.4.2.11. gemini_interface.blueprint.auth</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.celerytasks.html">6.4.2.12. gemini_interface.blueprint.celerytasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.dashboard.html">6.4.2.13. gemini_interface.blueprint.dashboard</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.dbmodels.html">6.4.2.14. gemini_interface.blueprint.dbmodels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.project.html">6.4.2.15. gemini_interface.blueprint.project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.report.html">6.4.2.16. gemini_interface.blueprint.report</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.routes.html">6.4.2.17. gemini_interface.blueprint.routes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_interface.blueprint.setting_plant.html">6.4.2.18. gemini_interface.blueprint.setting_plant</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_interface.create_app.html">6.4.3. gemini_interface.create_app</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_interface.html"><span class="section-number">6.4. </span>gemini_interface</a></li>
+          <li class="breadcrumb-item"><a href="gemini_interface.blueprint.html"><span class="section-number">6.4.2. </span>gemini_interface.blueprint</a></li>
+          <li class="breadcrumb-item"><a href="gemini_interface.blueprint.app_wellintegrity_monitoring.html"><span class="section-number">6.4.2.10. </span>gemini_interface.blueprint.app_wellintegrity_monitoring</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.4.2.10.1. </span>gemini_interface.blueprint.app_wellintegrity_monitoring.routes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_interface.blueprint.app_wellintegrity_monitoring.routes.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_interface.blueprint.app_wellintegrity_monitoring.routes">
+<span id="gemini-interface-blueprint-app-wellintegrity-monitoring-routes"></span><h1><span class="section-number">6.4.2.10.1. </span>gemini_interface.blueprint.app_wellintegrity_monitoring.routes<a class="headerlink" href="#module-gemini_interface.blueprint.app_wellintegrity_monitoring.routes" title="Link to this heading"></a></h1>
+<p>Well Integrity Monitoring Application Routes.</p>
+<hr class="docutils" />
+<p>This module handles well integrity assessment and monitoring functionality including caliper log
+processing, corrosion analysis, and well integrity assessment.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.calculate_erosion" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.calculate_erosion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_erosion</span></code></a>()</p></td>
+<td><p>Forward erosion calculation from well tally geometry and production data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.corrosion_task_status" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.corrosion_task_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">corrosion_task_status</span></code></a>(task_id)</p></td>
+<td><p>Poll the status of a corrosion Celery task.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.delete_history_document" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.delete_history_document"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_history_document</span></code></a>()</p></td>
+<td><p>Delete a document attached to a dashboard history entry.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.delete_log" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.delete_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_log</span></code></a>()</p></td>
+<td><p>Delete a log file, processed result file, and metadata entry for a selected well.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.detect_joints_route" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.detect_joints_route"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_joints_route</span></code></a>()</p></td>
+<td><p>Start joint detection for selected caliper logs using Celery task.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.download_history_document" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.download_history_document"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_history_document</span></code></a>()</p></td>
+<td><p>Download a document attached to a dashboard history entry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.forecast_years_to_min" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.forecast_years_to_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forecast_years_to_min</span></code></a>()</p></td>
+<td><p>Kick off a Celery task forecasting years-to-min-thickness per casing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.generate_schematic_image" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.generate_schematic_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_schematic_image</span></code></a>()</p></td>
+<td><p>Proxy route to generate a well schematic image.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.generate_schematic_image_with_barriers" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.generate_schematic_image_with_barriers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_schematic_image_with_barriers</span></code></a>()</p></td>
+<td><p>Generate schematic and optionally apply barrier colors server-side.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_annulus_information" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_annulus_information"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_annulus_information</span></code></a>()</p></td>
+<td><p>Get annulus information from the external API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_corrosion_rate_from_logs" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_corrosion_rate_from_logs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_corrosion_rate_from_logs</span></code></a>()</p></td>
+<td><p>Compute corrosion rate from processed logs for panel display.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_detect_joints_results" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_detect_joints_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_detect_joints_results</span></code></a>()</p></td>
+<td><p>Get the results of the joint detection task.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_esp_geometry" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_esp_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_esp_geometry</span></code></a>()</p></td>
+<td><p>Load ESP geometry JSON for a well (or default template).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_joint_finger_data" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_joint_finger_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_joint_finger_data</span></code></a>()</p></td>
+<td><p>Return per-finger caliper measurements for a specific joint depth range.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_dates" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_dates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_log_dates</span></code></a>()</p></td>
+<td><p>Get saved log dates for the selected well (from logs_information.json).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_info" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_log_info</span></code></a>()</p></td>
+<td><p>Get metadata for a single log from logs_information.json.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_list" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_log_list</span></code></a>()</p></td>
+<td><p>Get list of available logs for the selected well.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_status" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_log_status</span></code></a>()</p></td>
+<td><p>Get the processing status of logs for the selected well.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_measured_tags" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_measured_tags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_measured_tags</span></code></a>()</p></td>
+<td><p>Get measured tags from the selected unit for monitoring.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_processing_results" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_processing_results"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_processing_results</span></code></a>()</p></td>
+<td><p>Get the results of the caliper logs processing task.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_saved_schematics" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_saved_schematics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_saved_schematics</span></code></a>()</p></td>
+<td><p>Get list of saved well schematics for the selected well (WIMS card schematic selector).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tag_data" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tag_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tag_data</span></code></a>()</p></td>
+<td><p>Get data for a specific tag from the application using real database functionality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tag_series" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tag_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tag_series</span></code></a>()</p></td>
+<td><p>Return a tag's recent time series (default last 30 days) for annulus charts.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tally_list" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tally_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tally_list</span></code></a>()</p></td>
+<td><p>Get a list of available well tally files for the selected well.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tally_sizes" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tally_sizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tally_sizes</span></code></a>()</p></td>
+<td><p>Return unique casing OD sizes (largest-first) from the well tally.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_well_list" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_well_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_well_list</span></code></a>()</p></td>
+<td><p>Get list of wells for well integrity monitoring.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_approved_joints" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_approved_joints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_approved_joints</span></code></a>()</p></td>
+<td><p>Load previously approved joints for the selected well.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_dashboard" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_dashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_dashboard</span></code></a>()</p></td>
+<td><p>Load KPI dashboard state for the selected well and schematic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_detected_joints" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_detected_joints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_detected_joints</span></code></a>()</p></td>
+<td><p>Load previously saved detected-joints data (candidates + chart) for given logs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_monitors" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_monitors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_monitors</span></code></a>()</p></td>
+<td><p>Load monitor configurations for a specific well and schematic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_plant" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_plant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_plant</span></code></a>()</p></td>
+<td><p>Load a plant into the well integrity monitoring application instance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_processed_logs" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_processed_logs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_processed_logs</span></code></a>()</p></td>
+<td><p>Load previously processed logs from saved JSON files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_schematic" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_schematic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_schematic</span></code></a>()</p></td>
+<td><p>Load a specific integrity schematic file for the selected well.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_wims_panel" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_wims_panel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_wims_panel</span></code></a>()</p></td>
+<td><p>Load WIMS panel state for the selected well and schematic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.optimization_status" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.optimization_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimization_status</span></code></a>()</p></td>
+<td><p>Report whether calibrated corrosion parameters exist for a well.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.optimize_corrosion" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.optimize_corrosion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">optimize_corrosion</span></code></a>()</p></td>
+<td><p>Kick off a Celery task to calibrate corrosion model parameters against logs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.predict_corrosion" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.predict_corrosion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict_corrosion</span></code></a>()</p></td>
+<td><p>Kick off a Celery task to predict remaining wall thickness from logs to now.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.process_caliper_logs" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.process_caliper_logs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_caliper_logs</span></code></a>()</p></td>
+<td><p>Start processing selected caliper logs using Celery task.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_approved_joints" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_approved_joints"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_approved_joints</span></code></a>()</p></td>
+<td><p>Save user-approved joint candidates after QA/QC review.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_corrosion_limits" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_corrosion_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_corrosion_limits</span></code></a>()</p></td>
+<td><p>Stub for minimum_remaining_thickness_mm persistence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_dashboard" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_dashboard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_dashboard</span></code></a>()</p></td>
+<td><p>Save KPI dashboard state (manual fields) for the selected well and schematic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_esp_geometry" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_esp_geometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_esp_geometry</span></code></a>()</p></td>
+<td><p>Save ESP geometry JSON for a well.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_log_dates" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_log_dates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_log_dates</span></code></a>()</p></td>
+<td><p>Save log name -&gt; date (YYYY-MM-DD) into logs_information.json.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_log_info" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_log_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_log_info</span></code></a>()</p></td>
+<td><p>Save metadata for a single log into logs_information.json.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_monitors" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_monitors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_monitors</span></code></a>()</p></td>
+<td><p>Save monitor configurations for a specific well and schematic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_wims_panel" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_wims_panel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_wims_panel</span></code></a>()</p></td>
+<td><p>Save WIMS panel state for the selected well and schematic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_history_document" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_history_document"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upload_history_document</span></code></a>()</p></td>
+<td><p>Upload a document attached to a dashboard history entry.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_log" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upload_log</span></code></a>()</p></td>
+<td><p>Upload a log file to the calipers folder for the selected well.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_tally" title="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_tally"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upload_tally</span></code></a>()</p></td>
+<td><p>Upload a well tally file to the tally folder for the selected well.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.calculate_erosion">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">calculate_erosion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#calculate_erosion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.calculate_erosion" title="Link to this definition"></a></dt>
+<dd><p>Forward erosion calculation from well tally geometry and production data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.corrosion_task_status">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">corrosion_task_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#corrosion_task_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.corrosion_task_status" title="Link to this definition"></a></dt>
+<dd><p>Poll the status of a corrosion Celery task.</p>
+<p>For in-progress tasks that publish a PROGRESS meta dict (e.g. the per-joint
+corrosion optimization), the meta is returned under <code class="docutils literal notranslate"><span class="pre">progress</span></code> so the
+frontend can render live progress.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.delete_history_document">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">delete_history_document</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#delete_history_document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.delete_history_document" title="Link to this definition"></a></dt>
+<dd><p>Delete a document attached to a dashboard history entry.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.delete_log">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">delete_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#delete_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.delete_log" title="Link to this definition"></a></dt>
+<dd><p>Delete a log file, processed result file, and metadata entry for a selected well.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.detect_joints_route">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">detect_joints_route</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#detect_joints_route"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.detect_joints_route" title="Link to this definition"></a></dt>
+<dd><p>Start joint detection for selected caliper logs using Celery task.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.download_history_document">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">download_history_document</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#download_history_document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.download_history_document" title="Link to this definition"></a></dt>
+<dd><p>Download a document attached to a dashboard history entry.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.forecast_years_to_min">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">forecast_years_to_min</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#forecast_years_to_min"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.forecast_years_to_min" title="Link to this definition"></a></dt>
+<dd><p>Kick off a Celery task forecasting years-to-min-thickness per casing.</p>
+<p>Accepts the per-casing minimum thicknesses entered in the dashboard Wall
+thickness table and projects the calibrated model’s trailing-12-month
+corrosion rate forward to estimate when each casing reaches its minimum.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.generate_schematic_image">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">generate_schematic_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#generate_schematic_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.generate_schematic_image" title="Link to this definition"></a></dt>
+<dd><p>Proxy route to generate a well schematic image.</p>
+<p>Calls the external backend API (<a class="reference external" href="http://185.92.222.87:8001/generate">http://185.92.222.87:8001/generate</a>).
+Also requests annulus information in the same call (return_annulus_information=True).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.generate_schematic_image_with_barriers">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">generate_schematic_image_with_barriers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#generate_schematic_image_with_barriers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.generate_schematic_image_with_barriers" title="Link to this definition"></a></dt>
+<dd><p>Generate schematic and optionally apply barrier colors server-side.</p>
+<p>Single request from frontend; one or two calls to the schematic server.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_annulus_information">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_annulus_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_annulus_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_annulus_information" title="Link to this definition"></a></dt>
+<dd><p>Get annulus information from the external API.</p>
+<p>Sends schematic JSON with return_annulus_information=True.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_corrosion_rate_from_logs">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_corrosion_rate_from_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_corrosion_rate_from_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_corrosion_rate_from_logs" title="Link to this definition"></a></dt>
+<dd><p>Compute corrosion rate from processed logs for panel display.</p>
+<p>Reads saved JSONs and returns corrosion rate data.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_detect_joints_results">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_detect_joints_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_detect_joints_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_detect_joints_results" title="Link to this definition"></a></dt>
+<dd><p>Get the results of the joint detection task.</p>
+<p>Supports incremental loading: checks which per-log JSON files have been
+saved to disk so far and returns them, even if the Celery task is still
+running.  The frontend can display results as they become available.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_esp_geometry">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_esp_geometry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_esp_geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_esp_geometry" title="Link to this definition"></a></dt>
+<dd><p>Load ESP geometry JSON for a well (or default template).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_joint_finger_data">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_joint_finger_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_joint_finger_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_joint_finger_data" title="Link to this definition"></a></dt>
+<dd><p>Return per-finger caliper measurements for a specific joint depth range.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_dates">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_log_dates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_log_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_dates" title="Link to this definition"></a></dt>
+<dd><p>Get saved log dates for the selected well (from logs_information.json).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_info">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_log_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_log_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_info" title="Link to this definition"></a></dt>
+<dd><p>Get metadata for a single log from logs_information.json.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_list">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_log_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_log_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_list" title="Link to this definition"></a></dt>
+<dd><p>Get list of available logs for the selected well.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_status">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_log_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_log_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_log_status" title="Link to this definition"></a></dt>
+<dd><p>Get the processing status of logs for the selected well.</p>
+<p>Returns four-state status per log: inputs_required / unprocessed / detected / processed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_measured_tags">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_measured_tags</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_measured_tags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_measured_tags" title="Link to this definition"></a></dt>
+<dd><p>Get measured tags from the selected unit for monitoring.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_processing_results">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_processing_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_processing_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_processing_results" title="Link to this definition"></a></dt>
+<dd><p>Get the results of the caliper logs processing task.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_saved_schematics">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_saved_schematics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_saved_schematics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_saved_schematics" title="Link to this definition"></a></dt>
+<dd><p>Get list of saved well schematics for the selected well (WIMS card schematic selector).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tag_data">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_tag_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_tag_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tag_data" title="Link to this definition"></a></dt>
+<dd><p>Get data for a specific tag from the application using real database functionality.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tag_series">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_tag_series</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_tag_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tag_series" title="Link to this definition"></a></dt>
+<dd><p>Return a tag’s recent time series (default last 30 days) for annulus charts.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tally_list">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_tally_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_tally_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tally_list" title="Link to this definition"></a></dt>
+<dd><p>Get a list of available well tally files for the selected well.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tally_sizes">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_tally_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_tally_sizes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_tally_sizes" title="Link to this definition"></a></dt>
+<dd><p>Return unique casing OD sizes (largest-first) from the well tally.</p>
+<p>Drives the auto-populated casing rows of the KPI dashboard wall-thickness
+panel. Reads the tally from well parameters (same source as init_parameters).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_well_list">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">get_well_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#get_well_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.get_well_list" title="Link to this definition"></a></dt>
+<dd><p>Get list of wells for well integrity monitoring.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_approved_joints">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">load_approved_joints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#load_approved_joints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_approved_joints" title="Link to this definition"></a></dt>
+<dd><p>Load previously approved joints for the selected well.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_dashboard">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">load_dashboard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#load_dashboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_dashboard" title="Link to this definition"></a></dt>
+<dd><p>Load KPI dashboard state for the selected well and schematic.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_detected_joints">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">load_detected_joints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#load_detected_joints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_detected_joints" title="Link to this definition"></a></dt>
+<dd><p>Load previously saved detected-joints data (candidates + chart) for given logs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_monitors">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">load_monitors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#load_monitors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_monitors" title="Link to this definition"></a></dt>
+<dd><p>Load monitor configurations for a specific well and schematic.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_plant">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">load_plant</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#load_plant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_plant" title="Link to this definition"></a></dt>
+<dd><p>Load a plant into the well integrity monitoring application instance.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_processed_logs">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">load_processed_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#load_processed_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_processed_logs" title="Link to this definition"></a></dt>
+<dd><p>Load previously processed logs from saved JSON files.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_schematic">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">load_schematic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#load_schematic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_schematic" title="Link to this definition"></a></dt>
+<dd><p>Load a specific integrity schematic file for the selected well.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_wims_panel">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">load_wims_panel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#load_wims_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.load_wims_panel" title="Link to this definition"></a></dt>
+<dd><p>Load WIMS panel state for the selected well and schematic.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.optimization_status">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">optimization_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#optimization_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.optimization_status" title="Link to this definition"></a></dt>
+<dd><p>Report whether calibrated corrosion parameters exist for a well.</p>
+<p>Looks up the persisted <code class="docutils literal notranslate"><span class="pre">corrosion_opt_params.json</span></code> for the selected well
+and returns whether it exists plus when it was last written (the embedded
+<code class="docutils literal notranslate"><span class="pre">optimized_at</span></code> stamp, falling back to the file modification time). The
+Forecast UI uses this to show a “last optimized” note and to gate the Run
+(predict) button until calibration has been performed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.optimize_corrosion">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">optimize_corrosion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#optimize_corrosion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.optimize_corrosion" title="Link to this definition"></a></dt>
+<dd><p>Kick off a Celery task to calibrate corrosion model parameters against logs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.predict_corrosion">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">predict_corrosion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#predict_corrosion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.predict_corrosion" title="Link to this definition"></a></dt>
+<dd><p>Kick off a Celery task to predict remaining wall thickness from logs to now.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.process_caliper_logs">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">process_caliper_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#process_caliper_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.process_caliper_logs" title="Link to this definition"></a></dt>
+<dd><p>Start processing selected caliper logs using Celery task.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_approved_joints">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">save_approved_joints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#save_approved_joints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_approved_joints" title="Link to this definition"></a></dt>
+<dd><p>Save user-approved joint candidates after QA/QC review.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_corrosion_limits">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">save_corrosion_limits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#save_corrosion_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_corrosion_limits" title="Link to this definition"></a></dt>
+<dd><p>Stub for minimum_remaining_thickness_mm persistence.</p>
+<p>No longer stored in logs_information.json (to be redesigned).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_dashboard">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">save_dashboard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#save_dashboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_dashboard" title="Link to this definition"></a></dt>
+<dd><p>Save KPI dashboard state (manual fields) for the selected well and schematic.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_esp_geometry">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">save_esp_geometry</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#save_esp_geometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_esp_geometry" title="Link to this definition"></a></dt>
+<dd><p>Save ESP geometry JSON for a well.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_log_dates">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">save_log_dates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#save_log_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_log_dates" title="Link to this definition"></a></dt>
+<dd><p>Save log name -&gt; date (YYYY-MM-DD) into logs_information.json.</p>
+<p>Updates the date field per log.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_log_info">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">save_log_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#save_log_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_log_info" title="Link to this definition"></a></dt>
+<dd><p>Save metadata for a single log into logs_information.json.</p>
+<p>Enforces single-baseline: if is_baseline is True, clears baseline from all other logs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_monitors">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">save_monitors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#save_monitors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_monitors" title="Link to this definition"></a></dt>
+<dd><p>Save monitor configurations for a specific well and schematic.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_wims_panel">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">save_wims_panel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#save_wims_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.save_wims_panel" title="Link to this definition"></a></dt>
+<dd><p>Save WIMS panel state for the selected well and schematic.</p>
+<p>Persists overall status, last update date, and barrier elements.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_history_document">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">upload_history_document</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#upload_history_document"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_history_document" title="Link to this definition"></a></dt>
+<dd><p>Upload a document attached to a dashboard history entry.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_log">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">upload_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#upload_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_log" title="Link to this definition"></a></dt>
+<dd><p>Upload a log file to the calipers folder for the selected well.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_tally">
+<span class="sig-prename descclassname"><span class="pre">gemini_interface.blueprint.app_wellintegrity_monitoring.routes.</span></span><span class="sig-name descname"><span class="pre">upload_tally</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_interface/blueprint/app_wellintegrity_monitoring/routes.html#upload_tally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_interface.blueprint.app_wellintegrity_monitoring.routes.upload_tally" title="Link to this definition"></a></dt>
+<dd><p>Upload a well tally file to the tally folder for the selected well.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_interface.blueprint.app_wellintegrity_monitoring.html" class="btn btn-neutral float-left" title="6.4.2.10. gemini_interface.blueprint.app_wellintegrity_monitoring" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_interface.blueprint.auth.html" class="btn btn-neutral float-right" title="6.4.2.11. gemini_interface.blueprint.auth" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

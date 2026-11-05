@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.3.6.1. gemini_application.reportgenerator.reportgenerator &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.3.7. gemini_application.tagbrowser" href="gemini_application.tagbrowser.html" />
+    <link rel="prev" title="6.3.6. gemini_application.reportgenerator" href="gemini_application.reportgenerator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.application_abstract.html">6.3.1. gemini_application.application_abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.chatpopup.html">6.3.2. gemini_application.chatpopup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.esp.html">6.3.3. gemini_application.esp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.injectionwell.html">6.3.4. gemini_application.injectionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.productionwell.html">6.3.5. gemini_application.productionwell</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_application.reportgenerator.html">6.3.6. gemini_application.reportgenerator</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">6.3.6.1. gemini_application.reportgenerator.reportgenerator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.tagbrowser.html">6.3.7. gemini_application.tagbrowser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.wims.html">6.3.8. gemini_application.wims</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.html"><span class="section-number">6.3. </span>gemini_application</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.reportgenerator.html"><span class="section-number">6.3.6. </span>gemini_application.reportgenerator</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.3.6.1. </span>gemini_application.reportgenerator.reportgenerator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_application.reportgenerator.reportgenerator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_application.reportgenerator.reportgenerator">
+<span id="gemini-application-reportgenerator-reportgenerator"></span><h1><span class="section-number">6.3.6.1. </span>gemini_application.reportgenerator.reportgenerator<a class="headerlink" href="#module-gemini_application.reportgenerator.reportgenerator" title="Link to this heading"></a></h1>
+<p>PDF report generation for well performance analysis and monitoring data.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator" title="gemini_application.reportgenerator.reportgenerator.ReportGenerator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReportGenerator</span></code></a>()</p></td>
+<td><p>Class for generating reports.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gemini_application.reportgenerator.reportgenerator.</span></span><span class="sig-name descname"><span class="pre">ReportGenerator</span></span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="gemini_application.application_abstract.html#gemini_application.application_abstract.ApplicationAbstract" title="gemini_application.application_abstract.ApplicationAbstract"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApplicationAbstract</span></code></a></p>
+<p>Class for generating reports.</p>
+<p>The class retrieves data from the database and generates a report in pdf format.</p>
+<p>Initialize report generator.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_X_Y_plot_to_pdf">
+<span class="sig-name descname"><span class="pre">add_X_Y_plot_to_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_X_Y_plot_to_pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_X_Y_plot_to_pdf" title="Link to this definition"></a></dt>
+<dd><p>Add X-Y plot to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_cross_plot">
+<span class="sig-name descname"><span class="pre">add_cross_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tagnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_cross_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_cross_plot" title="Link to this definition"></a></dt>
+<dd><p>Add cross plot to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_cross_plot_with_skin_lines">
+<span class="sig-name descname"><span class="pre">add_cross_plot_with_skin_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tagnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_cross_plot_with_skin_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_cross_plot_with_skin_lines" title="Link to this definition"></a></dt>
+<dd><p>Add cross plot with skin lines to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_esp_report">
+<span class="sig-name descname"><span class="pre">add_esp_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">esps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_esp_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_esp_report" title="Link to this definition"></a></dt>
+<dd><p>Add ESP report to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_injection_report">
+<span class="sig-name descname"><span class="pre">add_injection_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inj_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tagnames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_injection_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_injection_report" title="Link to this definition"></a></dt>
+<dd><p>Add injection report to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_nlog_data">
+<span class="sig-name descname"><span class="pre">add_nlog_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">LicenseHolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NlogPeriod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_prod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_inj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table3_df</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_nlog_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_nlog_data" title="Link to this definition"></a></dt>
+<dd><p>Load the NLOG EXCEL template and writes the data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_nlog_report">
+<span class="sig-name descname"><span class="pre">add_nlog_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">LicenseHolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NlogPeriod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_section1A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_section1B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_section2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_nlog_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_nlog_report" title="Link to this definition"></a></dt>
+<dd><p>Prepare NLOG report data and return Excel file as BytesIO.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_production_report">
+<span class="sig-name descname"><span class="pre">add_production_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prod_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tagnames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_production_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_production_report" title="Link to this definition"></a></dt>
+<dd><p>Add production report to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_stats_plot">
+<span class="sig-name descname"><span class="pre">add_stats_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inj_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_wells</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_stats_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_stats_plot" title="Link to this definition"></a></dt>
+<dd><p>Add statistics plot to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_stats_table">
+<span class="sig-name descname"><span class="pre">add_stats_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inj_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_wells</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_stats_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_stats_table" title="Link to this definition"></a></dt>
+<dd><p>Add statistics table to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_text_section_page">
+<span class="sig-name descname"><span class="pre">add_text_section_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'User</span> <span class="pre">Input</span> <span class="pre">Section'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_text_section_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_text_section_page" title="Link to this definition"></a></dt>
+<dd><p>Include the text section as a page.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_timeseries_plot_to_pdf">
+<span class="sig-name descname"><span class="pre">add_timeseries_plot_to_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_timeseries_plot_to_pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_timeseries_plot_to_pdf" title="Link to this definition"></a></dt>
+<dd><p>Add timeseries plot to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_title_page">
+<span class="sig-name descname"><span class="pre">add_title_page</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.add_title_page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.add_title_page" title="Link to this definition"></a></dt>
+<dd><p>Add title page to PDF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.align_series_on_common_timestamps">
+<span class="sig-name descname"><span class="pre">align_series_on_common_timestamps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamps_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamps_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.align_series_on_common_timestamps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.align_series_on_common_timestamps" title="Link to this definition"></a></dt>
+<dd><p>Align two series on shared timestamps, preserving series A ordering.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate" title="Link to this definition"></a></dt>
+<dd><p>Calculate report data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate_nlog_1A">
+<span class="sig-name descname"><span class="pre">calculate_nlog_1A</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.calculate_nlog_1A"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate_nlog_1A" title="Link to this definition"></a></dt>
+<dd><p>Calculate NLOG Section 1A values for each production well.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate_nlog_1B">
+<span class="sig-name descname"><span class="pre">calculate_nlog_1B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inj_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hexs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">injection_pumps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.calculate_nlog_1B"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate_nlog_1B" title="Link to this definition"></a></dt>
+<dd><p>Calculate NLOG Section 1B values for each injection well.</p>
+<dl class="simple">
+<dt>Output columns:</dt><dd><ul class="simple">
+<li><p>well_name</p></li>
+<li><p>inj_vol_water</p></li>
+<li><p>inj_temp_avg_weighted</p></li>
+<li><p>inj_pres_avg</p></li>
+<li><p>inj_pres_max</p></li>
+<li><p>inj_inhibit_vol</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate_nlog_2">
+<span class="sig-name descname"><span class="pre">calculate_nlog_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows_section2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.calculate_nlog_2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate_nlog_2" title="Link to this definition"></a></dt>
+<dd><p>Calculate Section 2 NLOG values per doublet from flat rows_section2.</p>
+<dl class="simple">
+<dt>rows_section2: list[dict] with keys:</dt><dd><p>component_name, component_type, nlog_parameter, parameter, tagname, doublet</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>[“doublet”, “tot_heat_MJ”, “tot_oper_hours”, “tot_el_cons_KWh”]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.DataFrame with columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate_total_volume">
+<span class="sig-name descname"><span class="pre">calculate_total_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_rates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.calculate_total_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.calculate_total_volume" title="Link to this definition"></a></dt>
+<dd><p>Calculate total volume from timestamps and flow rates.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.compute_skin_lines">
+<span class="sig-name descname"><span class="pre">compute_skin_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skin_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.compute_skin_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.compute_skin_lines" title="Link to this definition"></a></dt>
+<dd><p>Compute skin lines for plot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.convert_numeric_values">
+<span class="sig-name descname"><span class="pre">convert_numeric_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.convert_numeric_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.convert_numeric_values" title="Link to this definition"></a></dt>
+<dd><p>Convert numeric values in inputs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.create_section1a_df">
+<span class="sig-name descname"><span class="pre">create_section1a_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aquifers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.create_section1a_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.create_section1a_df" title="Link to this definition"></a></dt>
+<dd><p>Create dataframe for section 1A (production_well, esp, aquifer).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.create_section1b_df">
+<span class="sig-name descname"><span class="pre">create_section1b_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inj_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hexs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">injection_pumps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.create_section1b_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.create_section1b_df" title="Link to this definition"></a></dt>
+<dd><p>Create dataframe for section 1B (injection_well, heat_exchanger, injection_pump).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.create_section2_df">
+<span class="sig-name descname"><span class="pre">create_section2_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hexs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">booster_pumps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">injection_pumps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.create_section2_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.create_section2_df" title="Link to this definition"></a></dt>
+<dd><p>Create dataframe for section 2.</p>
+<p>Covers production wells, heat exchangers, ESPs, booster pumps,
+and injection pumps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.export_pdf">
+<span class="sig-name descname"><span class="pre">export_pdf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.export_pdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.export_pdf" title="Link to this definition"></a></dt>
+<dd><p>Export PDF report.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.find_adjacent_component_name">
+<span class="sig-name descname"><span class="pre">find_adjacent_component_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_unit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_unit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.find_adjacent_component_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.find_adjacent_component_name" title="Link to this definition"></a></dt>
+<dd><p>Return the adjacent component name matching the requested unit type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.format_value">
+<span class="sig-name descname"><span class="pre">format_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.format_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.format_value" title="Link to this definition"></a></dt>
+<dd><p>Change the format of a value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.gather_stats">
+<span class="sig-name descname"><span class="pre">gather_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tagnames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.gather_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.gather_stats" title="Link to this definition"></a></dt>
+<dd><p>Gather statistics for wells.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_aquifers">
+<span class="sig-name descname"><span class="pre">get_aquifers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_aquifers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_aquifers" title="Link to this definition"></a></dt>
+<dd><p>Get aquifer component names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_booster_pumps">
+<span class="sig-name descname"><span class="pre">get_booster_pumps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_booster_pumps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_booster_pumps" title="Link to this definition"></a></dt>
+<dd><p>Get injection pump component names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_clean_list">
+<span class="sig-name descname"><span class="pre">get_clean_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_clean_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_clean_list" title="Link to this definition"></a></dt>
+<dd><p>Get clean list from value list.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tagname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_data" title="Link to this definition"></a></dt>
+<dd><p>Get data for given tagname.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_esps">
+<span class="sig-name descname"><span class="pre">get_esps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_esps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_esps" title="Link to this definition"></a></dt>
+<dd><p>Get ESP component names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_hexs">
+<span class="sig-name descname"><span class="pre">get_hexs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_hexs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_hexs" title="Link to this definition"></a></dt>
+<dd><p>Get HEX component names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_injection_pumps">
+<span class="sig-name descname"><span class="pre">get_injection_pumps</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_injection_pumps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_injection_pumps" title="Link to this definition"></a></dt>
+<dd><p>Get injection pump component names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_injection_wells">
+<span class="sig-name descname"><span class="pre">get_injection_wells</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_injection_wells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_injection_wells" title="Link to this definition"></a></dt>
+<dd><p>Get injection wells component names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_nlog_tagnames_df">
+<span class="sig-name descname"><span class="pre">get_nlog_tagnames_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inj_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prod_wells</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hexs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">booster_pumps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">injection_pumps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aquifers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_nlog_tagnames_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_nlog_tagnames_df" title="Link to this definition"></a></dt>
+<dd><p>Build dataframes for sections 1A, 1B, and 2.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_production_wells">
+<span class="sig-name descname"><span class="pre">get_production_wells</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_production_wells"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_production_wells" title="Link to this definition"></a></dt>
+<dd><p>Get production wells component names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_unit_data">
+<span class="sig-name descname"><span class="pre">get_unit_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_tagnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_plant_units_fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_unit_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_unit_data" title="Link to this definition"></a></dt>
+<dd><p>Retrieve data for given units and tagnames from database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_units">
+<span class="sig-name descname"><span class="pre">get_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tagname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.get_units"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.get_units" title="Link to this definition"></a></dt>
+<dd><p>Get units for given tagname.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.init_parameters">
+<span class="sig-name descname"><span class="pre">init_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.init_parameters" title="Link to this definition"></a></dt>
+<dd><p>Initialize parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.initialize_pdf_object">
+<span class="sig-name descname"><span class="pre">initialize_pdf_object</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.initialize_pdf_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.initialize_pdf_object" title="Link to this definition"></a></dt>
+<dd><p>Initialize PDF object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.load_section_config">
+<span class="sig-name descname"><span class="pre">load_section_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.load_section_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.load_section_config" title="Link to this definition"></a></dt>
+<dd><p>Load section config JSON, falling back to default file if main file is missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.pd">
+<span class="sig-name descname"><span class="pre">pd</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;module</span> <span class="pre">'pandas'</span> <span class="pre">from</span> <span class="pre">'/home/runner/.cache/pypoetry/virtualenvs/gemini-geothermal-suite-open-3rgx8eE0-py3.11/lib/python3.11/site-packages/pandas/__init__.py'&gt;</span></em><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.pd" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.rows_from_section1_config">
+<span class="sig-name descname"><span class="pre">rows_from_section1_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_mapping</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.rows_from_section1_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.rows_from_section1_config" title="Link to this definition"></a></dt>
+<dd><p>Build rows for Section 1A / Section 1B (flat structure).</p>
+<p>JSON format example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">"prod_pres_avg"</span><span class="p">:</span> <span class="p">{</span> <span class="s2">"tagname"</span><span class="p">:</span> <span class="s2">"..."</span><span class="p">,</span> <span class="s2">"unit"</span><span class="p">:</span> <span class="s2">"production_well"</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.rows_from_section2_config">
+<span class="sig-name descname"><span class="pre">rows_from_section2_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section_cfg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_mapping</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.rows_from_section2_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.rows_from_section2_config" title="Link to this definition"></a></dt>
+<dd><p>Build rows for Section 2 (nested structure with in-between keys).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Handles:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>subkeys with a single unit:</dt><dd><p>“unit”: “esp”</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>subkeys with multiple units:</dt><dd><p>“unit”: [“esp”, “booster_pump”, “injection_pump”]</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Produces one row per:</dt><dd><p>component_type × component_instance × subkey</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.weighted_average_value_with_volume">
+<span class="sig-name descname"><span class="pre">weighted_average_value_with_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">volume_intervals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.weighted_average_value_with_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.weighted_average_value_with_volume" title="Link to this definition"></a></dt>
+<dd><p>Calculate the volume-weighted average of a value over time.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.reportgenerator.reportgenerator.ReportGenerator.wrap_text">
+<span class="sig-name descname"><span class="pre">wrap_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_chars_per_line</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/reportgenerator/reportgenerator.html#ReportGenerator.wrap_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.reportgenerator.reportgenerator.ReportGenerator.wrap_text" title="Link to this definition"></a></dt>
+<dd><p>Change line in text output.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_application.reportgenerator.html" class="btn btn-neutral float-left" title="6.3.6. gemini_application.reportgenerator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_application.tagbrowser.html" class="btn btn-neutral float-right" title="6.3.7. gemini_application.tagbrowser" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

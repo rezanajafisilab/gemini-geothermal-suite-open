@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.1.7.1. gemini_model.cooling_common.config &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.1.7.2. gemini_model.cooling_common.kernel" href="gemini_model.cooling_common.kernel.html" />
+    <link rel="prev" title="6.1.7. gemini_model.cooling_common" href="gemini_model.cooling_common.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.absorption_chiller.html">6.1.1. gemini_model.absorption_chiller</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.adder.html">6.1.2. gemini_model.adder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.boiler.html">6.1.3. gemini_model.boiler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.booster_pump.html">6.1.4. gemini_model.booster_pump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.chp.html">6.1.5. gemini_model.chp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.compressor.html">6.1.6. gemini_model.compressor</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_model.cooling_common.html">6.1.7. gemini_model.cooling_common</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">6.1.7.1. gemini_model.cooling_common.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_model.cooling_common.kernel.html">6.1.7.2. gemini_model.cooling_common.kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_model.cooling_common.physics.html">6.1.7.3. gemini_model.cooling_common.physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_model.cooling_common.tower.html">6.1.7.4. gemini_model.cooling_common.tower</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_model.cooling_common.wrapper.html">6.1.7.5. gemini_model.cooling_common.wrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.cooling_tower.html">6.1.8. gemini_model.cooling_tower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.corrosion.html">6.1.9. gemini_model.corrosion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.electric_chiller.html">6.1.10. gemini_model.electric_chiller</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.erosion.html">6.1.11. gemini_model.erosion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.filter.html">6.1.12. gemini_model.filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.fluid.html">6.1.13. gemini_model.fluid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.heat_exchanger.html">6.1.14. gemini_model.heat_exchanger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.heatpump.html">6.1.15. gemini_model.heatpump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.injector_pump.html">6.1.16. gemini_model.injector_pump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.mixer.html">6.1.17. gemini_model.mixer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.model_abstract.html">6.1.18. gemini_model.model_abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.pump.html">6.1.19. gemini_model.pump</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.reservoir.html">6.1.20. gemini_model.reservoir</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.separator.html">6.1.21. gemini_model.separator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.splitter.html">6.1.22. gemini_model.splitter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_model.well.html">6.1.23. gemini_model.well</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_model.html"><span class="section-number">6.1. </span>gemini_model</a></li>
+          <li class="breadcrumb-item"><a href="gemini_model.cooling_common.html"><span class="section-number">6.1.7. </span>gemini_model.cooling_common</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.1.7.1. </span>gemini_model.cooling_common.config</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_model.cooling_common.config.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_model.cooling_common.config">
+<span id="gemini-model-cooling-common-config"></span><h1><span class="section-number">6.1.7.1. </span>gemini_model.cooling_common.config<a class="headerlink" href="#module-gemini_model.cooling_common.config" title="Link to this heading"></a></h1>
+<p>Explicit screening parameters (sources A002/A003/A006/A007/A013).</p>
+<p>All temperature envelopes below are analyst screening domains, not supplier ratings.
+Capacities/flows default to zero: equipment must be explicitly installed/supplied.
+Ratios are W per W of the named duty; water cp is independent of Rules brine cp.
+See 03_COMPONENT_EQUATIONS and the parameter handoff for bounds/provenance.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_model.cooling_common.config.validate_settings" title="gemini_model.cooling_common.config.validate_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_settings</span></code></a>(s)</p></td>
+<td><p>Reject malformed settings; physical shortfalls are handled by the kernel.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_model.cooling_common.config.AbsorptionSettings" title="gemini_model.cooling_common.config.AbsorptionSettings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AbsorptionSettings</span></code></a>([capacity_w, cop_th, ...])</p></td>
+<td><p>Single-effect constant COP; explicit provisional domain, A006/A007.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_model.cooling_common.config.CoolingSettings" title="gemini_model.cooling_common.config.CoolingSettings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoolingSettings</span></code></a>([option, electric, ...])</p></td>
+<td><p>Three options; optional free cooling is deliberately disabled (D002).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_model.cooling_common.config.ElectricSettings" title="gemini_model.cooling_common.config.ElectricSettings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElectricSettings</span></code></a>([capacity_w, cop, ...])</p></td>
+<td><p>Compressor-only COP with separate auxiliaries, A006/A007.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_model.cooling_common.config.TowerSettings" title="gemini_model.cooling_common.config.TowerSettings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TowerSettings</span></code></a>([capacity_w, circulation_m3s, ...])</p></td>
+<td><p>Declared capacity/flow and constant approach; not a tower performance map.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_model.cooling_common.config.WaterSettings" title="gemini_model.cooling_common.config.WaterSettings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WaterSettings</span></code></a>([cycles, density_kg_m3, ...])</p></td>
+<td><p>Effective-treatment/no-drift screening model, specification 11/A013.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gemini_model.cooling_common.config.</span></span><span class="sig-name descname"><span class="pre">AbsorptionSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capacity_w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cop_th</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">internal_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hot_supply_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hot_min_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">70.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hot_max_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">95.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hot_return_min_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">65.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sink_min_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sink_max_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">35.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supply_min_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supply_max_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hx_approach_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hx_ua_w_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hot_pump_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_model/cooling_common/config.html#AbsorptionSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Single-effect constant COP; explicit provisional domain, A006/A007.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.capacity_w">
+<span class="sig-name descname"><span class="pre">capacity_w</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.capacity_w" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.cop_th">
+<span class="sig-name descname"><span class="pre">cop_th</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.7</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.cop_th" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.hot_max_c">
+<span class="sig-name descname"><span class="pre">hot_max_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">95.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.hot_max_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.hot_min_c">
+<span class="sig-name descname"><span class="pre">hot_min_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">70.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.hot_min_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.hot_pump_ratio">
+<span class="sig-name descname"><span class="pre">hot_pump_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.005</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.hot_pump_ratio" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.hot_return_min_c">
+<span class="sig-name descname"><span class="pre">hot_return_min_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">65.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.hot_return_min_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.hot_supply_c">
+<span class="sig-name descname"><span class="pre">hot_supply_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">75.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.hot_supply_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.hx_approach_k">
+<span class="sig-name descname"><span class="pre">hx_approach_k</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.hx_approach_k" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.hx_ua_w_k">
+<span class="sig-name descname"><span class="pre">hx_ua_w_k</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.hx_ua_w_k" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.internal_ratio">
+<span class="sig-name descname"><span class="pre">internal_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.01</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.internal_ratio" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.sink_max_c">
+<span class="sig-name descname"><span class="pre">sink_max_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">35.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.sink_max_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.sink_min_c">
+<span class="sig-name descname"><span class="pre">sink_min_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.sink_min_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.supply_max_c">
+<span class="sig-name descname"><span class="pre">supply_max_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">25.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.supply_max_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.AbsorptionSettings.supply_min_c">
+<span class="sig-name descname"><span class="pre">supply_min_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.AbsorptionSettings.supply_min_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gemini_model.cooling_common.config.</span></span><span class="sig-name descname"><span class="pre">CoolingSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option='water'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">electric=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absorption=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tower=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">water=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">water_cp_j_kg_k=4180.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chilled_pump_ratio=0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chilled_pump_heat_to_water=1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">free_cooling_enabled=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_ids=('A002'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'A003'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'A006'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'A007'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'A013')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_model/cooling_common/config.html#CoolingSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Three options; optional free cooling is deliberately disabled (D002).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.absorption">
+<span class="sig-name descname"><span class="pre">absorption</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#gemini_model.cooling_common.config.AbsorptionSettings" title="gemini_model.cooling_common.config.AbsorptionSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsorptionSettings</span></code></a></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.absorption" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.chilled_pump_heat_to_water">
+<span class="sig-name descname"><span class="pre">chilled_pump_heat_to_water</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.chilled_pump_heat_to_water" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.chilled_pump_ratio">
+<span class="sig-name descname"><span class="pre">chilled_pump_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.01</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.chilled_pump_ratio" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.electric">
+<span class="sig-name descname"><span class="pre">electric</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#gemini_model.cooling_common.config.ElectricSettings" title="gemini_model.cooling_common.config.ElectricSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">ElectricSettings</span></code></a></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.electric" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.free_cooling_enabled">
+<span class="sig-name descname"><span class="pre">free_cooling_enabled</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.free_cooling_enabled" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.option">
+<span class="sig-name descname"><span class="pre">option</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'water'</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.option" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.source_ids">
+<span class="sig-name descname"><span class="pre">source_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('A002',</span> <span class="pre">'A003',</span> <span class="pre">'A006',</span> <span class="pre">'A007',</span> <span class="pre">'A013')</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.source_ids" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.tower">
+<span class="sig-name descname"><span class="pre">tower</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#gemini_model.cooling_common.config.TowerSettings" title="gemini_model.cooling_common.config.TowerSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">TowerSettings</span></code></a></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.tower" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.water">
+<span class="sig-name descname"><span class="pre">water</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#gemini_model.cooling_common.config.WaterSettings" title="gemini_model.cooling_common.config.WaterSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterSettings</span></code></a></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.water" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.CoolingSettings.water_cp_j_kg_k">
+<span class="sig-name descname"><span class="pre">water_cp_j_kg_k</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4180.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.CoolingSettings.water_cp_j_kg_k" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gemini_model.cooling_common.config.</span></span><span class="sig-name descname"><span class="pre">ElectricSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capacity_w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condenser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'water'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cop_boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'compressor_only'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">air_fan_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sink_min_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sink_max_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supply_min_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supply_max_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_model/cooling_common/config.html#ElectricSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Compressor-only COP with separate auxiliaries, A006/A007.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings.air_fan_ratio">
+<span class="sig-name descname"><span class="pre">air_fan_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.02</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings.air_fan_ratio" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings.capacity_w">
+<span class="sig-name descname"><span class="pre">capacity_w</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings.capacity_w" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings.condenser">
+<span class="sig-name descname"><span class="pre">condenser</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'water'</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings.condenser" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings.cop">
+<span class="sig-name descname"><span class="pre">cop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings.cop" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings.cop_boundary">
+<span class="sig-name descname"><span class="pre">cop_boundary</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'compressor_only'</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings.cop_boundary" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings.sink_max_c">
+<span class="sig-name descname"><span class="pre">sink_max_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">40.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings.sink_max_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings.sink_min_c">
+<span class="sig-name descname"><span class="pre">sink_min_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-10.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings.sink_min_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings.supply_max_c">
+<span class="sig-name descname"><span class="pre">supply_max_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">25.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings.supply_max_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.ElectricSettings.supply_min_c">
+<span class="sig-name descname"><span class="pre">supply_min_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.ElectricSettings.supply_min_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.TowerSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gemini_model.cooling_common.config.</span></span><span class="sig-name descname"><span class="pre">TowerSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capacity_w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">circulation_m3s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approach_k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_return_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">40.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fan_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0126</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pump_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.005</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pump_heat_to_water</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_model/cooling_common/config.html#TowerSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_model.cooling_common.config.TowerSettings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Declared capacity/flow and constant approach; not a tower performance map.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.TowerSettings.approach_k">
+<span class="sig-name descname"><span class="pre">approach_k</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.TowerSettings.approach_k" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.TowerSettings.capacity_w">
+<span class="sig-name descname"><span class="pre">capacity_w</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.TowerSettings.capacity_w" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.TowerSettings.circulation_m3s">
+<span class="sig-name descname"><span class="pre">circulation_m3s</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.TowerSettings.circulation_m3s" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.TowerSettings.fan_ratio">
+<span class="sig-name descname"><span class="pre">fan_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0126</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.TowerSettings.fan_ratio" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.TowerSettings.max_return_c">
+<span class="sig-name descname"><span class="pre">max_return_c</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">40.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.TowerSettings.max_return_c" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.TowerSettings.pump_heat_to_water">
+<span class="sig-name descname"><span class="pre">pump_heat_to_water</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.TowerSettings.pump_heat_to_water" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.TowerSettings.pump_ratio">
+<span class="sig-name descname"><span class="pre">pump_ratio</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.005</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.TowerSettings.pump_ratio" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.WaterSettings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gemini_model.cooling_common.config.</span></span><span class="sig-name descname"><span class="pre">WaterSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cycles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density_kg_m3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_heat_j_kg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2450000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_fraction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_makeup_water_m3h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_blowdown_m3h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_model/cooling_common/config.html#WaterSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_model.cooling_common.config.WaterSettings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Effective-treatment/no-drift screening model, specification 11/A013.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.WaterSettings.cycles">
+<span class="sig-name descname"><span class="pre">cycles</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.WaterSettings.cycles" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.WaterSettings.density_kg_m3">
+<span class="sig-name descname"><span class="pre">density_kg_m3</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1000.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.WaterSettings.density_kg_m3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.WaterSettings.latent_fraction">
+<span class="sig-name descname"><span class="pre">latent_fraction</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.8</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.WaterSettings.latent_fraction" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.WaterSettings.latent_heat_j_kg">
+<span class="sig-name descname"><span class="pre">latent_heat_j_kg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2450000.0</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.WaterSettings.latent_heat_j_kg" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.WaterSettings.max_blowdown_m3h">
+<span class="sig-name descname"><span class="pre">max_blowdown_m3h</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.WaterSettings.max_blowdown_m3h" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.WaterSettings.max_makeup_water_m3h">
+<span class="sig-name descname"><span class="pre">max_makeup_water_m3h</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gemini_model.cooling_common.config.WaterSettings.max_makeup_water_m3h" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_model.cooling_common.config.validate_settings">
+<span class="sig-prename descclassname"><span class="pre">gemini_model.cooling_common.config.</span></span><span class="sig-name descname"><span class="pre">validate_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_model/cooling_common/config.html#validate_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_model.cooling_common.config.validate_settings" title="Link to this definition"></a></dt>
+<dd><p>Reject malformed settings; physical shortfalls are handled by the kernel.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_model.cooling_common.html" class="btn btn-neutral float-left" title="6.1.7. gemini_model.cooling_common" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_model.cooling_common.kernel.html" class="btn btn-neutral float-right" title="6.1.7.2. gemini_model.cooling_common.kernel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

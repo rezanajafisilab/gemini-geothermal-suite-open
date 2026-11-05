@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.5. Corrosion: CO2 Corrosion Rate &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5.6. Erosion: Erosional Velocity/Rate" href="model_erosion.html" />
+    <link rel="prev" title="5.4. Reservoir Performance Models" href="model_reservoir.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_applications.html">4. Applications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_models.html">5. Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="model_well_esp.html">5.1. Pump: Electrical Submersible Pump (ESP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_well_hydraulics.html">5.2. Well: Pressure and Temperature Hydraulics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_fluid_pvt.html">5.3. Fluid: PVT Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_reservoir.html">5.4. Reservoir Performance Models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.5. Corrosion: CO2 Corrosion Rate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">5.5.1. Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dld-de-waard-lotz-dugstad-1995">5.5.2. DLD – de Waard-Lotz-Dugstad (1995)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">5.5.2.1. Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">5.5.2.2. Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">5.5.2.3. Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#correlations">5.5.2.4. Correlations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dlm-de-waard-lotz-milliams-1991">5.5.3. DLM – de Waard-Lotz-Milliams (1991)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">5.5.3.1. Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">5.5.3.2. Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">5.5.3.3. Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">5.5.3.4. Correlations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#norsok-m-506">5.5.4. NORSOK M-506</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">5.5.4.1. Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">5.5.4.2. Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">5.5.4.3. Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">5.5.4.4. Correlations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#co2-partial-pressure-helper-model">5.5.5. CO2 Partial Pressure (helper model)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">5.5.5.1. Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">5.5.5.2. Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">5.5.5.3. Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">5.5.5.4. Correlations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="model_erosion.html">5.6. Erosion: Erosional Velocity/Rate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_surface_equipment.html">5.7. Surface Equipment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_models.html"><span class="section-number">5. </span>Models</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">5.5. </span>Corrosion: CO2 Corrosion Rate</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/model_corrosion.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="corrosion-co2-corrosion-rate">
+<h1><span class="section-number">5.5. </span>Corrosion: CO2 Corrosion Rate<a class="headerlink" href="#corrosion-co2-corrosion-rate" title="Link to this heading"></a></h1>
+<section id="description">
+<h2><span class="section-number">5.5.1. </span>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">gemini_model.corrosion.co2_corrosion.CO2Corrosion</span></code> model is a
+dispatcher that computes the internal CO2 corrosion rate of a pipe or well
+tubular, delegating the calculation to one of three industry-standard
+correlations selected via the <code class="docutils literal notranslate"><span class="pre">corrosion_model</span></code> parameter. The corrosion
+rate is returned in mm/year, representing the expected wall loss rate of
+carbon steel tubulars exposed to a CO2-containing brine at the given
+pressure, temperature, and flow conditions.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">corrosion_model</span></code></p></th>
+<th class="head"><p>Correlation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DLD</span></code></p></td>
+<td><p>de Waard-Lotz-Dugstad (1995)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DLM</span></code></p></td>
+<td><p>de Waard-Lotz-Milliams (1991)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NORSOK</span></code></p></td>
+<td><p>NORSOK M-506</p></td>
+</tr>
+</tbody>
+</table>
+<p>All three correlations follow the common <code class="docutils literal notranslate"><span class="pre">Model</span></code> interface used across
+GEMINI: provide inputs <code class="docutils literal notranslate"><span class="pre">u</span></code> (and optional state <code class="docutils literal notranslate"><span class="pre">x</span></code>), and set
+<code class="docutils literal notranslate"><span class="pre">parameters</span></code> including <code class="docutils literal notranslate"><span class="pre">corrosion_model</span></code> plus any correlation-specific
+parameters (e.g. <code class="docutils literal notranslate"><span class="pre">diameter</span></code>, <code class="docutils literal notranslate"><span class="pre">roughness</span></code>).</p>
+</section>
+<section id="dld-de-waard-lotz-dugstad-1995">
+<h2><span class="section-number">5.5.2. </span>DLD – de Waard-Lotz-Dugstad (1995)<a class="headerlink" href="#dld-de-waard-lotz-dugstad-1995" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.corrosion.correlation.dld_model.DLD</span></code> combines a
+reaction-controlled and a mass-transfer-controlled corrosion rate in series,
+then applies a protective-scale correction factor.</p>
+<section id="parameters">
+<h3><span class="section-number">5.5.2.1. </span>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diameter</span></code></p></td>
+<td><p>Pipe inner diameter <span class="math notranslate nohighlight">\(D\)</span> (m)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs">
+<h3><span class="section-number">5.5.2.2. </span>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pressure</span></code></p></td>
+<td><p>Total system pressure <span class="math notranslate nohighlight">\(p\)</span> (bar)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></td>
+<td><p>Temperature <span class="math notranslate nohighlight">\(T\)</span> (°C)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">co2_fraction</span></code></p></td>
+<td><p>CO2 mole fraction in the gas phase (-), optional if
+<code class="docutils literal notranslate"><span class="pre">co2_partial_pressure</span></code> is given</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">co2_partial_pressure</span></code></p></td>
+<td><p>CO2 partial pressure (bar), optional if <code class="docutils literal notranslate"><span class="pre">co2_fraction</span></code> is given</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">flow_rate</span></code></p></td>
+<td><p>Flow rate <span class="math notranslate nohighlight">\(v\)</span>-basis volumetric flow (m³/s)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs">
+<h3><span class="section-number">5.5.2.3. </span>Outputs<a class="headerlink" href="#outputs" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">corrosion_rate</span></code></p></td>
+<td><p>CO2 corrosion rate <span class="math notranslate nohighlight">\(CR\)</span> (mm/yr)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="correlations">
+<h3><span class="section-number">5.5.2.4. </span>Correlations<a class="headerlink" href="#correlations" title="Link to this heading"></a></h3>
+<p>Each correlation first converts the CO2 partial pressure to a fugacity,
+accounting for non-ideal gas behaviour at elevated pressure (this fugacity
+calculation is shared by DLD, DLM, and NORSOK below):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\varphi = \begin{cases}
+    10^{\,p\,(0.0031 - 1.4/T)} &amp; p \le 250\ \text{bar} \\
+    10^{\,250\,(0.0031 - 1.4/T)} &amp; p &gt; 250\ \text{bar}
+\end{cases}
+\qquad
+f_{CO2} = \varphi \cdot p_{CO2}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(p_{CO2} = x_{CO2}\cdot p\)</span> if the CO2 mole fraction is given
+instead of the partial pressure directly, and <span class="math notranslate nohighlight">\(T\)</span> is the temperature
+in Kelvin.</p>
+<p>The DLD reaction- and mass-transfer-controlled rates are combined as
+resistances in series, then corrected by a scaling factor:</p>
+<div class="math notranslate nohighlight">
+\[CR_r = 10^{\,4.93 - 1119/T + 0.58\log_{10} f_{CO2}}
+\qquad \text{(reaction-controlled, mm/yr)}\]</div>
+<div class="math notranslate nohighlight">
+\[CR_m = 2.45\,\frac{v^{0.8}}{D^{0.2}}\,f_{CO2}
+\qquad \text{(mass-transfer-controlled, mm/yr)}\]</div>
+<div class="math notranslate nohighlight">
+\[CR = \left(\frac{1}{CR_r} + \frac{1}{CR_m}\right)^{-1} \cdot F_{scale}\]</div>
+<p>The scaling correction factor (protective FeCO3 scale forming above a
+temperature threshold that depends on fugacity) is:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}T_{scale} = \frac{2400}{6.7 + 0.6\log_{10}f_{CO2}}
+\qquad
+F_{scale} = \begin{cases}
+    \min\!\big(10^{\,2400/T - 0.44\log_{10}f_{CO2} - 6.7},\ 1\big) &amp; T \ge T_{scale} \\
+    1 &amp; T &lt; T_{scale}
+\end{cases}\end{split}\]</div>
+<p>Reference: de Waard, Lotz &amp; Dugstad (1995), <em>Influence of liquid flow
+velocity on CO2 corrosion: A semi-empirical model</em>.
+<a class="reference external" href="https://www.osti.gov/biblio/106125">https://www.osti.gov/biblio/106125</a></p>
+</section>
+</section>
+<section id="dlm-de-waard-lotz-milliams-1991">
+<h2><span class="section-number">5.5.3. </span>DLM – de Waard-Lotz-Milliams (1991)<a class="headerlink" href="#dlm-de-waard-lotz-milliams-1991" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.corrosion.correlation.dlm_model.DLM</span></code> uses a single
+temperature/fugacity correlation (no explicit flow-velocity term) with the
+same scaling correction concept as DLD.</p>
+<section id="id1">
+<h3><span class="section-number">5.5.3.1. </span>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>This model has no configuration parameters beyond <code class="docutils literal notranslate"><span class="pre">corrosion_model</span></code>.</p>
+</section>
+<section id="id2">
+<h3><span class="section-number">5.5.3.2. </span>Inputs<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pressure</span></code></p></td>
+<td><p>Total system pressure <span class="math notranslate nohighlight">\(p\)</span> (bar)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></td>
+<td><p>Temperature <span class="math notranslate nohighlight">\(T\)</span> (°C)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">co2_fraction</span></code></p></td>
+<td><p>CO2 mole fraction in the gas phase (-), optional if
+<code class="docutils literal notranslate"><span class="pre">co2_partial_pressure</span></code> is given</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">co2_partial_pressure</span></code></p></td>
+<td><p>CO2 partial pressure (bar), optional if <code class="docutils literal notranslate"><span class="pre">co2_fraction</span></code> is given</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id3">
+<h3><span class="section-number">5.5.3.3. </span>Outputs<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">corrosion_rate</span></code></p></td>
+<td><p>CO2 corrosion rate <span class="math notranslate nohighlight">\(CR\)</span> (mm/yr)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id4">
+<h3><span class="section-number">5.5.3.4. </span>Correlations<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>Using the CO2 fugacity <span class="math notranslate nohighlight">\(f_{CO2}\)</span> from the shared calculation
+described above:</p>
+<div class="math notranslate nohighlight">
+\[CR = 10^{\,5.8 - 1710/T + 0.67\log_{10}f_{CO2}} \cdot F_{scale}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}T_{scale} = \frac{2400}{6.7 + 0.6\log_{10}f_{CO2}}
+\qquad
+F_{scale} = \begin{cases}
+    \min\!\big(10^{\,2400/T - 0.6\log_{10}f_{CO2} - 6.7},\ 1\big) &amp; T \ge T_{scale} \\
+    1 &amp; T &lt; T_{scale}
+\end{cases}\end{split}\]</div>
+<p>Reference: de Waard, Lotz &amp; Milliams (1991), <em>Predictive model for CO2
+corrosion engineering in wet natural gas pipelines</em>.
+<a class="reference external" href="https://doi.org/10.5006/1.3585212">https://doi.org/10.5006/1.3585212</a></p>
+</section>
+</section>
+<section id="norsok-m-506">
+<h2><span class="section-number">5.5.4. </span>NORSOK M-506<a class="headerlink" href="#norsok-m-506" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.corrosion.correlation.norsok_model.NORSOK</span></code> implements the
+NORSOK standard M-506 CO2 corrosion rate model, combining CO2 fugacity,
+wall shear stress, and a pH- and temperature-dependent correction.</p>
+<section id="id5">
+<h3><span class="section-number">5.5.4.1. </span>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diameter</span></code></p></td>
+<td><p>Pipe inner diameter <span class="math notranslate nohighlight">\(D\)</span> (m)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">roughness</span></code></p></td>
+<td><p>Pipe roughness <span class="math notranslate nohighlight">\(\varepsilon\)</span> (m)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id6">
+<h3><span class="section-number">5.5.4.2. </span>Inputs<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pressure</span></code></p></td>
+<td><p>System pressure <span class="math notranslate nohighlight">\(p\)</span> (bar)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temperature</span></code></p></td>
+<td><p>Temperature <span class="math notranslate nohighlight">\(T\)</span> (°C)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">co2_fraction</span></code></p></td>
+<td><p>CO2 mole fraction in the gas phase (-), optional if
+<code class="docutils literal notranslate"><span class="pre">co2_partial_pressure</span></code> is given</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">co2_partial_pressure</span></code></p></td>
+<td><p>CO2 partial pressure (bar), optional if <code class="docutils literal notranslate"><span class="pre">co2_fraction</span></code> is given</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">water_flow_rate</span></code></p></td>
+<td><p>Water flow rate <span class="math notranslate nohighlight">\(Q_w\)</span> (m³/day)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">water_density</span></code></p></td>
+<td><p>Water density <span class="math notranslate nohighlight">\(\rho\)</span> (kg/m³)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">water_viscosity</span></code></p></td>
+<td><p>Water viscosity <span class="math notranslate nohighlight">\(\mu\)</span> (cP)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bicarb_concentration</span></code></p></td>
+<td><p>Bicarbonate concentration (mg/l), used in the pH calculation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ionic_strength</span></code></p></td>
+<td><p>Ionic strength (g/l), used in the pH calculation</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id7">
+<h3><span class="section-number">5.5.4.3. </span>Outputs<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">corrosion_rate</span></code></p></td>
+<td><p>CO2 corrosion rate <span class="math notranslate nohighlight">\(CR\)</span> (mm/yr)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id8">
+<h3><span class="section-number">5.5.4.4. </span>Correlations<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p>Using the CO2 fugacity <span class="math notranslate nohighlight">\(f_{CO2}\)</span> from the shared calculation
+described in the DLD section above, the NORSOK rate equation is:</p>
+<div class="math notranslate nohighlight">
+\[CR = K_t \cdot f_{CO2}^{0.62} \cdot
+    \left(\frac{\tau}{19}\right)^{0.146 + 0.0324\log_{10}f_{CO2}} \cdot f(pH_t)\]</div>
+<p><strong>Temperature factor</strong> <span class="math notranslate nohighlight">\(K_t\)</span> is linearly interpolated from a fixed
+lookup table over temperature (°C):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>T (°C)</p></th>
+<th class="head"><p>5</p></th>
+<th class="head"><p>15</p></th>
+<th class="head"><p>20</p></th>
+<th class="head"><p>40</p></th>
+<th class="head"><p>60</p></th>
+<th class="head"><p>80</p></th>
+<th class="head"><p>90</p></th>
+<th class="head"><p>120</p></th>
+<th class="head"><p>150</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(K_t\)</span></p></td>
+<td><p>0.42</p></td>
+<td><p>1.59</p></td>
+<td><p>4.762</p></td>
+<td><p>8.927</p></td>
+<td><p>10.695</p></td>
+<td><p>9.949</p></td>
+<td><p>6.250</p></td>
+<td><p>7.770</p></td>
+<td><p>5.203</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wall shear stress</strong> <span class="math notranslate nohighlight">\(\tau\)</span> uses a simplified single-phase
+(water) friction-factor correlation:</p>
+<div class="math notranslate nohighlight">
+\[v = \frac{Q_w}{A} \qquad
+f = 0.001375\left[1 + \left(20000\,\frac{\varepsilon}{D} +
+    \frac{10^6\,\mu}{v\,D\,\rho}\right)^{0.33}\right]
+\qquad
+\tau = \tfrac{1}{2}\rho\,f\,v^2\]</div>
+<p><strong>pH</strong> is computed from a carbonate-equilibrium model (bicarbonate
+concentration, ionic strength, CO2 partial pressure, temperature/pressure
+-dependent equilibrium constants <span class="math notranslate nohighlight">\(K_0, K_1, K_2, K_{sp,FeCO_3}, K_w\)</span>),
+solved iteratively for <span class="math notranslate nohighlight">\([\text{H}^+]\)</span> via Newton-Raphson (the model
+does genuinely iterate here, unlike the explicit friction-factor
+correlations used elsewhere in GEMINI), then adjusted to a fixed reference
+pH curve <span class="math notranslate nohighlight">\(f(pH_t)\)</span> that is piecewise-fitted per temperature bin
+(5-150 °C) to represent the effect of protective iron-carbonate scaling on
+the corrosion rate.</p>
+<p>Reference: NORSOK Standard M-506, <em>CO2 corrosion rate calculation model</em>.
+<a class="reference external" href="https://www.standard.no">https://www.standard.no</a></p>
+</section>
+</section>
+<section id="co2-partial-pressure-helper-model">
+<h2><span class="section-number">5.5.5. </span>CO2 Partial Pressure (helper model)<a class="headerlink" href="#co2-partial-pressure-helper-model" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.corrosion.correlation.co2_partial_pressure_model.CO2PartialPressureModel</span></code>
+estimates the CO2 partial pressure of a system from gas composition and
+sample/system conditions, for use as an input to the corrosion correlations
+above when a direct measurement is not available.</p>
+<section id="id9">
+<h3><span class="section-number">5.5.5.1. </span>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p>This model has no configuration parameters; it operates directly on the
+input measurements below.</p>
+</section>
+<section id="id10">
+<h3><span class="section-number">5.5.5.2. </span>Inputs<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gas_pressure</span></code></p></td>
+<td><p>Gas phase pressure at sample conditions <span class="math notranslate nohighlight">\(p_{gas}\)</span> (bar)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">co2_mol_fraction</span></code></p></td>
+<td><p>CO2 mole fraction in the gas phase <span class="math notranslate nohighlight">\(x_{CO2}\)</span> (-)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gas_water_ratio</span></code></p></td>
+<td><p>Gas-water ratio <span class="math notranslate nohighlight">\(GWR\)</span> (sm³/sm³)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gas_density</span></code></p></td>
+<td><p>Gas phase density <span class="math notranslate nohighlight">\(\rho_{gas}\)</span> (kg/m³)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gas_molecular_weight</span></code></p></td>
+<td><p>Gas (average) molar weight <span class="math notranslate nohighlight">\(M_{gas}\)</span> (g/mol)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temperature_sample</span></code></p></td>
+<td><p>Temperature of the sample <span class="math notranslate nohighlight">\(T_{sample}\)</span> (°C)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">temperature_system</span></code></p></td>
+<td><p>Temperature of the system <span class="math notranslate nohighlight">\(T_{system}\)</span> (°C)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id11">
+<h3><span class="section-number">5.5.5.3. </span>Outputs<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&quot;CO2</span> <span class="pre">Partial</span> <span class="pre">Pressure</span> <span class="pre">[bar]&quot;</span></code></p></td>
+<td><p>Estimated CO2 partial pressure <span class="math notranslate nohighlight">\(p_{CO2}\)</span> (bar)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id12">
+<h3><span class="section-number">5.5.5.4. </span>Correlations<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\[K_H(T) = 0.0385\,\exp\!\left(2400\left(\frac{1}{T} - \frac{1}{293.15}\right)\right)
+\qquad \text{(Henry's constant, mol/(l.bar))}\]</div>
+<div class="math notranslate nohighlight">
+\[C_{aq} = x_{CO2}\,K_H(T_{sample})\,p_{gas}
+\qquad \text{(CO2 dissolved in liquid, mol/l)}\]</div>
+<div class="math notranslate nohighlight">
+\[C_{g} = x_{CO2}\,\frac{GWR \cdot \rho_{gas}}{M_{gas}}
+\qquad \text{(CO2 present in gas phase, mol/l)}\]</div>
+<div class="math notranslate nohighlight">
+\[p_{CO2} = \frac{C_{aq} + C_g}{K_H(T_{system})}\]</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="model_reservoir.html" class="btn btn-neutral float-left" title="5.4. Reservoir Performance Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="model_erosion.html" class="btn btn-neutral float-right" title="5.6. Erosion: Erosional Velocity/Rate" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

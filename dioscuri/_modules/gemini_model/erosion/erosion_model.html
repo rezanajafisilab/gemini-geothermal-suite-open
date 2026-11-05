@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.erosion.erosion_model &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.erosion.erosion_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.erosion.erosion_model</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Erosion rate meta-model dispatching to industry correlations."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.erosion.correlation.API</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErosionAPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.erosion.correlation.DNV</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErosionDNV</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.erosion.correlation.OKA</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErosionOKA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.erosion.correlation.TULSA</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErosionTULSA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.model_abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaticModel</span>
+
+<span class="c1"># -- canonical model names ------------------------------------------------</span>
+<span class="n">MODEL_DNVGL</span> <span class="o">=</span> <span class="s2">"DNVGL"</span>
+<span class="n">MODEL_OKA</span> <span class="o">=</span> <span class="s2">"OKA"</span>
+<span class="n">MODEL_API</span> <span class="o">=</span> <span class="s2">"API"</span>
+<span class="n">MODEL_TULSA</span> <span class="o">=</span> <span class="s2">"E/CRC Tulsa"</span>
+
+<span class="c1"># Map user-facing spellings (upper-cased) to canonical names.</span>
+<span class="n">_ALIASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"DNVGL"</span><span class="p">:</span> <span class="n">MODEL_DNVGL</span><span class="p">,</span>
+    <span class="s2">"DNV"</span><span class="p">:</span> <span class="n">MODEL_DNVGL</span><span class="p">,</span>
+    <span class="s2">"OKA"</span><span class="p">:</span> <span class="n">MODEL_OKA</span><span class="p">,</span>
+    <span class="s2">"API"</span><span class="p">:</span> <span class="n">MODEL_API</span><span class="p">,</span>
+    <span class="s2">"E/CRC TULSA"</span><span class="p">:</span> <span class="n">MODEL_TULSA</span><span class="p">,</span>
+    <span class="s2">"TULSA"</span><span class="p">:</span> <span class="n">MODEL_TULSA</span><span class="p">,</span>
+    <span class="s2">"ECRC"</span><span class="p">:</span> <span class="n">MODEL_TULSA</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Canonical name -&gt; correlation class exposing calculate_erosion_rate().</span>
+<span class="n">_RATE_CORRELATIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">MODEL_DNVGL</span><span class="p">:</span> <span class="n">ErosionDNV</span><span class="p">,</span>
+    <span class="n">MODEL_OKA</span><span class="p">:</span> <span class="n">ErosionOKA</span><span class="p">,</span>
+    <span class="n">MODEL_TULSA</span><span class="p">:</span> <span class="n">ErosionTULSA</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="normalize_model_name">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.erosion.erosion_model.html#gemini_model.erosion.erosion_model.normalize_model_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_model_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Resolve a user-facing erosion model name to its canonical form."""</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+    <span class="n">canonical</span> <span class="o">=</span> <span class="n">_ALIASES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">canonical</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown erosion_model '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">canonical</span></div>
+
+
+
+<div class="viewcode-block" id="is_velocity_model">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.erosion.erosion_model.html#gemini_model.erosion.erosion_model.is_velocity_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_velocity_model</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return whether the model yields a velocity limit (API) rather than a rate."""</span>
+    <span class="k">return</span> <span class="n">normalize_model_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="n">MODEL_API</span></div>
+
+
+
+<div class="viewcode-block" id="ErosionModel">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.erosion.erosion_model.html#gemini_model.erosion.erosion_model.ErosionModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ErosionModel</span><span class="p">(</span><span class="n">StaticModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Erosion correlation dispatcher (OKA, DNVGL, API, E/CRC Tulsa)."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize erosion model."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="ErosionModel.update_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.erosion.erosion_model.html#gemini_model.erosion.erosion_model.ErosionModel.update_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update model parameters."""</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="ErosionModel.initialize_state">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.erosion.erosion_model.html#gemini_model.erosion.erosion_model.ErosionModel.initialize_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Generate an initial state based on user parameters."""</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ErosionModel.update_state">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.erosion.erosion_model.html#gemini_model.erosion.erosion_model.ErosionModel.update_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update the state based on input u and state x."""</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ErosionModel.calculate_output">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.erosion.erosion_model.html#gemini_model.erosion.erosion_model.ErosionModel.calculate_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate erosion output based on input u and state x."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate</span><span class="p">(</span><span class="n">u</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ErosionModel.get_output">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.erosion.erosion_model.html#gemini_model.erosion.erosion_model.ErosionModel.get_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get output of the model."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Run the selected erosion correlation."""</span>
+        <span class="n">model_key</span> <span class="o">=</span> <span class="n">normalize_model_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_model"</span><span class="p">,</span> <span class="n">MODEL_DNVGL</span><span class="p">))</span>
+
+        <span class="n">correlation_input</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"erosion_rate_mm_yr"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"erosion_velocity_ms"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># -- velocity-limit model (API) -------------------------------------</span>
+        <span class="k">if</span> <span class="n">model_key</span> <span class="o">==</span> <span class="n">MODEL_API</span><span class="p">:</span>
+            <span class="n">rho_fluid_kgm3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">correlation_input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rho_fluid"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">out</span><span class="p">[</span><span class="s2">"erosion_velocity_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ErosionAPI</span><span class="o">.</span><span class="n">calculate_erosion_velocity</span><span class="p">(</span><span class="n">rho_fluid_kgm3</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="c1"># -- rate models (DNVGL, OKA, E/CRC Tulsa) --------------------------</span>
+        <span class="n">correlation</span> <span class="o">=</span> <span class="n">_RATE_CORRELATIONS</span><span class="p">[</span><span class="n">model_key</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">]</span> <span class="o">=</span> <span class="n">correlation</span><span class="o">.</span><span class="n">calculate_erosion_rate</span><span class="p">(</span><span class="n">correlation_input</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

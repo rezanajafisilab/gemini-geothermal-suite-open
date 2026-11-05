@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5.6. Erosion: Erosional Velocity/Rate &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5.7. Surface Equipment" href="model_surface_equipment.html" />
+    <link rel="prev" title="5.5. Corrosion: CO2 Corrosion Rate" href="model_corrosion.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_applications.html">4. Applications</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_models.html">5. Models</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="model_well_esp.html">5.1. Pump: Electrical Submersible Pump (ESP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_well_hydraulics.html">5.2. Well: Pressure and Temperature Hydraulics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_fluid_pvt.html">5.3. Fluid: PVT Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_reservoir.html">5.4. Reservoir Performance Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_corrosion.html">5.5. Corrosion: CO2 Corrosion Rate</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.6. Erosion: Erosional Velocity/Rate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">5.6.1. Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#common-flow-terms">5.6.2. Common flow terms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#api-rp-14e-velocity-limit">5.6.3. API RP 14E (velocity limit)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">5.6.3.1. Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inputs">5.6.3.2. Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#outputs">5.6.3.3. Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#correlations">5.6.3.4. Correlations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dnv-gl-rp-o501">5.6.4. DNV GL RP-O501</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">5.6.4.1. Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">5.6.4.2. Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">5.6.4.3. Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">5.6.4.4. Correlations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#oka">5.6.5. Oka</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">5.6.5.1. Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">5.6.5.2. Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">5.6.5.3. Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">5.6.5.4. Correlations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#e-crc-tulsa">5.6.6. E/CRC Tulsa</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">5.6.6.1. Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10">5.6.6.2. Inputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">5.6.6.3. Outputs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">5.6.6.4. Correlations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="model_surface_equipment.html">5.7. Surface Equipment</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_models.html"><span class="section-number">5. </span>Models</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">5.6. </span>Erosion: Erosional Velocity/Rate</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/model_erosion.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="erosion-erosional-velocity-rate">
+<h1><span class="section-number">5.6. </span>Erosion: Erosional Velocity/Rate<a class="headerlink" href="#erosion-erosional-velocity-rate" title="Link to this heading"></a></h1>
+<section id="description">
+<h2><span class="section-number">5.6.1. </span>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">gemini_model.erosion.erosion_model</span></code> module is a dispatcher that
+computes either an erosional rate (mm/year, for a metal-loss correlation) or
+an erosional velocity limit (m/s, for the API velocity-based approach),
+depending on the selected <code class="docutils literal notranslate"><span class="pre">erosion_model</span></code> parameter. Rate-based
+correlations (DNVGL, OKA, E/CRC Tulsa) return an erosion rate in mm/year,
+representing expected wall loss due to solid-particle or sand erosion. The
+API correlation instead returns a maximum recommended flow velocity (m/s)
+below which erosion risk is considered acceptable.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">erosion_model</span></code></p></th>
+<th class="head"><p>Correlation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DNVGL</span></code></p></td>
+<td><p>DNV GL RP-O501 erosion rate correlation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OKA</span></code></p></td>
+<td><p>Oka erosion rate correlation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">E/CRC</span> <span class="pre">Tulsa</span></code></p></td>
+<td><p>University of Tulsa E/CRC erosion rate correlation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">API</span></code></p></td>
+<td><p>API RP 14E erosional velocity limit</p></td>
+</tr>
+</tbody>
+</table>
+<p>Use <code class="docutils literal notranslate"><span class="pre">normalize_model_name(name)</span></code> to resolve a user-facing spelling (e.g.
+<code class="docutils literal notranslate"><span class="pre">&quot;DNV&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;ECRC&quot;</span></code>) to its canonical form, and
+<code class="docutils literal notranslate"><span class="pre">is_velocity_model(name)</span></code> to check whether a model produces a velocity
+limit (<code class="docutils literal notranslate"><span class="pre">API</span></code>) rather than an erosion rate.</p>
+</section>
+<section id="common-flow-terms">
+<h2><span class="section-number">5.6.2. </span>Common flow terms<a class="headerlink" href="#common-flow-terms" title="Link to this heading"></a></h2>
+<p>All three rate correlations first derive the particle/fluid mass flow and
+mixture impact velocity from the volumetric flow rate, via the shared
+helper <code class="docutils literal notranslate"><span class="pre">gemini_model.erosion.correlation._common.mass_flow_and_velocity</span></code>:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(Q\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">flowRate</span></code></p></td>
+<td><p>Fluid flow rate (input, m³/h)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\rho_f\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rho_fluid</span></code></p></td>
+<td><p>Mixture density of the fluid (input, kg/m³)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(D\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">diameter</span></code></p></td>
+<td><p>Inner diameter of the pipe (input, m)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\dot{m}_p\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Particle/fluid mass flow (kg/s)</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(U_p\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Mixture impact velocity (m/s)</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(A\)</span></p></td>
+<td><p>–</p></td>
+<td><p>Pipe cross-sectional area (m²)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="math notranslate nohighlight">
+\[\dot{m}_p = \frac{Q\,\rho_f}{3600} \qquad
+A = \frac{\pi}{4}D^2 \qquad
+U_p = \frac{\dot{m}_p}{\rho_f\,A}\]</div>
+</section>
+<section id="api-rp-14e-velocity-limit">
+<h2><span class="section-number">5.6.3. </span>API RP 14E (velocity limit)<a class="headerlink" href="#api-rp-14e-velocity-limit" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.erosion.correlation.API.ErosionAPI</span></code> computes the maximum
+recommended flow velocity to limit erosion, using the classic API RP 14E
+“C-factor” approach.</p>
+<section id="parameters">
+<h3><span class="section-number">5.6.3.1. </span>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<p>This model has no configuration parameters.</p>
+</section>
+<section id="inputs">
+<h3><span class="section-number">5.6.3.2. </span>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rho_fluid</span></code></p></td>
+<td><p>Mixture density of the fluid <span class="math notranslate nohighlight">\(\rho_f\)</span> (kg/m³)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs">
+<h3><span class="section-number">5.6.3.3. </span>Outputs<a class="headerlink" href="#outputs" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">erosion_velocity_ms</span></code></p></td>
+<td><p>Maximum erosion-limited flow velocity <span class="math notranslate nohighlight">\(U_{erosion}\)</span> (m/s)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="correlations">
+<h3><span class="section-number">5.6.3.4. </span>Correlations<a class="headerlink" href="#correlations" title="Link to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\[U_{erosion} = C_{unit} \cdot \frac{C}{\sqrt{\rho_f}}
+\qquad C = 125,\quad C_{unit} = \frac{0.3048}{\sqrt{0.0283/0.454}}\]</div>
+</section>
+</section>
+<section id="dnv-gl-rp-o501">
+<h2><span class="section-number">5.6.4. </span>DNV GL RP-O501<a class="headerlink" href="#dnv-gl-rp-o501" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.erosion.correlation.DNV.ErosionDNV</span></code> computes erosion rate
+for a given pipe material and particle impact angle, using material-specific
+constants <span class="math notranslate nohighlight">\(K\)</span>, <span class="math notranslate nohighlight">\(n\)</span>, and pipe density <span class="math notranslate nohighlight">\(\rho_{pipe}\)</span>.</p>
+<section id="id1">
+<h3><span class="section-number">5.6.4.1. </span>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mater</span></code></p></td>
+<td><p>Pipe material: <code class="docutils literal notranslate"><span class="pre">steel</span></code>, <code class="docutils literal notranslate"><span class="pre">titanium</span></code>, <code class="docutils literal notranslate"><span class="pre">GRP/epoxy</span></code>,
+<code class="docutils literal notranslate"><span class="pre">GRP/vinyl</span> <span class="pre">ester</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h3><span class="section-number">5.6.4.2. </span>Inputs<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></td>
+<td><p>Particle impact angle <span class="math notranslate nohighlight">\(\alpha\)</span> (deg)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">flowRate</span></code>, <code class="docutils literal notranslate"><span class="pre">rho_fluid</span></code>, <code class="docutils literal notranslate"><span class="pre">diameter</span></code></p></td>
+<td><p>Shared flow terms, see “Common flow terms” above</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id3">
+<h3><span class="section-number">5.6.4.3. </span>Outputs<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">erosion_rate_mm_yr</span></code></p></td>
+<td><p>Erosion rate <span class="math notranslate nohighlight">\(EL\)</span> (mm/yr)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id4">
+<h3><span class="section-number">5.6.4.4. </span>Correlations<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>Material-dependent constants:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">mater</span></code></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(K\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(n\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\rho_{pipe}\)</span> (kg/m³)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">steel</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(2\times10^{-9}\)</span></p></td>
+<td><p>2.6</p></td>
+<td><p>7800</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">titanium</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(2\times10^{-9}\)</span></p></td>
+<td><p>2.6</p></td>
+<td><p>4500</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GRP/epoxy</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(0.3\times10^{-9}\)</span></p></td>
+<td><p>3.6</p></td>
+<td><p>1800</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">GRP/vinyl</span> <span class="pre">ester</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(0.6\times10^{-9}\)</span></p></td>
+<td><p>3.6</p></td>
+<td><p>1800</p></td>
+</tr>
+</tbody>
+</table>
+<p>Impact-angle function (with <span class="math notranslate nohighlight">\(\alpha\)</span> in radians):</p>
+<div class="math notranslate nohighlight">
+\[F(\alpha) = \alpha\big(9.37 + \alpha(-42.295 + \alpha(110.864 +
+    \alpha(-175.804 + \alpha(170.137 + \alpha(-98.398 + \alpha(31.211 -
+    4.17\alpha)))))))\big)\]</div>
+<p>The impacted-area projection and erosion rate are:</p>
+<div class="math notranslate nohighlight">
+\[A_t = \frac{A}{\sin\alpha}
+\qquad
+EL = \frac{31.5576\times10^6\,\dot{m}_p\,K\,U_p^{\,n}\,F(\alpha)}{\rho_{pipe}\,A_t}
+\quad \text{[mm/yr]}\]</div>
+<p>Reference: DNV GL, <em>Recommended Practice RP-O501, Erosive Wear in Piping
+Systems</em>.</p>
+</section>
+</section>
+<section id="oka">
+<h2><span class="section-number">5.6.5. </span>Oka<a class="headerlink" href="#oka" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.erosion.correlation.OKA.ErosionOKA</span></code> uses reference particle
+velocity/diameter and material-hardness-dependent exponents.</p>
+<section id="id5">
+<h3><span class="section-number">5.6.5.1. </span>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mater_particle</span></code></p></td>
+<td><p>Particle material: <code class="docutils literal notranslate"><span class="pre">SIO2</span></code>, <code class="docutils literal notranslate"><span class="pre">SIC</span></code>, <code class="docutils literal notranslate"><span class="pre">GLASS</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id6">
+<h3><span class="section-number">5.6.5.2. </span>Inputs<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></td>
+<td><p>Particle impact angle <span class="math notranslate nohighlight">\(\alpha\)</span> (deg)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Hv</span></code></p></td>
+<td><p>Particle Vickers hardness <span class="math notranslate nohighlight">\(H_v\)</span> (GPa)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diameter_particle</span></code></p></td>
+<td><p>Particle diameter <span class="math notranslate nohighlight">\(d_p\)</span> (mm)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">flowRate</span></code>, <code class="docutils literal notranslate"><span class="pre">rho_fluid</span></code>, <code class="docutils literal notranslate"><span class="pre">diameter</span></code></p></td>
+<td><p>Shared flow terms, see “Common flow terms” above</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id7">
+<h3><span class="section-number">5.6.5.3. </span>Outputs<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">erosion_rate_mm_yr</span></code></p></td>
+<td><p>Erosion rate <span class="math notranslate nohighlight">\(EL\)</span> (mm/yr)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id8">
+<h3><span class="section-number">5.6.5.4. </span>Correlations<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<p>Particle-material-dependent constants:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 15.0%" />
+<col style="width: 30.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">mater_particle</span></code></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(K\)</span></p></th>
+<th class="head"><p>Exponents <span class="math notranslate nohighlight">\((k_1, k_2, k_3)\)</span></p></th>
+<th class="head"><p>Reference <span class="math notranslate nohighlight">\((U_{p,ref}\,[\text{m/s}], d_{p,ref}\,[\mu\text{m}])\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SIO2</span></code></p></td>
+<td><p>65</p></td>
+<td><p><span class="math notranslate nohighlight">\((-0.12,\ 2.3\,H_v^{0.038},\ 0.19)\)</span></p></td>
+<td><p>(104, 326)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">SIC</span></code></p></td>
+<td><p>45</p></td>
+<td><p><span class="math notranslate nohighlight">\((-0.05,\ 3\,H_v^{0.085},\ 0.19)\)</span></p></td>
+<td><p>(99, 326)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GLASS</span></code></p></td>
+<td><p>27</p></td>
+<td><p><span class="math notranslate nohighlight">\((-0.16,\ 2.1,\ 0.19)\)</span></p></td>
+<td><p>(100, 200)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="math notranslate nohighlight">
+\[E(\alpha) = K\,(H_v)^{k_1} \left(\frac{U_p}{U_{p,ref}}\right)^{k_2}
+    \left(\frac{d_p}{d_{p,ref}}\right)^{k_3}
+\qquad \text{[mm}^3\text{/kg]}\]</div>
+<div class="math notranslate nohighlight">
+\[A_t = \frac{A}{\sin\alpha}
+\qquad
+EL = (3600 \cdot 24 \cdot 365.25)\,\frac{\dot{m}_p}{A_t}\,E(\alpha)
+\quad \text{[mm/yr]}\]</div>
+<p>Reference: Oka, Y.I. et al. (2005), <em>Practical estimation of erosion damage
+caused by solid particle impact</em>, Wear 259.
+<a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0043164805000979">https://www.sciencedirect.com/science/article/pii/S0043164805000979</a></p>
+</section>
+</section>
+<section id="e-crc-tulsa">
+<h2><span class="section-number">5.6.6. </span>E/CRC Tulsa<a class="headerlink" href="#e-crc-tulsa" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">gemini_model.erosion.correlation.TULSA.ErosionTULSA</span></code> uses a Vickers-to-
+Brinell hardness conversion and a particle-shape factor.</p>
+<section id="id9">
+<h3><span class="section-number">5.6.6.1. </span>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rho_pipe</span></code></p></td>
+<td><p>Pipe material density <span class="math notranslate nohighlight">\(\rho_{pipe}\)</span> (kg/m³)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id10">
+<h3><span class="section-number">5.6.6.2. </span>Inputs<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code></p></td>
+<td><p>Particle impact angle <span class="math notranslate nohighlight">\(\alpha\)</span> (deg)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Hv</span></code></p></td>
+<td><p>Particle Vickers hardness <span class="math notranslate nohighlight">\(H_v\)</span> (GPa)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fs</span></code></p></td>
+<td><p>Particle shape factor <span class="math notranslate nohighlight">\(F_s\)</span>, 0.2 (rounded) - 1 (sharp) (-)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">flowRate</span></code>, <code class="docutils literal notranslate"><span class="pre">rho_fluid</span></code>, <code class="docutils literal notranslate"><span class="pre">diameter</span></code></p></td>
+<td><p>Shared flow terms, see “Common flow terms” above</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id11">
+<h3><span class="section-number">5.6.6.3. </span>Outputs<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 75.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Output</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">erosion_rate_mm_yr</span></code></p></td>
+<td><p>Erosion rate <span class="math notranslate nohighlight">\(EL\)</span> (mm/yr)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id12">
+<h3><span class="section-number">5.6.6.4. </span>Correlations<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<p>Impact-angle function (with <span class="math notranslate nohighlight">\(\alpha\)</span> in radians):</p>
+<div class="math notranslate nohighlight">
+\[F(\alpha) = 5.4\alpha - 10.11\alpha^2 + 10.93\alpha^3 - 6.33\alpha^4 + 1.42\alpha^5\]</div>
+<p>Vickers-to-Brinell hardness conversion:</p>
+<div class="math notranslate nohighlight">
+\[H_{v}' = \frac{H_v}{0.009807} \qquad
+H_{b}' = 0.95057\,H_v' - 0.03743\]</div>
+<p>Erosion ratio and rate:</p>
+<div class="math notranslate nohighlight">
+\[ER = C\,H_b'^{\,-0.59}\,F_s\,U_p^{\,n}\,F(\alpha)
+\qquad C = 2.17\times10^{-7},\ n = 2.41 \qquad \text{[kg/kg]}\]</div>
+<div class="math notranslate nohighlight">
+\[A_t = \frac{A}{\sin\alpha}
+\qquad
+EL = (3600\cdot 24\cdot 365.25)\,\frac{ER\,\dot{m}_p}{\rho_{pipe}\,A_t}
+\quad \text{[mm/yr]}\]</div>
+<p>Reference: University of Tulsa Erosion/Corrosion Research Center (E/CRC).
+<a class="reference external" href="http://www.ecrc.utulsa.edu/">http://www.ecrc.utulsa.edu/</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="model_corrosion.html" class="btn btn-neutral float-left" title="5.5. Corrosion: CO2 Corrosion Rate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="model_surface_equipment.html" class="btn btn-neutral float-right" title="5.7. Surface Equipment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.3.8.4. gemini_application.wims.corrosion_model &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.3.8.5. gemini_application.wims.erosion_from_prod_data" href="gemini_application.wims.erosion_from_prod_data.html" />
+    <link rel="prev" title="6.3.8.3. gemini_application.wims.corrosion_from_prod_data" href="gemini_application.wims.corrosion_from_prod_data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.application_abstract.html">6.3.1. gemini_application.application_abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.chatpopup.html">6.3.2. gemini_application.chatpopup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.esp.html">6.3.3. gemini_application.esp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.injectionwell.html">6.3.4. gemini_application.injectionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.productionwell.html">6.3.5. gemini_application.productionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.reportgenerator.html">6.3.6. gemini_application.reportgenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.tagbrowser.html">6.3.7. gemini_application.tagbrowser</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_application.wims.html">6.3.8. gemini_application.wims</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.common.html">6.3.8.1. gemini_application.wims.common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_logs.html">6.3.8.2. gemini_application.wims.corrosion_from_logs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_prod_data.html">6.3.8.3. gemini_application.wims.corrosion_from_prod_data</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">6.3.8.4. gemini_application.wims.corrosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_prod_data.html">6.3.8.5. gemini_application.wims.erosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_tally.html">6.3.8.6. gemini_application.wims.erosion_from_tally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_model.html">6.3.8.7. gemini_application.wims.erosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.model_optimization.html">6.3.8.8. gemini_application.wims.model_optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.html"><span class="section-number">6.3. </span>gemini_application</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.wims.html"><span class="section-number">6.3.8. </span>gemini_application.wims</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.3.8.4. </span>gemini_application.wims.corrosion_model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_application.wims.corrosion_model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_application.wims.corrosion_model">
+<span id="gemini-application-wims-corrosion-model"></span><h1><span class="section-number">6.3.8.4. </span>gemini_application.wims.corrosion_model<a class="headerlink" href="#module-gemini_application.wims.corrosion_model" title="Link to this heading"></a></h1>
+<p>CO2 corrosion analysis application with caliper log processing and model optimization.</p>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication" title="gemini_application.wims.corrosion_model.CO2CorrosionApplication"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CO2CorrosionApplication</span></code></a>()</p></td>
+<td><p>Class for CO2 Corrosion application.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_model.</span></span><span class="sig-name descname"><span class="pre">CO2CorrosionApplication</span></span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="gemini_application.application_abstract.html#gemini_application.application_abstract.ApplicationAbstract" title="gemini_application.application_abstract.ApplicationAbstract"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApplicationAbstract</span></code></a></p>
+<p>Class for CO2 Corrosion application.</p>
+<p>Initialize CO2 corrosion application.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.calculate">
+<span class="sig-name descname"><span class="pre">calculate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.calculate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.calculate" title="Link to this definition"></a></dt>
+<dd><p>Execute main calculation pipeline.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.detect_joints">
+<span class="sig-name descname"><span class="pre">detect_joints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detection_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.detect_joints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.detect_joints" title="Link to this definition"></a></dt>
+<dd><p>Detect joint candidates for each uploaded log (QA/QC step).</p>
+<p>Stores results in <code class="docutils literal notranslate"><span class="pre">self.outputs[&quot;detectedJoints&quot;]</span></code> – a list (per log)
+of candidate dicts with keys: joint_no, top, bottom, method, tally.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_caliper_logs">
+<span class="sig-name descname"><span class="pre">get_caliper_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.get_caliper_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_caliper_logs" title="Link to this definition"></a></dt>
+<dd><p>Get caliper logs data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_corrosion_rate_from_logs">
+<span class="sig-name descname"><span class="pre">get_corrosion_rate_from_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.get_corrosion_rate_from_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_corrosion_rate_from_logs" title="Link to this definition"></a></dt>
+<dd><p>Compute measured corrosion based on log scenarios.</p>
+<dl class="simple">
+<dt>Scenarios:</dt><dd><ul class="simple">
+<li><p>No logs =&gt; ‘calculation not possible’</p></li>
+<li><p>1 log =&gt; compare that log to well tally ID at baseline date</p></li>
+<li><p>2+ logs =&gt; compare each log to the <em>previous</em> one (chronologically)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_corrosion_rate_from_prod_data">
+<span class="sig-name descname"><span class="pre">get_corrosion_rate_from_prod_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.get_corrosion_rate_from_prod_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_corrosion_rate_from_prod_data" title="Link to this definition"></a></dt>
+<dd><p>Compute corrosion rate from production data using VLP per-joint P/T.</p>
+<p>Splits the production window into intervals defined by log dates from
+<code class="docutils literal notranslate"><span class="pre">logs_metadata</span></code>.  Output is stored in
+<code class="docutils literal notranslate"><span class="pre">self.outputs['measuredCorrosionRate']</span></code> with columns ‘Joint No.’,
+‘Corrosion rate [mm/year] (date1 -&gt; date2)’, and
+‘Corroded [mm] (date1 -&gt; date2)’ for each interval.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_data" title="Link to this definition"></a></dt>
+<dd><p>Load data if available.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_gas_analysis_data">
+<span class="sig-name descname"><span class="pre">get_gas_analysis_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.get_gas_analysis_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_gas_analysis_data" title="Link to this definition"></a></dt>
+<dd><p>Get gas analysis data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_production_data">
+<span class="sig-name descname"><span class="pre">get_production_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coarsen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecimate_bin_hours</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.get_production_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_production_data" title="Link to this definition"></a></dt>
+<dd><p>Get production data from the plant database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coarsen</strong> (<em>bool</em>) – If True, downsample flow, pressure, and temperature using change-point
+detection (see <code class="docutils literal notranslate"><span class="pre">coarsen_timeseries_by_change_point</span></code>).</p></li>
+<li><p><strong>pen</strong> (<em>float</em>) – Penalty passed to the change-point detector when <code class="docutils literal notranslate"><span class="pre">coarsen</span></code> is True.</p></li>
+<li><p><strong>predecimate_bin_hours</strong> (<em>float</em>) – Hours per bin used before PELT when the native sampling interval is
+finer than this value. The resulting bin count follows from the data
+time span (e.g. hourly data over ~8 years with <code class="docutils literal notranslate"><span class="pre">24</span></code> yields ~2920 bins).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_remaining_days_to_min_thickness">
+<span class="sig-name descname"><span class="pre">get_remaining_days_to_min_thickness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_remaining_thickness_mm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.get_remaining_days_to_min_thickness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_remaining_days_to_min_thickness" title="Link to this definition"></a></dt>
+<dd><p>Compute remaining days until remaining thickness reaches the minimum.</p>
+<p>Uses the latest (by date) corrosion rate and remaining thickness:
+- Latest corrosion rate: last interval in measuredCorrosionRate (chronologically).
+- Latest remaining thickness: last log date column in remainingThicknessAtLogDate.</p>
+<p>Formula: days = (remaining_thickness_mm - min_remaining_thickness_mm)
+/ (corrosion_rate_mm_per_year) * 365.25</p>
+<p>Output: self.outputs[“remainingDaysToMinThickness”] DataFrame with columns
+Joint No. and “Remaining days to min. thickness [days]”.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_remaining_thickness_at_log_dates">
+<span class="sig-name descname"><span class="pre">get_remaining_thickness_at_log_dates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.get_remaining_thickness_at_log_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_remaining_thickness_at_log_dates" title="Link to this definition"></a></dt>
+<dd><p>Compute remaining wall thickness [mm] at each log date.</p>
+<p>For each processed log (sorted by date), remaining thickness at that date
+is (OD - Max. ID) from well tally and log, converted to mm.
+Output: self.outputs[“remainingThicknessAtLogDate”] DataFrame with columns
+Joint No. and one column per log date: “Remaining thickness [mm] (YYYY-MM-DD)”.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_water_analysis_data">
+<span class="sig-name descname"><span class="pre">get_water_analysis_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.get_water_analysis_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.get_water_analysis_data" title="Link to this definition"></a></dt>
+<dd><p>Get water analysis data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.inches_to_meters">
+<span class="sig-name descname"><span class="pre">inches_to_meters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inches</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.inches_to_meters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.inches_to_meters" title="Link to this definition"></a></dt>
+<dd><p>Convert inches to meters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.init_parameters">
+<span class="sig-name descname"><span class="pre">init_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">corrosion_model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DLD'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.init_parameters" title="Link to this definition"></a></dt>
+<dd><p>Initialize model parameters using tally from well parameters only.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.optimize_models">
+<span class="sig-name descname"><span class="pre">optimize_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">progress_callback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.optimize_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.optimize_models" title="Link to this definition"></a></dt>
+<dd><p>Calibrate corrosion models against log-measured corrosion.</p>
+<p>Fits per-joint DLD parameters so the production-data modelled rate
+matches the caliper-log measured rate, writes the optimized parameters
+back into <code class="docutils literal notranslate"><span class="pre">self.corrosion_models</span></code>, stores modelled/measured rates in
+<code class="docutils literal notranslate"><span class="pre">self.outputs</span></code>, and persists the parameters for reuse.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>progress_callback</strong> (<em>callable</em><em> or </em><em>None</em>) – Forwarded to <code class="xref py py-meth docutils literal notranslate"><span class="pre">OptCO2Corrosion.calibrate()</span></code>; invoked as
+<code class="docutils literal notranslate"><span class="pre">fn(completed,</span> <span class="pre">total,</span> <span class="pre">per_joint)</span></code> after each joint is solved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.predict_corrosion_rate">
+<span class="sig-name descname"><span class="pre">predict_corrosion_rate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.predict_corrosion_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.predict_corrosion_rate" title="Link to this definition"></a></dt>
+<dd><p>Predict corrosion rate.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.predict_remaining_thickness">
+<span class="sig-name descname"><span class="pre">predict_remaining_thickness</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.predict_remaining_thickness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.predict_remaining_thickness" title="Link to this definition"></a></dt>
+<dd><p>Predict remaining wall thickness per joint from the latest log to now.</p>
+<p>Uses the <em>latest</em> interval’s optimized parameters (and their sign E)
+persisted by <a class="reference internal" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.optimize_models" title="gemini_application.wims.corrosion_model.CO2CorrosionApplication.optimize_models"><code class="xref py py-meth docutils literal notranslate"><span class="pre">optimize_models()</span></code></a>, integrates the calibrated corrosion
+model over the production data between the latest log date and now, and
+applies the resulting (signed) bore change to the latest log’s measured
+bore.  The sign is carried forward, so a joint whose latest interval fit
+a negative rate predicts the bore continuing in that direction.</p>
+<p>Requires that optimization has been run; returns an
+<code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:</span> <span class="pre">&quot;error&quot;,</span> <span class="pre">&quot;message&quot;:</span> <span class="pre">...}</span></code> dict otherwise.  On success the
+per-joint result is stored in <code class="docutils literal notranslate"><span class="pre">outputs[&quot;predictedRemainingThickness&quot;]</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.predict_years_to_min_thickness">
+<span class="sig-name descname"><span class="pre">predict_years_to_min_thickness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_thickness_by_od</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.predict_years_to_min_thickness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.predict_years_to_min_thickness" title="Link to this definition"></a></dt>
+<dd><p>Predict years until each casing size reaches its minimum thickness.</p>
+<p>Projects the recent corrosion trend forward linearly: the per-joint
+annual corrosion rate is taken from the <em>calibrated</em> DLD model run over
+the <strong>last 12 months</strong> of production data, and the current remaining
+wall is the predicted bore <em>now</em> (latest log + corrosion since).  For
+each casing size the top 5 worst (soonest) joints are ranked; the
+soonest sets the casing’s summary result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">years_to_min</span> <span class="o">=</span> <span class="p">(</span><span class="n">remaining_wall_now_mm</span> <span class="o">-</span> <span class="n">min_thickness_mm</span><span class="p">)</span>
+               <span class="o">/</span> <span class="n">annual_corrosion_rate_mm_yr</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>min_thickness_by_od</strong> (<em>dict</em>) – Minimum allowable wall thickness [mm] keyed by nominal casing OD
+[inch].  Keys may be floats or strings; only ODs present here are
+evaluated.  These come from the dashboard Wall thickness inputs.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:</span> <span class="pre">&quot;ok&quot;,</span> <span class="pre">...}</span></code> with a JSON-safe <code class="docutils literal notranslate"><span class="pre">per_casing</span></code> list and a
+<code class="docutils literal notranslate"><span class="pre">per_joint</span></code> table, or <code class="docutils literal notranslate"><span class="pre">{&quot;status&quot;:</span> <span class="pre">&quot;error&quot;,</span> <span class="pre">&quot;message&quot;:</span> <span class="pre">...}</span></code> when
+a prerequisite (optimization, processed logs, production) is missing.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.process_caliper_logs">
+<span class="sig-name descname"><span class="pre">process_caliper_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">approved_joints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qa_log_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.process_caliper_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.process_caliper_logs" title="Link to this definition"></a></dt>
+<dd><p>Build processed caliper logs for each log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>approved_joints</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>dict</em><em>]</em><em>] or </em><em>None</em>) – Pre-approved joint boundaries from QA/QC. When provided, detection
+is skipped and these are used directly.</p></li>
+<li><p><strong>qa_log_dir</strong> (<em>str</em><em> or </em><em>Path</em><em> or </em><em>None</em>) – Directory to write per-log QA JSON files for joint-to-tally matching.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_model.CO2CorrosionApplication.set_production_window_from_logs_metadata">
+<span class="sig-name descname"><span class="pre">set_production_window_from_logs_metadata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_model.html#CO2CorrosionApplication.set_production_window_from_logs_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_model.CO2CorrosionApplication.set_production_window_from_logs_metadata" title="Link to this definition"></a></dt>
+<dd><p>Set <code class="docutils literal notranslate"><span class="pre">start_time</span></code> and <code class="docutils literal notranslate"><span class="pre">end_time</span></code> in inputs from <code class="docutils literal notranslate"><span class="pre">logs_metadata</span></code> dates.</p>
+<p>Uses the baseline log date for start when <code class="docutils literal notranslate"><span class="pre">is_baseline</span></code> is set, otherwise
+the earliest log date. End time is the latest log date (end of day).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Error message if no valid log dates were found, otherwise None.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_application.wims.corrosion_from_prod_data.html" class="btn btn-neutral float-left" title="6.3.8.3. gemini_application.wims.corrosion_from_prod_data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_application.wims.erosion_from_prod_data.html" class="btn btn-neutral float-right" title="6.3.8.5. gemini_application.wims.erosion_from_prod_data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

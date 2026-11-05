@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. Set-up &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4. Applications" href="index_applications.html" />
+    <link rel="prev" title="2.5. Projects" href="start_projects.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Set-up</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-plant-diagram">3.1. Creating a plant diagram</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-asset-parameters">3.2. Adding asset parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linking-tags-to-plant-assets">3.3. Linking tags to plant assets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#connect-to-real-time-database-of-manual-csv-upload">3.4. Connect to real-time database of manual CSV upload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-gemini-module">3.5. Running gemini module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#viewing-plant-configuration-and-parameters">3.6. Viewing plant configuration and parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uploading-and-viewing-documents">3.7. Uploading and viewing documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3. </span>Set-up</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index_setup.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="set-up">
+<span id="system-setup"></span><h1><span class="section-number">3. </span>Set-up<a class="headerlink" href="#set-up" title="Link to this heading"></a></h1>
+<p>This section explains how to configure a GEMINI project after creation. It
+covers plant diagram setup, parameter configuration, tag mapping, plant-level
+settings, and report/document handling.</p>
+<p>Before starting, make sure you have created and opened a project as described in
+<a class="reference internal" href="start_projects.html#projects"><span class="std std-ref">Projects</span></a>.</p>
+<section id="creating-a-plant-diagram">
+<h2><span class="section-number">3.1. </span>Creating a plant diagram<a class="headerlink" href="#creating-a-plant-diagram" title="Link to this heading"></a></h2>
+<p>After opening a project, start by defining the plant geometry in the
+<em>Diagram Builder</em> application.</p>
+<figure class="align-center" id="id1">
+<span id="new-component"></span><a class="reference internal image-reference" href="_images/diagram_builder_new_component.png"><img alt="_images/diagram_builder_new_component.png" src="_images/diagram_builder_new_component.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.1 </span><span class="caption-text">Adding new component in the plant diagram from the <em>diagram builder</em> application.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>For a new project, the canvas is empty. Add the required components by selecting
+them from the component list at the bottom of the screen (see
+<a class="reference internal" href="#new-component"><span class="std std-numref">Fig. 3.1</span></a>).</p>
+<figure class="align-center" id="id2">
+<span id="add-move-component"></span><a class="reference internal image-reference" href="_images/diagram_builder_add_move_component.gif"><img alt="_images/diagram_builder_add_move_component.gif" src="_images/diagram_builder_add_move_component.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.2 </span><span class="caption-text">Moving component on canvas from the <em>diagram builder</em> application.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>When a component is added, it appears on the top-left of the canvas. Drag and
+drop it to the preferred location (see <a class="reference internal" href="#add-move-component"><span class="std std-numref">Fig. 3.2</span></a>).</p>
+<figure class="align-center" id="id3">
+<span id="connect-components"></span><a class="reference internal image-reference" href="_images/diagram_builder_connect_components.gif"><img alt="_images/diagram_builder_connect_components.gif" src="_images/diagram_builder_connect_components.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.3 </span><span class="caption-text">Creating a connection between two components from the <em>diagram builder</em> application.</span><a class="headerlink" href="#id3" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Connect components to define process flow relations. Create a connection by
+clicking and dragging from one connection point to another, as shown in
+<a class="reference internal" href="#connect-components"><span class="std std-numref">Fig. 3.3</span></a>.</p>
+</section>
+<section id="adding-asset-parameters">
+<h2><span class="section-number">3.2. </span>Adding asset parameters<a class="headerlink" href="#adding-asset-parameters" title="Link to this heading"></a></h2>
+<p>After creating the diagram, define parameters for each asset through
+<em>Diagram Builder</em>.</p>
+<figure class="align-center" id="id4">
+<span id="edit-component-parameters"></span><a class="reference internal image-reference" href="_images/diagram_builder_edit_component_parameters.gif"><img alt="_images/diagram_builder_edit_component_parameters.gif" src="_images/diagram_builder_edit_component_parameters.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.4 </span><span class="caption-text">Edit components parameters from the <em>diagram builder</em> application.</span><a class="headerlink" href="#id4" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Right-click a component and open its parameter editor. Figure
+<a class="reference internal" href="#edit-component-parameters"><span class="std std-numref">Fig. 3.4</span></a> shows an example for a production well.
+After editing values, click <strong>SAVE</strong> to persist changes to the project JSON
+files. Repeat for all relevant components.</p>
+<p>For production and injection wells, trajectory data is required.</p>
+</section>
+<section id="linking-tags-to-plant-assets">
+<h2><span class="section-number">3.3. </span>Linking tags to plant assets<a class="headerlink" href="#linking-tags-to-plant-assets" title="Link to this heading"></a></h2>
+<p>A tag links model variables to database values. Each tag has:</p>
+<ul class="simple">
+<li><p>a <strong>tag name</strong> (human-readable descriptor)</p></li>
+<li><p>a <strong>tag value</strong> (database variable reference)</p></li>
+</ul>
+<figure class="align-center" id="id5">
+<span id="edit-component-tags"></span><a class="reference internal image-reference" href="_images/diagram_builder_edit_component_tagvalues.gif"><img alt="_images/diagram_builder_edit_component_tagvalues.gif" src="_images/diagram_builder_edit_component_tagvalues.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.5 </span><span class="caption-text">Edit components tags from the <em>diagram builder</em> application.</span><a class="headerlink" href="#id5" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>To configure tags, open <em>Diagram Builder</em>, right-click the asset, select
+<code class="docutils literal notranslate"><span class="pre">Open</span> <span class="pre">Parameter</span></code>, then switch to the <strong>Tagnames</strong> tab and enter tag values.
+Use consistent naming and avoid typos, as shown in <a class="reference internal" href="#edit-component-tags"><span class="std std-numref">Fig. 3.5</span></a>.</p>
+</section>
+<section id="connect-to-real-time-database-of-manual-csv-upload">
+<h2><span class="section-number">3.4. </span>Connect to real-time database of manual CSV upload<a class="headerlink" href="#connect-to-real-time-database-of-manual-csv-upload" title="Link to this heading"></a></h2>
+<p>After assigning tags, connect the project to a real-time database or upload CSV files to
+get the measured data. Open the <em>DATA MANAGEMENT</em> application (under <em>SETTINGS</em>).</p>
+<p>This first tab is <em>Data Browser</em>, which allows you to browse both external database (if applicable) and internal database.</p>
+<figure class="align-center" id="id6">
+<a class="reference internal image-reference" href="_images/datamanagement_application_data_viewer.gif"><img alt="_images/datamanagement_application_data_viewer.gif" src="_images/datamanagement_application_data_viewer.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.6 </span><span class="caption-text">Data browser application to view the data from database</span><a class="headerlink" href="#id6" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The second tab is <em>Data Upload</em>, which allows you to upload the data manually from a csv file and check the tag status.
+Before upload the csv, you need to assign the tags to the components in the diagram builder.</p>
+<figure class="align-center" id="id7">
+<a class="reference internal image-reference" href="_images/datamanagement_application_data_tagname.gif"><img alt="_images/datamanagement_application_data_tagname.gif" src="_images/datamanagement_application_data_tagname.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.7 </span><span class="caption-text">Assign the tags to the components in the diagram builder</span><a class="headerlink" href="#id7" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>The csv file should have the following format: gemini-geothermal-suite-open/dataset/geothermal_example_dataset.csv</p>
+<p>The csv can be uploaded by clicking the <strong>Upload</strong> button and selecting the file.
+After upload, you can check the tag status.</p>
+<figure class="align-center" id="id8">
+<a class="reference internal image-reference" href="_images/datamanagement_application_data_upload.gif"><img alt="_images/datamanagement_application_data_upload.gif" src="_images/datamanagement_application_data_upload.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.8 </span><span class="caption-text">Upload csv data to the database</span><a class="headerlink" href="#id8" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="running-gemini-module">
+<h2><span class="section-number">3.5. </span>Running gemini module<a class="headerlink" href="#running-gemini-module" title="Link to this heading"></a></h2>
+<p>After the plant diagram is created, parameters are configured, and tags are linked to the database, you can run the GEMINI module to perform calculations and predictions.</p>
+<p>This action can be started by running the script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>src/gemini_framework/app.py
+</pre></div>
+</div>
+</section>
+<section id="viewing-plant-configuration-and-parameters">
+<h2><span class="section-number">3.6. </span>Viewing plant configuration and parameters<a class="headerlink" href="#viewing-plant-configuration-and-parameters" title="Link to this heading"></a></h2>
+<p>Use the <em>PLANT CONFIGURATION</em> application (under <em>SETTINGS</em>) to configure
+project-wide plant and database parameters.</p>
+<dl class="simple">
+<dt>Plant settings include:</dt><dd><ul class="simple">
+<li><p>Start time</p></li>
+<li><p>Measured Interval, in seconds</p></li>
+<li><p>Filtered Interval, in seconds</p></li>
+<li><p>Calculated Interval, in seconds</p></li>
+<li><p>Prediction Interval, in seconds</p></li>
+<li><p>Prediction Horizon, in days</p></li>
+</ul>
+</dd>
+<dt>Database settings include:</dt><dd><ul class="simple">
+<li><p>Database name, from the dropdown menu</p></li>
+<li><p>url</p></li>
+<li><p>organisation</p></li>
+<li><p>bucket</p></li>
+<li><p>username</p></li>
+<li><p>password</p></li>
+<li><p>token</p></li>
+</ul>
+</dd>
+</dl>
+<figure class="align-center" id="id9">
+<span id="plant-configuration"></span><a class="reference internal image-reference" href="_images/plant_configuration_application.png"><img alt="_images/plant_configuration_application.png" src="_images/plant_configuration_application.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.9 </span><span class="caption-text">Configure the plant parameters and the database parameters from the <em>PLANT CONFIGURATION</em> window.</span><a class="headerlink" href="#id9" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>Click <strong>Save</strong> to persist configuration updates (see
+<a class="reference internal" href="#plant-configuration"><span class="std std-numref">Fig. 3.9</span></a>).</p>
+</section>
+<section id="uploading-and-viewing-documents">
+<h2><span class="section-number">3.7. </span>Uploading and viewing documents<a class="headerlink" href="#uploading-and-viewing-documents" title="Link to this heading"></a></h2>
+<p>The report library lets you upload and access project documents from one place.
+Supported uploads are PDF files, stored in your account/project context.</p>
+<figure class="align-center" id="id10">
+<span id="report-upload-view"></span><a class="reference internal image-reference" href="_images/info_report_upload_view.gif"><img alt="_images/info_report_upload_view.gif" src="_images/info_report_upload_view.gif" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3.10 </span><span class="caption-text">Upload and view pdf report from the <em>REPORT</em> window.</span><a class="headerlink" href="#id10" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<p>To upload a report, open <em>INFO</em> -&gt; <em>REPORT</em>, select a local file, and click
+<strong>Upload</strong>. Uploaded files are available from the report dropdown. Use <strong>Delete</strong>
+to remove obsolete documents (see <a class="reference internal" href="#report-upload-view"><span class="std std-numref">Fig. 3.10</span></a>).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="start_projects.html" class="btn btn-neutral float-left" title="2.5. Projects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index_applications.html" class="btn btn-neutral float-right" title="4. Applications" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

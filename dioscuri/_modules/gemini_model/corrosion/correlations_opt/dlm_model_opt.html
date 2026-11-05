@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.corrosion.correlations_opt.dlm_model_opt &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.corrosion.correlations_opt.dlm_model_opt</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.corrosion.correlations_opt.dlm_model_opt</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""DLM corrosion model optimization module."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.model_abstract</span><span class="w"> </span><span class="kn">import</span> <span class="n">StaticModel</span>
+
+
+<div class="viewcode-block" id="DLM">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_model.corrosion.correlations_opt.dlm_model_opt.html#gemini_model.corrosion.correlations_opt.dlm_model_opt.DLM">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DLM</span><span class="p">(</span><span class="n">StaticModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""The original DLM (C. de Waard; U. Lotz; D. E. Milliams, 1991) model.</span>
+
+<span class="sd">    Model proposed in the article "Predictive Model</span>
+<span class="sd">    for CO2 Corrosion Engineering in Wet Natural Gas Pipelines"</span>
+<span class="sd">    https://doi.org/10.5006/1.3585212</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize DLM corrosion optimization model."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="DLM.update_parameters">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_model.corrosion.correlations_opt.dlm_model_opt.html#gemini_model.corrosion.correlations_opt.dlm_model_opt.DLM.update_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update model parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters: dict</span>
+<span class="sd">            Parameters dict as defined by the model.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="DLM.initialize_state">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_model.corrosion.correlations_opt.dlm_model_opt.html#gemini_model.corrosion.correlations_opt.dlm_model_opt.DLM.initialize_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialize_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Generate an initial state based on user parameters."""</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="DLM.update_state">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_model.corrosion.correlations_opt.dlm_model_opt.html#gemini_model.corrosion.correlations_opt.dlm_model_opt.DLM.update_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update the state based on input u and state x."""</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="DLM.calculate_output">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_model.corrosion.correlations_opt.dlm_model_opt.html#gemini_model.corrosion.correlations_opt.dlm_model_opt.DLM.calculate_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate output based on input u and state x."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s2">"corrosion_rate"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_corrosion_rate</span><span class="p">(</span><span class="n">u</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DLM.get_output">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_model.corrosion.correlations_opt.dlm_model_opt.html#gemini_model.corrosion.correlations_opt.dlm_model_opt.DLM.get_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get output of the model."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span></div>
+
+
+<div class="viewcode-block" id="DLM.get_corrosion_rate">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_model.corrosion.correlations_opt.dlm_model_opt.html#gemini_model.corrosion.correlations_opt.dlm_model_opt.DLM.get_corrosion_rate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_corrosion_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate the corrosion rate based on various parameters.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        u (dict): Dictionary containing the required</span>
+<span class="sd">        parameters for corrosion rate calculation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        float: Corrosion rate in mm/year</span>
+<span class="sd">        """</span>
+        <span class="n">co2_fraction</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"co2_fraction"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">co2_partial_pressure</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"co2_partial_pressure"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">pressure</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"pressure"</span><span class="p">]</span>  <span class="c1"># bar</span>
+        <span class="n">temperature_celsius</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="s2">"temperature"</span><span class="p">]</span>  <span class="c1"># C</span>
+
+        <span class="n">co2_fugacity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_co2_fugacity</span><span class="p">(</span>
+            <span class="n">pressure</span><span class="o">=</span><span class="n">pressure</span><span class="p">,</span>
+            <span class="n">temperature_celsius</span><span class="o">=</span><span class="n">temperature_celsius</span><span class="p">,</span>
+            <span class="n">co2_fraction</span><span class="o">=</span><span class="n">co2_fraction</span><span class="p">,</span>
+            <span class="n">co2_partial_pressure</span><span class="o">=</span><span class="n">co2_partial_pressure</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">temperature_kelvin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_celsius_to_kelvin</span><span class="p">(</span><span class="n">temperature_celsius</span><span class="p">)</span>
+
+        <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"A"</span><span class="p">]</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"B"</span><span class="p">]</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"C"</span><span class="p">]</span>
+
+        <span class="n">corrosion_rate</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span>
+            <span class="n">A</span> <span class="o">-</span> <span class="n">B</span> <span class="o">/</span> <span class="n">temperature_kelvin</span> <span class="o">+</span> <span class="n">C</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">co2_fugacity</span><span class="p">)</span>
+        <span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_scaling_factor</span><span class="p">(</span><span class="n">temperature_celsius</span><span class="p">,</span> <span class="n">co2_fugacity</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">corrosion_rate</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_co2_fugacity</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span> <span class="n">temperature_celsius</span><span class="p">,</span> <span class="n">co2_fraction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">co2_partial_pressure</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate the fugacity of CO2.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        pressure : float</span>
+<span class="sd">            Total pressure in the system [bar].</span>
+<span class="sd">        temperature_celsius : float</span>
+<span class="sd">            Temperature in Celsius.</span>
+<span class="sd">        co2_fraction : float, optional</span>
+<span class="sd">            Mole fraction of CO2 in the gas phase [-].</span>
+<span class="sd">        co2_partial_pressure : float, optional</span>
+<span class="sd">            Partial pressure of CO2 [bar]. If this is provided, co2_fraction is ignored.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        float: Fugacity of CO2 in [bar]</span>
+<span class="sd">        """</span>
+        <span class="c1"># Convert temperature from Celsius to Kelvin</span>
+        <span class="n">temperature_kelvin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_celsius_to_kelvin</span><span class="p">(</span><span class="n">temperature_celsius</span><span class="p">)</span>
+
+        <span class="c1"># Calculate fugacity coefficient</span>
+        <span class="k">if</span> <span class="n">pressure</span> <span class="o">&lt;=</span> <span class="mi">250</span><span class="p">:</span>
+            <span class="n">fugacity_coefficient</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">pressure</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.0031</span> <span class="o">-</span> <span class="mf">1.4</span> <span class="o">/</span> <span class="n">temperature_kelvin</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fugacity_coefficient</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="mi">250</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.0031</span> <span class="o">-</span> <span class="mf">1.4</span> <span class="o">/</span> <span class="n">temperature_kelvin</span><span class="p">))</span>
+
+        <span class="c1"># If CO2 partial pressure is not given, calculate it from the fraction and total pressure</span>
+        <span class="k">if</span> <span class="n">co2_partial_pressure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">co2_fraction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Either co2_fraction or co2_partial_pressure must be provided."</span><span class="p">)</span>
+            <span class="n">co2_partial_pressure</span> <span class="o">=</span> <span class="n">co2_fraction</span> <span class="o">*</span> <span class="n">pressure</span>
+
+        <span class="c1"># Compute fugacity</span>
+        <span class="k">return</span> <span class="n">fugacity_coefficient</span> <span class="o">*</span> <span class="n">co2_partial_pressure</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_scaling_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature_celsius</span><span class="p">,</span> <span class="n">co2_fugacity</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate the scaling correction factor.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        temperature_celsius (float): Temperature in Celsius</span>
+<span class="sd">        co2_fugacity (float): Fugacity of CO2 in [bar]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        float: Scaling correction factor</span>
+<span class="sd">        """</span>
+        <span class="n">temperature_kelvin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_celsius_to_kelvin</span><span class="p">(</span><span class="n">temperature_celsius</span><span class="p">)</span>
+        <span class="n">scaling_temperature_threshold</span> <span class="o">=</span> <span class="mi">2400</span> <span class="o">/</span> <span class="p">(</span><span class="mf">6.7</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">co2_fugacity</span><span class="p">))</span>
+        <span class="n">scaling_factor</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2400</span> <span class="o">/</span> <span class="n">temperature_kelvin</span> <span class="o">-</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">co2_fugacity</span><span class="p">)</span> <span class="o">-</span> <span class="mf">6.7</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">scaling_factor</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">temperature_kelvin</span> <span class="o">&gt;=</span> <span class="n">scaling_temperature_threshold</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_celsius_to_kelvin</span><span class="p">(</span><span class="n">temperature_celsius</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Convert temperature from Celsius to Kelvin.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        temperature_celsius (float): Temperature in Celsius</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        float: Temperature in Kelvin</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">temperature_celsius</span> <span class="o">+</span> <span class="mf">273.15</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

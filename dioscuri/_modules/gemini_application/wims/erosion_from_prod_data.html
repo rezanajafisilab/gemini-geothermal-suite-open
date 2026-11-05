@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_application.wims.erosion_from_prod_data &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_application.wims.erosion_from_prod_data</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_application.wims.erosion_from_prod_data</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Erosion rate estimation from production / injection flow data."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.erosion.correlation.API</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErosionAPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_model.erosion.erosion_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErosionModel</span><span class="p">,</span> <span class="n">is_velocity_model</span>
+
+<span class="n">MM_PER_M</span> <span class="o">=</span> <span class="mf">1000.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_representative_flow</span><span class="p">(</span><span class="n">flow_m3h</span><span class="p">,</span> <span class="n">flow_stat</span><span class="o">=</span><span class="s2">"mean"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return representative flow [m3/h] from a time series."""</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">flow_m3h</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">if</span> <span class="n">flow_stat</span> <span class="o">==</span> <span class="s2">"max"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="build_correlation_input_base">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_prod_data.html#gemini_application.wims.erosion_from_prod_data.build_correlation_input_base">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_correlation_input_base</span><span class="p">(</span><span class="n">flow_m3h</span><span class="p">,</span> <span class="n">erosion_params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Correlation input fields independent of per-segment geometry."""</span>
+    <span class="n">rho_fluid_kgm3</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rho_fluid_kgm3"</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"alpha"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"alpha_deg"</span><span class="p">,</span> <span class="mi">90</span><span class="p">)),</span>
+        <span class="s2">"rho_fluid"</span><span class="p">:</span> <span class="n">rho_fluid_kgm3</span><span class="p">,</span>
+        <span class="s2">"flowRate"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">flow_m3h</span><span class="p">),</span>
+        <span class="s2">"Hv"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Hv_gpa"</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)),</span>
+        <span class="s2">"mater_particle"</span><span class="p">:</span> <span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mater_particle"</span><span class="p">,</span> <span class="s2">"SIO2"</span><span class="p">),</span>
+        <span class="s2">"diameter_particle"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"diameter_particle_mm"</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)),</span>
+        <span class="s2">"mater"</span><span class="p">:</span> <span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mater"</span><span class="p">,</span> <span class="s2">"steel"</span><span class="p">),</span>
+        <span class="s2">"rho_pipe"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rho_pipe_kgm3"</span><span class="p">,</span> <span class="mi">7800</span><span class="p">)),</span>
+        <span class="s2">"fs"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fs"</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="flow_velocity_ms">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_prod_data.html#gemini_application.wims.erosion_from_prod_data.flow_velocity_ms">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">flow_velocity_ms</span><span class="p">(</span><span class="n">flow_m3h</span><span class="p">,</span> <span class="n">diameter_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Actual flow velocity [m/s] from volumetric flow and effective diameter."""</span>
+    <span class="n">diameter_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">diameter_m</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">diameter_m</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">flow_m3s</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">flow_m3h</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3600.0</span>
+    <span class="n">area_m2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">diameter_m</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">4.0</span>
+    <span class="k">if</span> <span class="n">area_m2</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">flow_m3s</span> <span class="o">/</span> <span class="n">area_m2</span></div>
+
+
+
+<div class="viewcode-block" id="api_velocity_comparison">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_prod_data.html#gemini_application.wims.erosion_from_prod_data.api_velocity_comparison">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">api_velocity_comparison</span><span class="p">(</span><span class="n">flow_velocity_ms</span><span class="p">,</span> <span class="n">api_limit_velocity_ms</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compare actual flow velocity to API erosion velocity limit."""</span>
+    <span class="k">if</span> <span class="n">flow_velocity_ms</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">api_limit_velocity_ms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"velocity_ratio"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"velocity_margin_ms"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"exceeds_api_limit"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="n">actual_ms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">flow_velocity_ms</span><span class="p">)</span>
+    <span class="n">limit_ms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">api_limit_velocity_ms</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">limit_ms</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"velocity_ratio"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"velocity_margin_ms"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"exceeds_api_limit"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"velocity_ratio"</span><span class="p">:</span> <span class="n">actual_ms</span> <span class="o">/</span> <span class="n">limit_ms</span><span class="p">,</span>
+        <span class="s2">"velocity_margin_ms"</span><span class="p">:</span> <span class="n">limit_ms</span> <span class="o">-</span> <span class="n">actual_ms</span><span class="p">,</span>
+        <span class="s2">"exceeds_api_limit"</span><span class="p">:</span> <span class="n">actual_ms</span> <span class="o">&gt;</span> <span class="n">limit_ms</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_base_result_fields</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">rep_flow_m3h</span><span class="p">,</span> <span class="n">diameter_m</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Geometry/flow fields common to every segment result."""</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">segment</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">"flow_m3h"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rep_flow_m3h</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">"flow_diameter_mm"</span><span class="p">]</span> <span class="o">=</span> <span class="n">diameter_m</span> <span class="o">*</span> <span class="n">MM_PER_M</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">"outer_id_mm"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"outer_id_m"</span><span class="p">)</span> <span class="o">*</span> <span class="n">MM_PER_M</span> <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"outer_id_m"</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">"inner_od_mm"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"inner_od_m"</span><span class="p">)</span> <span class="o">*</span> <span class="n">MM_PER_M</span> <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"inner_od_m"</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="s2">"flow_area_mm2"</span><span class="p">]</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_area_mm2"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="compute_erosion_for_segments">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_prod_data.html#gemini_application.wims.erosion_from_prod_data.compute_erosion_for_segments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_erosion_for_segments</span><span class="p">(</span>
+    <span class="n">segments</span><span class="p">,</span>
+    <span class="n">flow_m3h</span><span class="p">,</span>
+    <span class="n">erosion_model_name</span><span class="p">,</span>
+    <span class="n">erosion_params</span><span class="p">,</span>
+    <span class="n">well_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute erosion for each flow-path segment."""</span>
+    <span class="n">flow_stat</span> <span class="o">=</span> <span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_stat"</span><span class="p">,</span> <span class="s2">"mean"</span><span class="p">)</span>
+    <span class="n">rep_flow</span> <span class="o">=</span> <span class="n">_representative_flow</span><span class="p">(</span><span class="n">flow_m3h</span><span class="p">,</span> <span class="n">flow_stat</span><span class="o">=</span><span class="n">flow_stat</span><span class="p">)</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">ErosionModel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">({</span><span class="s2">"erosion_model"</span><span class="p">:</span> <span class="n">erosion_model_name</span><span class="p">})</span>
+
+    <span class="n">is_api_model</span> <span class="o">=</span> <span class="n">is_velocity_model</span><span class="p">(</span><span class="n">erosion_model_name</span><span class="p">)</span>
+    <span class="n">api_limit_velocity_ms</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">is_api_model</span><span class="p">:</span>
+        <span class="n">api_limit_velocity_ms</span> <span class="o">=</span> <span class="n">ErosionAPI</span><span class="o">.</span><span class="n">calculate_erosion_velocity</span><span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">erosion_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"rho_fluid_kgm3"</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="c1"># -- constant correlation inputs (only diameter varies per segment) -----</span>
+    <span class="n">correlation_input_base</span> <span class="o">=</span> <span class="n">build_correlation_input_base</span><span class="p">(</span><span class="n">rep_flow</span><span class="p">,</span> <span class="n">erosion_params</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">max_rate</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">:</span>
+        <span class="n">diameter_m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_diameter_m"</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">diameter_m</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">_base_result_fields</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">rep_flow</span><span class="p">,</span> <span class="n">diameter_m</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"erosion_velocity_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"warning"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Invalid flow diameter"</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">actual_flow_velocity_ms</span> <span class="o">=</span> <span class="n">flow_velocity_ms</span><span class="p">(</span><span class="n">rep_flow</span><span class="p">,</span> <span class="n">diameter_m</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_api_model</span><span class="p">:</span>
+            <span class="n">rate</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="n">actual_flow_velocity_ms</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">correlation_input_base</span><span class="p">)</span>
+            <span class="n">u</span><span class="p">[</span><span class="s2">"diameter"</span><span class="p">]</span> <span class="o">=</span> <span class="n">diameter_m</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_output</span><span class="p">()</span>
+            <span class="n">rate</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">)</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_velocity_ms"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">max_rate</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_rate</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">rate</span><span class="p">))</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_base_result_fields</span><span class="p">(</span><span class="n">segment</span><span class="p">,</span> <span class="n">rep_flow</span><span class="p">,</span> <span class="n">diameter_m</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"flow_velocity_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="n">actual_flow_velocity_ms</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rate</span>
+        <span class="n">result</span><span class="p">[</span><span class="s2">"erosion_velocity_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="n">velocity</span>
+        <span class="k">if</span> <span class="n">is_api_model</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"api_erosion_limit_velocity_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="n">api_limit_velocity_ms</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">api_velocity_comparison</span><span class="p">(</span><span class="n">actual_flow_velocity_ms</span><span class="p">,</span> <span class="n">api_limit_velocity_ms</span><span class="p">))</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"max_erosion_rate_mm_yr"</span><span class="p">:</span> <span class="n">max_rate</span><span class="p">,</span>
+        <span class="s2">"segment_count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">is_api_model</span><span class="p">:</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"api_erosion_limit_velocity_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="n">api_limit_velocity_ms</span>
+    <span class="n">summary</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">aggregate_erosion_by_joint</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">well_type</span><span class="o">=</span><span class="n">well_type</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">summary</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_joint_row_from_segment</span><span class="p">(</span><span class="n">segment</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Extract per-joint erosion fields from a segment result."""</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"joint"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"joint"</span><span class="p">),</span>
+        <span class="s2">"joint_id_inch"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"joint_id_inch"</span><span class="p">),</span>
+        <span class="s2">"tubing_id_inch"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tubing_id_inch"</span><span class="p">),</span>
+        <span class="s2">"below_esp_intake"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"below_esp_intake"</span><span class="p">),</span>
+        <span class="s2">"flow_area"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_area"</span><span class="p">),</span>
+        <span class="s2">"flow_area_mm2"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_area_mm2"</span><span class="p">),</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"component_name"</span><span class="p">),</span>
+        <span class="s2">"component_type"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"component_type"</span><span class="p">),</span>
+        <span class="s2">"top_md_m"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"top_md_m"</span><span class="p">),</span>
+        <span class="s2">"bottom_md_m"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bottom_md_m"</span><span class="p">),</span>
+        <span class="s2">"flow_diameter_mm"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_diameter_mm"</span><span class="p">),</span>
+        <span class="s2">"flow_m3h"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_m3h"</span><span class="p">),</span>
+        <span class="s2">"flow_velocity_ms"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_velocity_ms"</span><span class="p">),</span>
+        <span class="s2">"api_erosion_limit_velocity_ms"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"api_erosion_limit_velocity_ms"</span><span class="p">),</span>
+        <span class="s2">"velocity_ratio"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"velocity_ratio"</span><span class="p">),</span>
+        <span class="s2">"velocity_margin_ms"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"velocity_margin_ms"</span><span class="p">),</span>
+        <span class="s2">"exceeds_api_limit"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"exceeds_api_limit"</span><span class="p">),</span>
+        <span class="s2">"erosion_rate_mm_yr"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">),</span>
+        <span class="s2">"erosion_velocity_ms"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_velocity_ms"</span><span class="p">),</span>
+        <span class="s2">"segment_type"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"segment_type"</span><span class="p">),</span>
+    <span class="p">}</span>
+
+
+<div class="viewcode-block" id="aggregate_erosion_by_joint">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.erosion_from_prod_data.html#gemini_application.wims.erosion_from_prod_data.aggregate_erosion_by_joint">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">aggregate_erosion_by_joint</span><span class="p">(</span><span class="n">segment_results</span><span class="p">,</span> <span class="n">well_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build per-joint erosion summary for production and injection wells."""</span>
+    <span class="n">joints_below_esp_intake</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">esp_annulus_segments</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tubing_above_esp_joints</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tubing_interior_rates_mm_yr</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tubing_interior_velocities_ms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tubing_interior_flow_velocities_ms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">tubing_interior_segment_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">injection_joints</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">segment_results</span><span class="p">:</span>
+        <span class="n">segment_type</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"segment_type"</span><span class="p">)</span>
+        <span class="n">rate_mm_yr</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">)</span>
+        <span class="n">velocity_ms</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_velocity_ms"</span><span class="p">)</span>
+        <span class="n">flow_velocity_ms_val</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_velocity_ms"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">well_type</span> <span class="o">==</span> <span class="s2">"productionwell"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">segment_type</span> <span class="o">==</span> <span class="s2">"tubing_interior"</span> <span class="ow">and</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"below_esp_intake"</span><span class="p">):</span>
+                <span class="n">joints_below_esp_intake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_joint_row_from_segment</span><span class="p">(</span><span class="n">segment</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">segment_type</span> <span class="o">==</span> <span class="s2">"esp_joint_annulus"</span><span class="p">:</span>
+                <span class="n">esp_annulus_segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_joint_row_from_segment</span><span class="p">(</span><span class="n">segment</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">segment_type</span> <span class="o">==</span> <span class="s2">"tubing_interior"</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"below_esp_intake"</span><span class="p">):</span>
+                    <span class="n">joints_below_esp_intake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_joint_row_from_segment</span><span class="p">(</span><span class="n">segment</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tubing_above_esp_joints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_joint_row_from_segment</span><span class="p">(</span><span class="n">segment</span><span class="p">))</span>
+                    <span class="n">tubing_interior_segment_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">rate_mm_yr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">tubing_interior_rates_mm_yr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">rate_mm_yr</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">velocity_ms</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">tubing_interior_velocities_ms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">velocity_ms</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">flow_velocity_ms_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">tubing_interior_flow_velocities_ms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">flow_velocity_ms_val</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">well_type</span> <span class="o">==</span> <span class="s2">"injectionwell"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">segment_type</span> <span class="o">==</span> <span class="s2">"tubular_interior"</span><span class="p">:</span>
+                <span class="n">injection_joints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_joint_row_from_segment</span><span class="p">(</span><span class="n">segment</span><span class="p">))</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">well_type</span> <span class="o">==</span> <span class="s2">"productionwell"</span><span class="p">:</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"joints_below_esp_intake"</span><span class="p">]</span> <span class="o">=</span> <span class="n">joints_below_esp_intake</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"esp_annulus_segments"</span><span class="p">]</span> <span class="o">=</span> <span class="n">esp_annulus_segments</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"tubing_above_esp_joints"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tubing_above_esp_joints</span>
+        <span class="n">below_rates_mm_yr</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">joints_below_esp_intake</span>
+            <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="n">below_flow_velocities_ms</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"flow_velocity_ms"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">joints_below_esp_intake</span>
+            <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_velocity_ms"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"max_erosion_below_esp_intake_mm_yr"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">below_rates_mm_yr</span><span class="p">))</span> <span class="k">if</span> <span class="n">below_rates_mm_yr</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"max_flow_velocity_below_esp_intake_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">below_flow_velocities_ms</span><span class="p">))</span> <span class="k">if</span> <span class="n">below_flow_velocities_ms</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"joints_exceeding_api_limit_count"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">joints_below_esp_intake</span> <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"exceeds_api_limit"</span><span class="p">))</span>
+            <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">esp_annulus_segments</span> <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"exceeds_api_limit"</span><span class="p">))</span>
+            <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tubing_above_esp_joints</span> <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"exceeds_api_limit"</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">esp_flow_velocities_ms</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"flow_velocity_ms"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">esp_annulus_segments</span>
+            <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_velocity_ms"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"max_flow_velocity_esp_annulus_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">esp_flow_velocities_ms</span><span class="p">))</span> <span class="k">if</span> <span class="n">esp_flow_velocities_ms</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">esp_rates_mm_yr</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">esp_annulus_segments</span>
+            <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"max_erosion_esp_annulus_mm_yr"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">esp_rates_mm_yr</span><span class="p">))</span> <span class="k">if</span> <span class="n">esp_rates_mm_yr</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"tubing_interior_segment_count"</span><span class="p">]</span> <span class="o">=</span> <span class="n">tubing_interior_segment_count</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"tubing_interior_average_mm_yr"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tubing_interior_rates_mm_yr</span><span class="p">))</span> <span class="k">if</span> <span class="n">tubing_interior_rates_mm_yr</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"tubing_interior_average_velocity_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tubing_interior_velocities_ms</span><span class="p">))</span> <span class="k">if</span> <span class="n">tubing_interior_velocities_ms</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"tubing_interior_average_flow_velocity_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tubing_interior_flow_velocities_ms</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">tubing_interior_flow_velocities_ms</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">well_type</span> <span class="o">==</span> <span class="s2">"injectionwell"</span><span class="p">:</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"injection_joints"</span><span class="p">]</span> <span class="o">=</span> <span class="n">injection_joints</span>
+        <span class="n">injection_rates_mm_yr</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">injection_joints</span>
+            <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"erosion_rate_mm_yr"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="n">injection_flow_velocities_ms</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"flow_velocity_ms"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">injection_joints</span>
+            <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"flow_velocity_ms"</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">]</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"max_erosion_rate_mm_yr"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">injection_rates_mm_yr</span><span class="p">))</span> <span class="k">if</span> <span class="n">injection_rates_mm_yr</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="p">)</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"max_flow_velocity_ms"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">injection_flow_velocities_ms</span><span class="p">))</span> <span class="k">if</span> <span class="n">injection_flow_velocities_ms</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s2">"joints_exceeding_api_limit_count"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="mi">1</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">injection_joints</span> <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"exceeds_api_limit"</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">summary</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

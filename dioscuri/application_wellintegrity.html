@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4.7. Well Integrity &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="4.8. Chat Assistant" href="application_rag.html" />
+    <link rel="prev" title="4.6. Well Schematics" href="application_well_schematics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_applications.html">4. Applications</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="application_grafana.html">4.1. Time Series Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_production_well_performance.html">4.2. Production well performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_injectivity.html">4.3. Injectivity Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_parameters_overview.html">4.4. Parameters overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_esp.html">4.5. ESP Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_well_schematics.html">4.6. Well Schematics</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.7. Well Integrity</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">4.7.1. Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#layout">4.7.2. Layout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#workflow-per-well-integrity-monitoring-app">4.7.3. Workflow (per Well Integrity Monitoring app)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inputs">4.7.4. Inputs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#caliper-log-processing">4.7.5. Caliper log processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dashboard">4.7.6. Dashboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wall-thickness-forecast">4.7.7. Wall thickness forecast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#erosion">4.7.8. Erosion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-the-calculations-work">4.7.9. How the calculations work</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#caliper-processing-method">4.7.9.1. Caliper processing method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#corrosion-forecast-calibrated-model">4.7.9.2. Corrosion forecast (calibrated model)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#erosion-method">4.7.9.3. Erosion method</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="application_rag.html">4.8. Chat Assistant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="application_report_generator.html">4.9. Report Generator</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_applications.html"><span class="section-number">4. </span>Applications</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4.7. </span>Well Integrity</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/application_wellintegrity.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="well-integrity">
+<h1><span class="section-number">4.7. </span>Well Integrity<a class="headerlink" href="#well-integrity" title="Link to this heading"></a></h1>
+<section id="description">
+<h2><span class="section-number">4.7.1. </span>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h2>
+<p>The Well Integrity Monitoring application (WIMS) provides monitoring and
+forecasting tools for well integrity in geothermal wells. It combines
+multi-finger caliper log processing (joint detection, QA/QC and per-joint
+remaining-thickness statistics), a well-integrity <strong>Dashboard</strong> (schematic with
+Well Barrier Envelope colouring, operational limits, history, maintenance
+checklist, annulus monitoring and WBE tracking), a <strong>Wall thickness forecast</strong>
+based on a calibrated CO2 corrosion model, and an <strong>Erosion</strong> analysis for the
+production flow path.</p>
+</section>
+<section id="layout">
+<h2><span class="section-number">4.7.2. </span>Layout<a class="headerlink" href="#layout" title="Link to this heading"></a></h2>
+<p>Select a well from <strong>Well Name</strong> at the top of the page. The app is then
+organised into three cards:</p>
+<ul class="simple">
+<li><p><strong>Dashboard</strong> — schematic, operational limits, history, maintenance checklist, and the WIMS subcards (Overall Integrity status, Annulus monitoring, Well Barrier Envelope, WBE Risk).</p></li>
+<li><p><strong>Wall thickness forecast</strong> — caliper log management (upload / detect joints / process) and the corrosion forecast (Optimize / Predict / Years to minimum thickness).</p></li>
+<li><p><strong>Erosion</strong> — ESP geometry and erosion calculation for the production flow path.</p></li>
+</ul>
+</section>
+<section id="workflow-per-well-integrity-monitoring-app">
+<h2><span class="section-number">4.7.3. </span>Workflow (per Well Integrity Monitoring app)<a class="headerlink" href="#workflow-per-well-integrity-monitoring-app" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Select well</strong> — On opening the app, the plant is loaded. Choose <strong>Well Name</strong> from the dropdown to view WIMS for that well.</p></li>
+<li><p><strong>Manage caliper logs</strong> — In the <strong>Wall thickness forecast</strong> card, <strong>Wall integrity logs</strong> subcard (<strong>Multi-Finger Caliper Logs</strong>):</p>
+<ul>
+<li><p><strong>Upload log</strong> — Add a LAS caliper log (up to <code class="docutils literal notranslate"><span class="pre">MAX_WELL_LOGS</span></code> = 5 logs per well).</p></li>
+<li><p><strong>Log info</strong> — Click a log to open the <strong>Log info</strong> modal and set its metadata: date, baseline flag, finger units, joint identification marker, depth-corrected flag, finger name, and the max / min / average column names. A log cannot be processed until its required metadata is filled. Each log shows a status: <em>inputs required</em>, <em>unprocessed</em>, <em>detected</em>, or <em>processed</em>. Logs can be removed here.</p></li>
+<li><p><strong>Detect Joints</strong> — Run joint detection to propose joint-boundary candidates.</p></li>
+<li><p><strong>QA/QC</strong> — Open the <strong>Joint Detection QA/QC</strong> modal to review candidates against the depth chart and <strong>Approve</strong> the correct joints per log.</p></li>
+<li><p><strong>Process Logs</strong> — Run processing (uses the approved joints when available) to produce per-joint statistics.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/application_wims_1.png"><img alt="_images/application_wims_1.png" class="align-center" src="_images/application_wims_1.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+</ul>
+</li>
+<li><p><strong>Review processed logs</strong> — Select one or more processed logs to chart. Pick a column to plot (per-joint statistic), and open <strong>Finger Detail</strong> to inspect per-finger measurements for a chosen joint.</p></li>
+<li><p><strong>Well schematic</strong> — Create the well schematic in the <strong>Well Schematics</strong> application and add a well tally in Well Parameters. The Dashboard schematic and WIMS subcards appear when the selected well has at least one saved schematic.</p></li>
+<li><p><strong>Dashboard</strong> — Select a <strong>saved schematic</strong> in the Dashboard header. Fill in operational limits, history, maintenance and the WIMS subcards (see <a class="reference internal" href="#dashboard">Dashboard</a>). Click <strong>Save dashboard</strong> to persist the configuration.</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/application_wims_2.png"><img alt="_images/application_wims_2.png" class="align-center" src="_images/application_wims_2.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="_images/application_wims_4.png"><img alt="_images/application_wims_4.png" class="align-center" src="_images/application_wims_4.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Forecast</strong> — In the <strong>Forecast</strong> subcard, click <strong>Optimize</strong> to calibrate
+the corrosion model against processed logs, then choose a <strong>Prediction</strong>
+method (<em>Current wall thickness</em> or <em>Years to minimum thickness</em>) and click
+<strong>Run</strong> (see <a class="reference internal" href="#wall-thickness-forecast">Wall thickness forecast</a>).</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/application_wims_6.png"><img alt="_images/application_wims_6.png" class="align-center" src="_images/application_wims_6.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>Erosion</strong> — In the <strong>Erosion</strong> card, define the ESP geometry, choose a correlation and production window, and click <strong>Run erosion</strong> (see <a class="reference internal" href="#erosion">Erosion</a>).</p></li>
+</ol>
+</section>
+<section id="inputs">
+<h2><span class="section-number">4.7.4. </span>Inputs<a class="headerlink" href="#inputs" title="Link to this heading"></a></h2>
+<ul>
+<li><p><strong>Caliper log</strong> — LAS format (up to 2.0 supported). The file should have a <code class="docutils literal notranslate"><span class="pre">DATE</span></code> or <code class="docutils literal notranslate"><span class="pre">PID</span></code> mnemonic for the logging date. Finger channels should be named <code class="docutils literal notranslate"><span class="pre">D01</span></code>, <code class="docutils literal notranslate"><span class="pre">D02</span></code>, etc.</p></li>
+<li><p><strong>Per-log metadata</strong> — Set in the <strong>Log info</strong> modal (stored in <code class="docutils literal notranslate"><span class="pre">logs_information.json</span></code>): date, baseline flag (a single log per well can be the baseline), finger units (e.g. radius / double radius / diameter), joint identification marker (CCL, log markers, or tally), depth-corrected flag, finger name, and the max / min / average column names.</p></li>
+<li><p><strong>Well schematic</strong> — Created in the Well Schematics application; select a saved schematic in the Dashboard.</p></li>
+<li><p><strong>Well tally</strong> — Required for joint-based processing. Provide via Well Parameters (app builder). Format example:</p>
+<blockquote>
+<div><a class="reference internal image-reference" href="_images/application_wims_3.png"><img alt="_images/application_wims_3.png" class="align-center" src="_images/application_wims_3.png" style="width: 100%;" /></a>
+</div></blockquote>
+</li>
+<li><p><strong>ESP geometry and production data</strong> — Required for erosion (and for corrosion calibration/prediction, which use production flow, pressure and temperature over a time window). ESP geometry is edited/saved in the Erosion card.</p></li>
+</ul>
+</section>
+<section id="caliper-log-processing">
+<h2><span class="section-number">4.7.5. </span>Caliper log processing<a class="headerlink" href="#caliper-log-processing" title="Link to this heading"></a></h2>
+<p>Processing runs in three steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Detect Joints</strong> — Proposes joint-boundary candidates from the log using the configured <em>joint identification marker</em> (CCL collar peaks, log-curve markers, or the well tally as a fallback). Each candidate has a depth, kind, and score.</p></li>
+<li><p><strong>QA/QC and Approve</strong> — In the <strong>Joint Detection QA/QC</strong> modal, review the candidates against the depth chart and approve the correct joints. Approved joints are matched to the well tally.</p></li>
+<li><p><strong>Process Logs</strong> — For each well joint, computes:</p>
+<ul class="simple">
+<li><p>Maximum, minimum and average radius [inch]</p></li>
+<li><p>Maximum penetration [%] — <code class="docutils literal notranslate"><span class="pre">100</span> <span class="pre">x</span> <span class="pre">(max</span> <span class="pre">radius</span> <span class="pre">-</span> <span class="pre">nominal</span> <span class="pre">inner</span> <span class="pre">radius)</span> <span class="pre">/</span> <span class="pre">(nominal</span> <span class="pre">outer</span> <span class="pre">radius</span> <span class="pre">-</span> <span class="pre">nominal</span> <span class="pre">inner</span> <span class="pre">radius)</span></code></p></li>
+<li><p>Maximum wall loss [%] — circumferential loss averaged over the joint depth rows</p></li>
+<li><p>Maximum penetration depth and minimum penetration depth [m]</p></li>
+<li><p>Remaining wall thickness [inch] — <code class="docutils literal notranslate"><span class="pre">nominal</span> <span class="pre">outer</span> <span class="pre">radius</span> <span class="pre">-</span> <span class="pre">maximum</span> <span class="pre">radius</span></code> (one-sided, worst-case pit)</p></li>
+</ul>
+</li>
+</ol>
+<p>Log depths should be calibrated to the same depth reference prior to processing (set the <em>depth-corrected</em> flag in the Log info modal).</p>
+</section>
+<section id="dashboard">
+<h2><span class="section-number">4.7.6. </span>Dashboard<a class="headerlink" href="#dashboard" title="Link to this heading"></a></h2>
+<p>Select a saved schematic in the Dashboard header; the schematic image is shown
+with Well Barrier Envelope colouring applied (primary elements blue, secondary
+red, and failed elements highlighted yellow). Click <strong>Save dashboard</strong> to
+persist all Dashboard state.</p>
+<ul class="simple">
+<li><p><strong>Operational Limits</strong> — Table of Description, Casing, Min., Max. and Unit. Add via <strong>Add limit</strong> (description presets include minimum wall thickness, temperature, and annulus A/B/C pressure, plus a Custom option; casing-specific limits pick a casing from the tally).</p></li>
+<li><p><strong>History</strong> — Dated event log. Add via <strong>Add entry</strong>; each entry can have a document attached (uploaded to the server and downloadable from the table).</p></li>
+<li><p><strong>Maintenance checklist</strong> — Table of maintenance type, comments, interval, last maintenance date and a computed <strong>Due status</strong> (days remaining until the next due date, or days overdue). Add via <strong>Add item</strong>.</p></li>
+<li><p><strong>Overall Integrity status</strong> — Overall status dot and a <strong>Last update date</strong>; legend: Failed (red), Not verified or other issues (amber), Verified and in good state (green).</p></li>
+<li><p><strong>Annulus monitoring</strong> — Add monitors per annulus via <strong>Add monitor</strong> (choose the annulus from the schematic). Each monitor is a gauge: <strong>Configure gauge</strong> (select Tag, set Min and Max alert values) or <strong>Delete monitor</strong>. Tag values and recent time series are fetched from the application; when a value crosses an alert threshold an alarm is raised and can be acknowledged.</p></li>
+<li><p><strong>Well Barrier Envelope (WBE)</strong> — Primary and Secondary barrier element tables. Each row: Element, Qualification, Monitoring, Status (Failed / Not verified / Verified), Remarks. Add elements from the schematic or as custom via <strong>Add element</strong>; click a row to edit or delete.</p></li>
+<li><p><strong>WBE Risk</strong> — Table of Failure mode, Effect, Risk (Likelihood L, Effect E, Risk factor L x E), Action Plan, Response time (months) and Operate during failure. Add via <strong>Add risk</strong>; click a row to edit or delete.</p></li>
+</ul>
+</section>
+<section id="wall-thickness-forecast">
+<h2><span class="section-number">4.7.7. </span>Wall thickness forecast<a class="headerlink" href="#wall-thickness-forecast" title="Link to this heading"></a></h2>
+<p>The <strong>Forecast</strong> subcard uses a calibrated CO2 corrosion model rather than a
+manual rate calculation.</p>
+<ul class="simple">
+<li><p><strong>Optimize</strong> — Calibrates the corrosion model against the processed logs and production data, and persists the calibrated parameters (<code class="docutils literal notranslate"><span class="pre">corrosion_opt_params.json</span></code>). A “last optimized” note shows when calibration was last run. Optimization must be run before prediction.</p></li>
+<li><p><strong>Prediction method</strong> — After optimization, choose a method and click <strong>Run</strong>:</p>
+<ul>
+<li><p><strong>Current wall thickness</strong> — Predicts the remaining wall thickness from the latest log up to now, using the calibrated model over the intervening production window. Result: predicted remaining wall thickness per joint.</p></li>
+<li><p><strong>Years to minimum thickness (past-year production)</strong> — Projects the calibrated model’s trailing 12-month corrosion rate forward to estimate, per casing, the years until the casing reaches its minimum wall thickness (using the per-casing minimum thicknesses entered in the Dashboard). Reports the limiting joint and the worst joints per casing.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="erosion">
+<h2><span class="section-number">4.7.8. </span>Erosion<a class="headerlink" href="#erosion" title="Link to this heading"></a></h2>
+<p>The <strong>Erosion</strong> card estimates erosion along the production flow path from the
+well tally, ESP geometry and production data.</p>
+<ul class="simple">
+<li><p><strong>ESP geometry</strong> — Shows the ESP setting depth (from the plant) and the production casing ID (from the tally), and lets you set the production tubing ID [inch] and edit the geometry components (Type, Name, Length [m], OD [inch]). <strong>Save ESP geometry</strong> stores it per well.</p></li>
+<li><p><strong>Erosion calculation</strong> — Choose a <strong>Correlation</strong> (DNVGL, OKA, API, or E/CRC Tulsa), a production <strong>Start</strong>/<strong>End</strong> date, the <strong>Fluid density</strong> [kg/m3] and a <strong>Flow statistic</strong> (Mean or Max), plus correlation-specific parameters (e.g. particle impact angle, hardness, particle/pipe material). Click <strong>Run erosion</strong>.</p></li>
+<li><p><strong>Results</strong> — Per-segment flow velocity [m/s] and erosion rate [mm/year] (for DNVGL / OKA / E/CRC Tulsa), or an API velocity-limit comparison (erosional velocity limit, flow velocity, and whether it is exceeded). A summary aggregates the worst erosion rate per joint.</p></li>
+</ul>
+</section>
+<section id="how-the-calculations-work">
+<h2><span class="section-number">4.7.9. </span>How the calculations work<a class="headerlink" href="#how-the-calculations-work" title="Link to this heading"></a></h2>
+<section id="caliper-processing-method">
+<h3><span class="section-number">4.7.9.1. </span>Caliper processing method<a class="headerlink" href="#caliper-processing-method" title="Link to this heading"></a></h3>
+<p>For each matched joint, finger-radius channels are sliced over the joint depth
+interval and coupling spikes are excluded. From the cleaned radii, per joint:</p>
+<ul class="simple">
+<li><p><strong>Max / Min / Mean radius [inch]</strong> — over the finger columns.</p></li>
+<li><p><strong>Max penetration [%]</strong> — <code class="docutils literal notranslate"><span class="pre">100</span> <span class="pre">x</span> <span class="pre">(max</span> <span class="pre">radius</span> <span class="pre">-</span> <span class="pre">nominal</span> <span class="pre">inner</span> <span class="pre">radius)</span> <span class="pre">/</span> <span class="pre">(nominal</span> <span class="pre">outer</span> <span class="pre">radius</span> <span class="pre">-</span> <span class="pre">nominal</span> <span class="pre">inner</span> <span class="pre">radius)</span></code>, where nominal inner/outer radii are <code class="docutils literal notranslate"><span class="pre">ID/2</span></code> and <code class="docutils literal notranslate"><span class="pre">OD/2</span></code> from the matched tally row.</p></li>
+<li><p><strong>Max wall loss [%]</strong> — circumferential wall loss averaged over the joint’s depth rows.</p></li>
+<li><p><strong>Remaining wall thickness [inch]</strong> — <code class="docutils literal notranslate"><span class="pre">nominal</span> <span class="pre">outer</span> <span class="pre">radius</span> <span class="pre">-</span> <span class="pre">max</span> <span class="pre">radius</span></code> (one-sided, deepest pit).</p></li>
+</ul>
+</section>
+<section id="corrosion-forecast-calibrated-model">
+<h3><span class="section-number">4.7.9.2. </span>Corrosion forecast (calibrated model)<a class="headerlink" href="#corrosion-forecast-calibrated-model" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Log-measured rate</strong> — Between two dated logs (or from a baseline log), the wall-thickness change rate [mm/year] is derived from the change in <strong>maximum inner radius</strong> (worst pit) per joint over the elapsed time. The baseline is the log flagged as baseline, otherwise the earliest dated log. Remaining wall thickness at a log date is <code class="docutils literal notranslate"><span class="pre">(OD/2</span> <span class="pre">-</span> <span class="pre">max</span> <span class="pre">radius)</span> <span class="pre">x</span> <span class="pre">25.4</span></code> [mm].</p></li>
+<li><p><strong>Optimize (calibration)</strong> — For each joint and log interval, the DLD CO2 corrosion model coefficients (A, B, C, D) are calibrated so the modelled rate matches the log-measured rate; the sign term (E) is derived from the measured trend. The modelled rate integrates the CO2 corrosion rate over the production window (flow, pressure, temperature per joint) between log dates.</p></li>
+<li><p><strong>Predict (current wall thickness)</strong> — Starting from the latest processed log’s maximum inner radius, the calibrated model is integrated over the production window from the latest log date to now, giving the predicted inner radius and remaining wall thickness [mm] per joint.</p></li>
+<li><p><strong>Years to minimum thickness</strong> — The per-joint annual corrosion rate is taken from the calibrated model over the last 12 months of production; <code class="docutils literal notranslate"><span class="pre">years</span> <span class="pre">to</span> <span class="pre">min</span> <span class="pre">=</span> <span class="pre">(remaining</span> <span class="pre">wall</span> <span class="pre">now</span> <span class="pre">[mm]</span> <span class="pre">-</span> <span class="pre">minimum</span> <span class="pre">wall</span> <span class="pre">[mm])</span> <span class="pre">/</span> <span class="pre">rate</span> <span class="pre">[mm/year]</span></code>. Per casing, the soonest (limiting) joint sets the casing result.</p></li>
+</ul>
+</section>
+<section id="erosion-method">
+<h3><span class="section-number">4.7.9.3. </span>Erosion method<a class="headerlink" href="#erosion-method" title="Link to this heading"></a></h3>
+<p>The production flow path is split into segments from the well tally and ESP
+geometry (tubing interior, ESP-joint annulus, and tubing above the ESP). A
+representative flow rate (mean or max of the production series) gives the flow
+velocity <code class="docutils literal notranslate"><span class="pre">v</span> <span class="pre">=</span> <span class="pre">(flow</span> <span class="pre">[m3/h]</span> <span class="pre">/</span> <span class="pre">3600)</span> <span class="pre">/</span> <span class="pre">(pi</span> <span class="pre">x</span> <span class="pre">d^2</span> <span class="pre">/</span> <span class="pre">4)</span></code> [m/s] per segment. The
+selected correlation then gives, per segment, an erosion rate [mm/year] (DNVGL,
+OKA, E/CRC Tulsa) or, for API, an erosional velocity limit [m/s] compared
+against the flow velocity.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="application_well_schematics.html" class="btn btn-neutral float-left" title="4.6. Well Schematics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="application_rag.html" class="btn btn-neutral float-right" title="4.8. Chat Assistant" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

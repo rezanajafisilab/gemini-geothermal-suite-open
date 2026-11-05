@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.fluid.pvt_water_stp &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.fluid.pvt_water_stp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.fluid.pvt_water_stp</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Simple water PVT properties near STP.</span>
+
+<span class="sd">Provides constant representative properties for water at standard</span>
+<span class="sd">conditions.</span>
+<span class="sd">"""</span>
+
+
+<div class="viewcode-block" id="PVTConstantSTP">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.fluid.pvt_water_stp.html#gemini_model.fluid.pvt_water_stp.PVTConstantSTP">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PVTConstantSTP</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Water PVT at standard conditions (constant properties)."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize PVT water STP model."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"pressure_max"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">500e5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"pressure_min"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"temperature_max"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">+</span> <span class="mf">273.15</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"temperature_min"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">+</span> <span class="mf">273.15</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"RHOG"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.976</span>  <span class="c1"># CO2 gas density (kg/m3)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"RHOL"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># H2O Liquid density (kg/m3)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"GMF"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># gas mass fraction (-)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"VISG"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">21.29e-6</span>  <span class="c1"># CO2 Gas viscosity (Pa.s)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"VISL"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-3</span>  <span class="c1"># H2O viscosity (Pa.s)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"CPG"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.819e3</span>  <span class="c1"># CO2 heat capacity (J/Kg K)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"CPL"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">4.2174e3</span>  <span class="c1"># H2O Heat capacity (J/Kg K)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"HG"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">484.665</span>  <span class="c1"># CO2 Enthalpy (KJ/Kg)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"HL"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.000612</span>  <span class="c1"># H2O Enthalpy ((KJ/Kg)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"TCG"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">14.7e-3</span>  <span class="c1"># CO2 thermal conductivity (W/m K)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"TCL"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.6</span>  <span class="c1"># H2O thermal conductivity (W/m K)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"SIGMA"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">72.8e-3</span>  <span class="c1"># Water-CO2 surface tension (N/m)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"SG"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9381.68</span>  <span class="c1"># CO2 Entropy (K/Kg K)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"SL"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># H2O Entropy (K/Kg K)</span>
+
+<div class="viewcode-block" id="PVTConstantSTP.update_parameters">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.fluid.pvt_water_stp.html#gemini_model.fluid.pvt_water_stp.PVTConstantSTP.update_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Update model parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters: dict</span>
+<span class="sd">            Parameters dict as defined by the model.</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="PVTConstantSTP.get_pvt">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.fluid.pvt_water_stp.html#gemini_model.fluid.pvt_water_stp.PVTConstantSTP.get_pvt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pvt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">T</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Calculate the PVT parameters based on pressure and temperature.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        P : float</span>
+<span class="sd">            Pressure (Pa).</span>
+<span class="sd">        T : float</span>
+<span class="sd">            Temperature (K).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rho_g : float</span>
+<span class="sd">            Gas density (kg/m3).</span>
+<span class="sd">        rho_l : float</span>
+<span class="sd">            Liquid density (kg/m3).</span>
+<span class="sd">        gmf : float</span>
+<span class="sd">            Gas mass fraction (-).</span>
+<span class="sd">        eta_g : float</span>
+<span class="sd">            Viscosity gas (Pa.s).</span>
+<span class="sd">        eta_l : float</span>
+<span class="sd">            Viscosity liquid (Pa.s).</span>
+<span class="sd">        cp_g : float</span>
+<span class="sd">            Heat capacity gas (J/Kg/K).</span>
+<span class="sd">        cp_l : float</span>
+<span class="sd">            Heat capacity liquid (J/Kg/K).</span>
+<span class="sd">        K_g : float</span>
+<span class="sd">            Thermal conductivity gas (W/m/K).</span>
+<span class="sd">        K_l : float</span>
+<span class="sd">            Thermal conductivity liquid (W/m/K).</span>
+<span class="sd">        sigma : float</span>
+<span class="sd">            Surface tension (N/m).</span>
+<span class="sd">        """</span>
+        <span class="c1"># Density of Gas, Oil &amp; Water. rho_l is a psuedo density of liquid phase</span>
+        <span class="n">rho_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"RHOG"</span><span class="p">]</span>  <span class="c1"># density gas (kg/m3)</span>
+        <span class="n">rho_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"RHOL"</span><span class="p">]</span>  <span class="c1"># density liquid (kg/m3)</span>
+
+        <span class="c1"># Gas mass fraction of gas + water</span>
+        <span class="n">gmf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"GMF"</span><span class="p">]</span>  <span class="c1"># gas mass fraction (-)</span>
+
+        <span class="c1"># Viscosity of Gas &amp; Water</span>
+        <span class="n">eta_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"VISG"</span><span class="p">]</span>  <span class="c1"># viscosity gas (Pa.s)</span>
+        <span class="n">eta_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"VISL"</span><span class="p">]</span>  <span class="c1"># viscosity liquid (Pa.s)</span>
+
+        <span class="c1"># Heat capacity of gas &amp; liquid</span>
+        <span class="n">cp_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"CPG"</span><span class="p">]</span>  <span class="c1"># heat capacity gas (J/Kg/K)</span>
+        <span class="n">cp_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"CPL"</span><span class="p">]</span>  <span class="c1"># heat capacity liquid (J/Kg/K)</span>
+
+        <span class="c1"># Thermal conductivity of gas &amp; liquid</span>
+        <span class="n">K_g</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"TCG"</span><span class="p">]</span>  <span class="c1"># thermal conductivity gas (W/m/K)</span>
+        <span class="n">K_l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"TCL"</span><span class="p">]</span>  <span class="c1"># thermal conductivity liquid (W/m/K)</span>
+
+        <span class="c1"># Interfacial tension of Gas-Water &amp; Gas-Oil interface</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"SIGMA"</span><span class="p">]</span>  <span class="c1"># Surface tension (N/m)</span>
+
+        <span class="k">return</span> <span class="n">rho_g</span><span class="p">,</span> <span class="n">rho_l</span><span class="p">,</span> <span class="n">gmf</span><span class="p">,</span> <span class="n">eta_g</span><span class="p">,</span> <span class="n">eta_l</span><span class="p">,</span> <span class="n">cp_g</span><span class="p">,</span> <span class="n">cp_l</span><span class="p">,</span> <span class="n">K_g</span><span class="p">,</span> <span class="n">K_l</span><span class="p">,</span> <span class="n">sigma</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

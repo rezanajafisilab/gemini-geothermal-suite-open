@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_model.cooling_common.kernel &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_model.cooling_common.kernel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_model.cooling_common.kernel</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Shared vectorised cooling calculation, SI units; equations in specification 03.</span>
+
+<span class="sd">Absorption-first is an explicit component policy under supplied boundaries. This does</span>
+<span class="sd">not schedule wells or allocate heating. Constant-COP envelopes are analyst scenarios.</span>
+<span class="sd">Chilled/CW pump heat feedback is solved algebraically for linear auxiliary proxies;</span>
+<span class="sd">hot-pump and fan heat goes to ambient. No iterations, caches, I/O or model calls.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_settings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.physics</span><span class="w"> </span><span class="kn">import</span> <span class="n">hx_conductance_w_k</span><span class="p">,</span> <span class="n">nonnegative</span><span class="p">,</span> <span class="n">water_rates_m3h</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.tower</span><span class="w"> </span><span class="kn">import</span> <span class="n">tower_budget</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_temperature</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">a</span> <span class="o">&lt;=</span> <span class="o">-</span><span class="mf">273.15</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> must be finite Celsius above absolute zero"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_within</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">low</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">value</span> <span class="o">&lt;=</span> <span class="n">high</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="cooling_kernel">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_model.cooling_common.kernel.html#gemini_model.cooling_common.kernel.cooling_kernel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cooling_kernel</span><span class="p">(</span>
+    <span class="n">request_w</span><span class="p">,</span>
+    <span class="n">supply_c</span><span class="p">,</span>
+    <span class="n">return_c</span><span class="p">,</span>
+    <span class="n">chilled_flow_m3s</span><span class="p">,</span>
+    <span class="n">dry_bulb_c</span><span class="p">,</span>
+    <span class="n">wet_bulb_c</span><span class="p">,</span>
+    <span class="n">settings</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">availability</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Evaluate scalar or broadcast arrays using a single W-based path.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    request_w, supply_c, return_c, chilled_flow_m3s : array_like</span>
+<span class="sd">        Requested service W, target/return C and actual supplied chilled-loop m3/s.</span>
+<span class="sd">    dry_bulb_c, wet_bulb_c : array_like</span>
+<span class="sd">        Consistent weather; wet inlet estimate = wet bulb + tower approach.</span>
+<span class="sd">    settings : CoolingSettings</span>
+<span class="sd">        Explicit installed capacities, envelopes and screening parameters.</span>
+<span class="sd">    source : dict, optional</span>
+<span class="sd">        wellhead_c (already corrected), brine_capacity_w_k (caller rho*flow*Rules.cp),</span>
+<span class="sd">        brine_return_min_c (remaining whole-plant budget), allocated_heat_w and</span>
+<span class="sd">        clean hot_flow_m3s. Optional well_loss_k is diagnostic only.</span>
+<span class="sd">    availability : array_like</span>
+<span class="sd">        Equipment available fraction, [0,1]. Does not imply well operation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Numeric inventories/masks, with undefined outlet masks instead of NaNs.</span>
+<span class="sd">    """</span>
+    <span class="n">validate_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+    <span class="n">s</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">settings</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">electric</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">absorption</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">tower</span>
+    <span class="n">q</span><span class="p">,</span> <span class="n">ts</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">flow</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="n">wb</span><span class="p">,</span> <span class="n">av</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span>
+        <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"request_w"</span><span class="p">,</span> <span class="n">request_w</span><span class="p">),</span>
+        <span class="n">_temperature</span><span class="p">(</span><span class="s2">"supply"</span><span class="p">,</span> <span class="n">supply_c</span><span class="p">),</span>
+        <span class="n">_temperature</span><span class="p">(</span><span class="s2">"return"</span><span class="p">,</span> <span class="n">return_c</span><span class="p">),</span>
+        <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"chilled flow"</span><span class="p">,</span> <span class="n">chilled_flow_m3s</span><span class="p">),</span>
+        <span class="n">_temperature</span><span class="p">(</span><span class="s2">"dry bulb"</span><span class="p">,</span> <span class="n">dry_bulb_c</span><span class="p">),</span>
+        <span class="n">_temperature</span><span class="p">(</span><span class="s2">"wet bulb"</span><span class="p">,</span> <span class="n">wet_bulb_c</span><span class="p">),</span>
+        <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"availability"</span><span class="p">,</span> <span class="n">availability</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">av</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">wb</span> <span class="o">&gt;</span> <span class="n">db</span> <span class="o">+</span> <span class="mf">0.001</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Availability exceeds one or wet bulb exceeds dry bulb"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">tr</span> <span class="o">&lt;=</span> <span class="n">ts</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Positive cooling requires return above target"</span><span class="p">)</span>
+    <span class="n">zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">wet_option</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">option</span> <span class="o">!=</span> <span class="s2">"air"</span>
+    <span class="n">cw_in</span> <span class="o">=</span> <span class="n">wb</span> <span class="o">+</span> <span class="n">t</span><span class="o">.</span><span class="n">approach_k</span>
+    <span class="n">c_chw</span> <span class="o">=</span> <span class="n">flow</span> <span class="o">*</span> <span class="n">s</span><span class="o">.</span><span class="n">water</span><span class="o">.</span><span class="n">density_kg_m3</span> <span class="o">*</span> <span class="n">s</span><span class="o">.</span><span class="n">water_cp_j_kg_k</span>
+    <span class="n">service_cap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">c_chw</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tr</span> <span class="o">-</span> <span class="n">ts</span><span class="p">))</span>
+    <span class="n">pump_factor</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">chilled_pump_ratio</span> <span class="o">*</span> <span class="n">s</span><span class="o">.</span><span class="n">chilled_pump_heat_to_water</span>
+
+    <span class="c1"># One physical shared tower budget, including condenser pump heat and water caps.</span>
+    <span class="n">tower_cap</span><span class="p">,</span> <span class="n">cw_in</span><span class="p">,</span> <span class="n">c_cw</span><span class="p">,</span> <span class="n">water_cap</span><span class="p">,</span> <span class="n">thermal_cap</span> <span class="o">=</span> <span class="n">tower_budget</span><span class="p">(</span><span class="n">wb</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">tower_factor</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">t</span><span class="o">.</span><span class="n">pump_ratio</span> <span class="o">*</span> <span class="n">t</span><span class="o">.</span><span class="n">pump_heat_to_water</span>
+
+    <span class="n">gen_limit</span> <span class="o">=</span> <span class="n">zero</span>
+    <span class="n">hot_flow</span> <span class="o">=</span> <span class="n">zero</span>
+    <span class="n">cb</span> <span class="o">=</span> <span class="n">zero</span>
+    <span class="n">wh</span> <span class="o">=</span> <span class="n">zero</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">zero</span>
+    <span class="n">hot_valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="n">source_supplied</span> <span class="o">=</span> <span class="n">source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">source_supplied</span><span class="p">:</span>
+        <span class="n">wh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">_temperature</span><span class="p">(</span><span class="s2">"wellhead"</span><span class="p">,</span> <span class="n">source</span><span class="p">[</span><span class="s2">"wellhead_c"</span><span class="p">]),</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">cb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span>
+            <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"brine heat capacity flow"</span><span class="p">,</span> <span class="n">source</span><span class="p">[</span><span class="s2">"brine_capacity_w_k"</span><span class="p">]),</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">)</span>
+        <span class="n">br_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span>
+            <span class="n">_temperature</span><span class="p">(</span><span class="s2">"brine return minimum"</span><span class="p">,</span> <span class="n">source</span><span class="p">[</span><span class="s2">"brine_return_min_c"</span><span class="p">]),</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">)</span>
+        <span class="n">allocated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span>
+            <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"allocated heat"</span><span class="p">,</span> <span class="n">source</span><span class="p">[</span><span class="s2">"allocated_heat_w"</span><span class="p">]),</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">)</span>
+        <span class="n">hot_flow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">nonnegative</span><span class="p">(</span><span class="s2">"hot flow"</span><span class="p">,</span> <span class="n">source</span><span class="p">[</span><span class="s2">"hot_flow_m3s"</span><span class="p">]),</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span>
+            <span class="n">nonnegative</span><span class="p">(</span><span class="s2">"well loss diagnostic"</span><span class="p">,</span> <span class="n">source</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"well_loss_k"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)),</span> <span class="n">q</span><span class="o">.</span><span class="n">shape</span>
+        <span class="p">)</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">hot_flow</span> <span class="o">*</span> <span class="n">s</span><span class="o">.</span><span class="n">water</span><span class="o">.</span><span class="n">density_kg_m3</span> <span class="o">*</span> <span class="n">s</span><span class="o">.</span><span class="n">water_cp_j_kg_k</span>
+        <span class="n">conductance</span> <span class="o">=</span> <span class="n">hx_conductance_w_k</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">ch</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">hx_ua_w_k</span><span class="p">)</span>
+        <span class="c1"># HX inlet clean water = hot_supply - Q/Ch. Solve Q &lt;= G*(Twh-Tclean_in).</span>
+        <span class="n">g_over_ch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">conductance</span><span class="p">,</span> <span class="n">ch</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">ch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ua_limit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
+            <span class="n">conductance</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_supply_c</span><span class="p">),</span>
+            <span class="mi">1</span> <span class="o">-</span> <span class="n">g_over_ch</span><span class="p">,</span>
+            <span class="n">out</span><span class="o">=</span><span class="n">allocated</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">g_over_ch</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">inv_cb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">cb</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">inv_ch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">ch</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">ch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">pinch_limit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_supply_c</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">hx_approach_k</span><span class="p">),</span>
+            <span class="n">inv_cb</span> <span class="o">-</span> <span class="n">inv_ch</span><span class="p">,</span>
+            <span class="n">out</span><span class="o">=</span><span class="n">allocated</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="n">where</span><span class="o">=</span><span class="n">inv_cb</span> <span class="o">&gt;</span> <span class="n">inv_ch</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">hot_valid</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">wh</span> <span class="o">&gt;=</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_supply_c</span> <span class="o">+</span> <span class="n">a</span><span class="o">.</span><span class="n">hx_approach_k</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">ch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">cb</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="n">_within</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">hot_supply_c</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_min_c</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_max_c</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">gen_limit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">allocated</span><span class="p">,</span>
+                <span class="n">cb</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span> <span class="o">-</span> <span class="n">br_min</span><span class="p">),</span>
+                <span class="n">ua_limit</span><span class="p">,</span>
+                <span class="n">pinch_limit</span><span class="p">,</span>
+                <span class="n">ch</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_supply_c</span> <span class="o">-</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_return_min_c</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">gen_limit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hot_valid</span><span class="p">,</span> <span class="n">gen_limit</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">abs_valid</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">_within</span><span class="p">(</span><span class="n">cw_in</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">sink_min_c</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">sink_max_c</span><span class="p">)</span>
+        <span class="o">&amp;</span> <span class="n">_within</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">supply_min_c</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">supply_max_c</span><span class="p">)</span>
+        <span class="o">&amp;</span> <span class="n">hot_valid</span>
+    <span class="p">)</span>
+    <span class="n">abs_reject_ratio</span> <span class="o">=</span> <span class="n">pump_factor</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">a</span><span class="o">.</span><span class="n">cop_th</span> <span class="o">+</span> <span class="n">a</span><span class="o">.</span><span class="n">internal_ratio</span><span class="p">)</span>
+    <span class="n">abs_tower_ratio</span> <span class="o">=</span> <span class="n">abs_reject_ratio</span> <span class="o">*</span> <span class="n">tower_factor</span>
+    <span class="n">qa</span> <span class="o">=</span> <span class="n">zero</span>
+    <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">option</span> <span class="o">==</span> <span class="s2">"absorption"</span><span class="p">:</span>
+        <span class="n">qa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">service_cap</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">capacity_w</span><span class="p">)</span> <span class="o">*</span> <span class="n">av</span> <span class="o">/</span> <span class="n">pump_factor</span><span class="p">,</span>
+                <span class="n">gen_limit</span> <span class="o">*</span> <span class="n">a</span><span class="o">.</span><span class="n">cop_th</span> <span class="o">/</span> <span class="n">pump_factor</span><span class="p">,</span>
+                <span class="n">tower_cap</span> <span class="o">/</span> <span class="n">abs_tower_ratio</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">qa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">abs_valid</span><span class="p">,</span> <span class="n">qa</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">electric_sink</span> <span class="o">=</span> <span class="n">cw_in</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">condenser</span> <span class="o">==</span> <span class="s2">"water"</span> <span class="k">else</span> <span class="n">db</span>
+    <span class="n">electric_valid</span> <span class="o">=</span> <span class="n">_within</span><span class="p">(</span><span class="n">electric_sink</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">sink_min_c</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">sink_max_c</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">_within</span><span class="p">(</span>
+        <span class="n">ts</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">supply_min_c</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">supply_max_c</span>
+    <span class="p">)</span>
+    <span class="n">electric_reject_ratio</span> <span class="o">=</span> <span class="n">pump_factor</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">cop</span><span class="p">)</span>
+    <span class="n">remaining_tower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tower_cap</span> <span class="o">-</span> <span class="n">qa</span> <span class="o">*</span> <span class="n">abs_tower_ratio</span><span class="p">)</span>
+    <span class="n">qe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">service_cap</span> <span class="o">-</span> <span class="n">qa</span><span class="p">),</span> <span class="n">e</span><span class="o">.</span><span class="n">capacity_w</span> <span class="o">*</span> <span class="n">av</span> <span class="o">/</span> <span class="n">pump_factor</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">condenser</span> <span class="o">==</span> <span class="s2">"water"</span><span class="p">:</span>
+        <span class="n">qe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">qe</span><span class="p">,</span> <span class="n">remaining_tower</span> <span class="o">/</span> <span class="p">(</span><span class="n">electric_reject_ratio</span> <span class="o">*</span> <span class="n">tower_factor</span><span class="p">))</span>
+    <span class="n">qe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">electric_valid</span><span class="p">,</span> <span class="n">qe</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">delivered</span> <span class="o">=</span> <span class="n">qa</span> <span class="o">+</span> <span class="n">qe</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="n">qa</span> <span class="o">*</span> <span class="n">pump_factor</span> <span class="o">/</span> <span class="n">a</span><span class="o">.</span><span class="n">cop_th</span>
+    <span class="n">comp</span> <span class="o">=</span> <span class="n">qe</span> <span class="o">*</span> <span class="n">pump_factor</span> <span class="o">/</span> <span class="n">e</span><span class="o">.</span><span class="n">cop</span>
+    <span class="n">internal</span> <span class="o">=</span> <span class="n">qa</span> <span class="o">*</span> <span class="n">pump_factor</span> <span class="o">*</span> <span class="n">a</span><span class="o">.</span><span class="n">internal_ratio</span>
+    <span class="n">abs_core</span> <span class="o">=</span> <span class="n">qa</span> <span class="o">*</span> <span class="n">pump_factor</span> <span class="o">+</span> <span class="n">gen</span> <span class="o">+</span> <span class="n">internal</span>
+    <span class="n">elec_core</span> <span class="o">=</span> <span class="n">qe</span> <span class="o">*</span> <span class="n">pump_factor</span> <span class="o">+</span> <span class="n">comp</span>
+    <span class="n">wet_core</span> <span class="o">=</span> <span class="n">abs_core</span> <span class="o">+</span> <span class="p">(</span><span class="n">elec_core</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">condenser</span> <span class="o">==</span> <span class="s2">"water"</span> <span class="k">else</span> <span class="n">zero</span><span class="p">)</span>
+    <span class="n">cw_pump</span> <span class="o">=</span> <span class="n">wet_core</span> <span class="o">*</span> <span class="n">t</span><span class="o">.</span><span class="n">pump_ratio</span>
+    <span class="n">tower_reject</span> <span class="o">=</span> <span class="n">wet_core</span> <span class="o">+</span> <span class="n">cw_pump</span> <span class="o">*</span> <span class="n">t</span><span class="o">.</span><span class="n">pump_heat_to_water</span>
+    <span class="n">tower_fan</span> <span class="o">=</span> <span class="n">tower_reject</span> <span class="o">*</span> <span class="n">t</span><span class="o">.</span><span class="n">fan_ratio</span>
+    <span class="n">air_reject</span> <span class="o">=</span> <span class="n">elec_core</span> <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">condenser</span> <span class="o">==</span> <span class="s2">"air"</span> <span class="k">else</span> <span class="n">zero</span>
+    <span class="n">air_fan</span> <span class="o">=</span> <span class="n">air_reject</span> <span class="o">*</span> <span class="n">e</span><span class="o">.</span><span class="n">air_fan_ratio</span>
+    <span class="n">hot_pump</span> <span class="o">=</span> <span class="n">gen</span> <span class="o">*</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_pump_ratio</span>
+    <span class="n">chilled_pump</span> <span class="o">=</span> <span class="n">delivered</span> <span class="o">*</span> <span class="n">s</span><span class="o">.</span><span class="n">chilled_pump_ratio</span>
+    <span class="n">chillers</span> <span class="o">=</span> <span class="n">comp</span> <span class="o">+</span> <span class="n">internal</span> <span class="o">+</span> <span class="n">air_fan</span> <span class="o">+</span> <span class="n">hot_pump</span> <span class="o">+</span> <span class="n">chilled_pump</span>
+    <span class="n">towers</span> <span class="o">=</span> <span class="n">tower_fan</span> <span class="o">+</span> <span class="n">cw_pump</span>
+    <span class="n">ambient</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">air_fan</span>
+        <span class="o">+</span> <span class="n">tower_fan</span>
+        <span class="o">+</span> <span class="n">hot_pump</span>
+        <span class="o">+</span> <span class="n">chilled_pump</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">s</span><span class="o">.</span><span class="n">chilled_pump_heat_to_water</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">cw_pump</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span><span class="o">.</span><span class="n">pump_heat_to_water</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">evap</span><span class="p">,</span> <span class="n">blow</span><span class="p">,</span> <span class="n">makeup</span> <span class="o">=</span> <span class="n">water_rates_m3h</span><span class="p">(</span><span class="n">tower_reject</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">water</span><span class="p">)</span>
+    <span class="n">actual_supply</span> <span class="o">=</span> <span class="n">tr</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">delivered</span><span class="p">,</span> <span class="n">c_chw</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">c_chw</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">hot_c</span> <span class="o">=</span> <span class="n">hot_flow</span> <span class="o">*</span> <span class="n">s</span><span class="o">.</span><span class="n">water</span><span class="o">.</span><span class="n">density_kg_m3</span> <span class="o">*</span> <span class="n">s</span><span class="o">.</span><span class="n">water_cp_j_kg_k</span>
+    <span class="n">hot_out</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">hot_supply_c</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">hot_c</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">hot_c</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">brine_out</span> <span class="o">=</span> <span class="n">wh</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="n">cb</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">cb</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cw_out</span> <span class="o">=</span> <span class="n">cw_in</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">tower_reject</span><span class="p">,</span> <span class="n">c_cw</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="n">c_cw</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">unmet</span> <span class="o">=</span> <span class="n">q</span> <span class="o">-</span> <span class="n">delivered</span>
+    <span class="n">masks</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"COOLING_UNMET"</span><span class="p">:</span> <span class="n">unmet</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.001</span> <span class="o">*</span> <span class="n">q</span><span class="p">),</span>
+        <span class="s2">"CHILLED_FLOW_LIMIT"</span><span class="p">:</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="n">service_cap</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"ELECTRIC_ENVELOPE"</span><span class="p">:</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="n">qa</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">electric_valid</span><span class="p">,</span>
+        <span class="s2">"ABS_HOT_LIMIT"</span><span class="p">:</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">option</span> <span class="o">==</span> <span class="s2">"absorption"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gen_limit</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="s2">"ABS_ENVELOPE"</span><span class="p">:</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">option</span> <span class="o">==</span> <span class="s2">"absorption"</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">abs_valid</span><span class="p">,</span>
+        <span class="s2">"SINK_CAPACITY"</span><span class="p">:</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">wet_option</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">unmet</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">tower_reject</span> <span class="o">&gt;=</span> <span class="n">tower_cap</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"SINK_FREEZE_RISK"</span><span class="p">:</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">wet_option</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cw_in</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="s2">"WATER_LIMIT"</span><span class="p">:</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="o">&amp;</span> <span class="n">wet_option</span>
+        <span class="o">&amp;</span> <span class="p">(</span><span class="n">water_cap</span> <span class="o">&lt;</span> <span class="n">thermal_cap</span><span class="p">)</span>
+        <span class="o">&amp;</span> <span class="p">(</span><span class="n">tower_reject</span> <span class="o">&gt;=</span> <span class="n">water_cap</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"WATER_SUPPLY_NOT_CHECKED"</span><span class="p">:</span> <span class="p">(</span><span class="n">tower_reject</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">water</span><span class="o">.</span><span class="n">max_makeup_water_m3h</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">"DISCHARGE_NOT_CHECKED"</span><span class="p">:</span> <span class="p">(</span><span class="n">tower_reject</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">water</span><span class="o">.</span><span class="n">max_blowdown_m3h</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">"RETURN_NOT_VALIDATED"</span><span class="p">:</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"SUPPLIER_MAP_NOT_VALIDATED"</span><span class="p">:</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"power_cool"</span><span class="p">:</span> <span class="n">delivered</span><span class="p">,</span>
+        <span class="s2">"power_cool_unmet"</span><span class="p">:</span> <span class="n">unmet</span><span class="p">,</span>
+        <span class="s2">"power_abs"</span><span class="p">:</span> <span class="n">qa</span><span class="p">,</span>
+        <span class="s2">"power_chill"</span><span class="p">:</span> <span class="n">qe</span><span class="p">,</span>
+        <span class="s2">"power_free"</span><span class="p">:</span> <span class="n">zero</span><span class="p">,</span>
+        <span class="s2">"power_recovery_hp"</span><span class="p">:</span> <span class="n">zero</span><span class="p">,</span>
+        <span class="s2">"power_drive"</span><span class="p">:</span> <span class="n">gen</span><span class="p">,</span>
+        <span class="s2">"power_compressor"</span><span class="p">:</span> <span class="n">comp</span><span class="p">,</span>
+        <span class="s2">"power_abs_internal"</span><span class="p">:</span> <span class="n">internal</span><span class="p">,</span>
+        <span class="s2">"power_chilled_pump"</span><span class="p">:</span> <span class="n">chilled_pump</span><span class="p">,</span>
+        <span class="s2">"power_hot_pump"</span><span class="p">:</span> <span class="n">hot_pump</span><span class="p">,</span>
+        <span class="s2">"power_cw_pump"</span><span class="p">:</span> <span class="n">cw_pump</span><span class="p">,</span>
+        <span class="s2">"power_tower_fan"</span><span class="p">:</span> <span class="n">tower_fan</span><span class="p">,</span>
+        <span class="s2">"power_air_fan"</span><span class="p">:</span> <span class="n">air_fan</span><span class="p">,</span>
+        <span class="s2">"power_chillers"</span><span class="p">:</span> <span class="n">chillers</span><span class="p">,</span>
+        <span class="s2">"power_towers"</span><span class="p">:</span> <span class="n">towers</span><span class="p">,</span>
+        <span class="s2">"power_el"</span><span class="p">:</span> <span class="n">chillers</span> <span class="o">+</span> <span class="n">towers</span><span class="p">,</span>
+        <span class="s2">"power_tower_reject"</span><span class="p">:</span> <span class="n">tower_reject</span><span class="p">,</span>
+        <span class="s2">"power_air_reject"</span><span class="p">:</span> <span class="n">air_reject</span><span class="p">,</span>
+        <span class="s2">"power_reject"</span><span class="p">:</span> <span class="n">tower_reject</span> <span class="o">+</span> <span class="n">air_reject</span><span class="p">,</span>
+        <span class="s2">"power_aux_to_ambient"</span><span class="p">:</span> <span class="n">ambient</span><span class="p">,</span>
+        <span class="s2">"power_th"</span><span class="p">:</span> <span class="n">zero</span><span class="p">,</span>
+        <span class="s2">"emission"</span><span class="p">:</span> <span class="n">zero</span><span class="p">,</span>
+        <span class="s2">"evaporation_m3h"</span><span class="p">:</span> <span class="n">evap</span><span class="p">,</span>
+        <span class="s2">"blowdown_m3h"</span><span class="p">:</span> <span class="n">blow</span><span class="p">,</span>
+        <span class="s2">"makeup_m3h"</span><span class="p">:</span> <span class="n">makeup</span><span class="p">,</span>
+        <span class="s2">"chilled_supply_temperature_c"</span><span class="p">:</span> <span class="n">actual_supply</span><span class="p">,</span>
+        <span class="s2">"chilled_outlet_defined"</span><span class="p">:</span> <span class="n">flow</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"hot_return_temperature_c"</span><span class="p">:</span> <span class="n">hot_out</span><span class="p">,</span>
+        <span class="s2">"hot_outlet_defined"</span><span class="p">:</span> <span class="n">gen</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"brine_outlet_temperature_c"</span><span class="p">:</span> <span class="n">brine_out</span><span class="p">,</span>
+        <span class="s2">"brine_outlet_defined"</span><span class="p">:</span> <span class="n">gen</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"cw_inlet_temperature_c"</span><span class="p">:</span> <span class="n">cw_in</span><span class="p">,</span>
+        <span class="s2">"cw_return_temperature_c"</span><span class="p">:</span> <span class="n">cw_out</span><span class="p">,</span>
+        <span class="s2">"cw_outlet_defined"</span><span class="p">:</span> <span class="n">tower_reject</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">"wellhead_c"</span><span class="p">:</span> <span class="n">wh</span><span class="p">,</span>
+        <span class="s2">"well_loss_k"</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span>
+        <span class="s2">"chilled_flow_m3s"</span><span class="p">:</span> <span class="n">flow</span><span class="p">,</span>
+        <span class="s2">"hot_flow_m3s"</span><span class="p">:</span> <span class="n">hot_flow</span><span class="p">,</span>
+        <span class="s2">"tower_limit_w"</span><span class="p">:</span> <span class="n">tower_cap</span><span class="p">,</span>
+        <span class="s2">"energy_residual_w"</span><span class="p">:</span> <span class="n">delivered</span>
+        <span class="o">+</span> <span class="n">gen</span>
+        <span class="o">+</span> <span class="n">chillers</span>
+        <span class="o">+</span> <span class="n">towers</span>
+        <span class="o">-</span> <span class="n">tower_reject</span>
+        <span class="o">-</span> <span class="n">air_reject</span>
+        <span class="o">-</span> <span class="n">ambient</span><span class="p">,</span>
+        <span class="s2">"masks"</span><span class="p">:</span> <span class="n">masks</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">"masks"</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Numerical overflow: operating inputs exceed the supported numeric range"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

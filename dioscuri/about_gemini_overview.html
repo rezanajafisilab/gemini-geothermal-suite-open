@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.1. GEMINI architecture &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=14520fd3"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. Getting started" href="index_getting_started.html" />
+    <link rel="prev" title="1. About GEMINI" href="index_about_gemini.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index_about_gemini.html">1. About GEMINI</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.1. GEMINI architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functional-architecture">1.1.1. Functional architecture</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#framework-layer">1.1.1.1. Framework layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model-layer">1.1.1.2. Model layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-layer">1.1.1.3. Module layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-layer">1.1.1.4. Application layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#project-layer">1.1.1.5. Project layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#database-layer">1.1.1.6. Database layer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphical-user-interface">1.1.1.7. Graphical User Interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#internal-vs-external-layers">1.1.1.8. Internal vs. external layers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#technical-architecture">1.1.2. Technical architecture</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#back-end">1.1.2.1. Back-end</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#front-end">1.1.2.2. Front-end</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#workflow-manager">1.1.2.3. Workflow manager</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#databases">1.1.2.4. Databases</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index_about_gemini.html"><span class="section-number">1. </span>About GEMINI</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">1.1. </span>GEMINI architecture</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/about_gemini_overview.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gemini-architecture">
+<h1><span class="section-number">1.1. </span>GEMINI architecture<a class="headerlink" href="#gemini-architecture" title="Link to this heading"></a></h1>
+<p>GEMINI is a software framework for modeling and real-time monitoring of
+geothermal assets. This page gives a high-level overview of the platform
+architecture. The architecture is described from two perspectives:</p>
+<ul class="simple">
+<li><p><strong>Functional architecture</strong>: platform layers and their responsibilities</p></li>
+<li><p><strong>Technical architecture</strong>: software components and infrastructure</p></li>
+</ul>
+<section id="functional-architecture">
+<h2><span class="section-number">1.1.1. </span>Functional architecture<a class="headerlink" href="#functional-architecture" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="#fig-func-architecture"><span class="std std-numref">Fig. 1.1</span></a> shows the functional layers of GEMINI and their
+interactions. The platform consists of:</p>
+<ul class="simple">
+<li><p>The framework layer</p></li>
+<li><p>The model layer</p></li>
+<li><p>The module layer</p></li>
+<li><p>The application layer</p></li>
+<li><p>The project layer</p></li>
+<li><p>The database layer</p></li>
+<li><p>A Graphical User Interface (GUI)</p></li>
+</ul>
+<p>The following subsections describe each layer.</p>
+<figure class="align-center" id="id1">
+<span id="fig-func-architecture"></span><a class="reference internal image-reference" href="_images/gemini_functional_architecture_V2_headers_only.png"><img alt="_images/gemini_functional_architecture_V2_headers_only.png" src="_images/gemini_functional_architecture_V2_headers_only.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 1.1 </span><span class="caption-text">Overview of the functional architecture of the GEMINI digital twin framework.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="framework-layer">
+<h3><span class="section-number">1.1.1.1. </span>Framework layer<a class="headerlink" href="#framework-layer" title="Link to this heading"></a></h3>
+<p>The framework is the foundation of GEMINI. It provides shared services that
+connect all internal and external components. Examples include scheduling,
+database I/O, and project lifecycle actions (create, open, save).</p>
+</section>
+<section id="model-layer">
+<h3><span class="section-number">1.1.1.2. </span>Model layer<a class="headerlink" href="#model-layer" title="Link to this heading"></a></h3>
+<p>The model layer contains computational models used by GEMINI. A model maps
+inputs to outputs and can be:</p>
+<ul class="simple">
+<li><p><strong>static</strong> (pure input-output)</p></li>
+<li><p><strong>dynamic</strong> (state is updated at each execution)</p></li>
+</ul>
+<p>Examples include well VLP, fluid PVT, and erosion calculations.</p>
+</section>
+<section id="module-layer">
+<h3><span class="section-number">1.1.1.3. </span>Module layer<a class="headerlink" href="#module-layer" title="Link to this heading"></a></h3>
+<p>A module is a scheduled collection of one or more models that provides a
+specific utility. Modules run automatically at fixed intervals (for example,
+every 5 minutes or hourly). A typical module computes KPIs such as injectivity
+index using recent data.</p>
+</section>
+<section id="application-layer">
+<h3><span class="section-number">1.1.1.4. </span>Application layer<a class="headerlink" href="#application-layer" title="Link to this heading"></a></h3>
+<p>Like modules, applications combine models and logic, but they run <strong>on demand</strong>.
+Applications are designed for interactive analysis, parameter tuning, and
+scenario exploration.</p>
+<p>In practice, modules are mostly “set and run”, while applications require direct
+user interaction.</p>
+</section>
+<section id="project-layer">
+<h3><span class="section-number">1.1.1.5. </span>Project layer<a class="headerlink" href="#project-layer" title="Link to this heading"></a></h3>
+<p>A project is a saved digital twin configuration for a specific system scope:
+full doublet, single well, or even a single asset (for example an ESP). Project
+settings and parameters are persisted and restored when reopened.</p>
+</section>
+<section id="database-layer">
+<h3><span class="section-number">1.1.1.6. </span>Database layer<a class="headerlink" href="#database-layer" title="Link to this heading"></a></h3>
+<p>The database layer contains:</p>
+<ul class="simple">
+<li><p>plant data (real-time measurements)</p></li>
+<li><p>calculated data</p></li>
+<li><p>plant/project parameters</p></li>
+<li><p>user/account information</p></li>
+</ul>
+<p>Database implementations can differ per plant and are therefore external to the
+generic GEMINI core.</p>
+</section>
+<section id="graphical-user-interface">
+<h3><span class="section-number">1.1.1.7. </span>Graphical User Interface<a class="headerlink" href="#graphical-user-interface" title="Link to this heading"></a></h3>
+<p>The GUI (Graphical User Interface) is the visual interaction layer on top of
+GEMINI.</p>
+</section>
+<section id="internal-vs-external-layers">
+<h3><span class="section-number">1.1.1.8. </span>Internal vs. external layers<a class="headerlink" href="#internal-vs-external-layers" title="Link to this heading"></a></h3>
+<p>GEMINI distinguishes between <em>internal</em> (general-purpose) and <em>external</em>
+(plant-specific) layers. In <a class="reference internal" href="#fig-func-architecture"><span class="std std-numref">Fig. 1.1</span></a>, internal layers use
+solid outlines and external layers use dashed outlines. Internal layers are part
+of the open-source scope.</p>
+</section>
+</section>
+<section id="technical-architecture">
+<h2><span class="section-number">1.1.2. </span>Technical architecture<a class="headerlink" href="#technical-architecture" title="Link to this heading"></a></h2>
+<p><a class="reference internal" href="#fig-tech-architecture"><span class="std std-numref">Fig. 1.2</span></a> shows the software packages and tools that
+implement GEMINI functionality. The technical architecture includes:</p>
+<ul class="simple">
+<li><p>The back-end</p></li>
+<li><p>The front-end</p></li>
+<li><p>The workflow manager</p></li>
+<li><p>The databases</p></li>
+</ul>
+<p>The subsections below describe each part.</p>
+<figure class="align-center" id="id2">
+<span id="fig-tech-architecture"></span><a class="reference internal image-reference" href="_images/gemini_technical_architecture.png"><img alt="_images/gemini_technical_architecture.png" src="_images/gemini_technical_architecture.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 1.2 </span><span class="caption-text">Overview of the technical architecture of the GEMINI digital twin framework.</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="back-end">
+<h3><span class="section-number">1.1.2.1. </span>Back-end<a class="headerlink" href="#back-end" title="Link to this heading"></a></h3>
+<p>The back-end performs data processing, scheduling, and model calculations. It
+connects the functional layers and exposes services to the front-end. The core
+back-end is implemented in Python.</p>
+<p>Front-end/back-end communication is handled using
+<a class="reference external" href="https://flask.palletsprojects.com/en/3.0.x/">Flask</a>.</p>
+</section>
+<section id="front-end">
+<h3><span class="section-number">1.1.2.2. </span>Front-end<a class="headerlink" href="#front-end" title="Link to this heading"></a></h3>
+<p>The front-end includes the web interface used by end users. It is built with
+HTML/CSS (Bootstrap) and JavaScript (React), and is hosted in an Azure-based
+deployment. Authentication secures access to back-end services.</p>
+</section>
+<section id="workflow-manager">
+<h3><span class="section-number">1.1.2.3. </span>Workflow manager<a class="headerlink" href="#workflow-manager" title="Link to this heading"></a></h3>
+<p>The workflow manager ensures periodic data retrieval and scheduled module
+execution. GEMINI uses <a class="reference external" href="https://docs.celeryq.dev/en/stable/index.html">Celery</a>
+for this purpose.</p>
+</section>
+<section id="databases">
+<h3><span class="section-number">1.1.2.4. </span>Databases<a class="headerlink" href="#databases" title="Link to this heading"></a></h3>
+<p>The database layer provides access to plant data and parameter storage. Time
+series streaming is typically handled with
+<a class="reference external" href="https://www.influxdata.com/">InfluxDB</a>, and relational configuration data with
+<a class="reference external" href="https://www.mysql.com/">MySQL</a>. Future integration with
+<a class="reference external" href="https://osduforum.org/">OSDU</a> is planned.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index_about_gemini.html" class="btn btn-neutral float-left" title="1. About GEMINI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index_getting_started.html" class="btn btn-neutral float-right" title="2. Getting started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

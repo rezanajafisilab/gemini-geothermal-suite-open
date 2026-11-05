@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_application.wims.corrosion_from_prod_data &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_application.wims.corrosion_from_prod_data</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_application.wims.corrosion_from_prod_data</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Utilities for corrosion rate estimation from production data."""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ruptures</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">rpt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.wims.corrosion_from_logs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">WALL_THICKNESS_CHANGE_RATE_PREFIX</span><span class="p">,</span>
+    <span class="n">wall_thickness_change_col</span><span class="p">,</span>
+    <span class="n">wall_thickness_change_rate_col</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">SECONDS_PER_YEAR</span> <span class="o">=</span> <span class="mf">365.25</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_predecimate_aligned_series</span><span class="p">(</span><span class="n">dfs</span><span class="p">,</span> <span class="n">value_col</span><span class="o">=</span><span class="s2">"value"</span><span class="p">,</span> <span class="n">bin_hours</span><span class="o">=</span><span class="mi">24</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Bin aligned series by *bin_hours* for faster change-point detection.</span>
+
+<span class="sd">    The number of bins follows from the series time span and native sampling</span>
+<span class="sd">    interval; segment means are only computed when the data is finer than</span>
+<span class="sd">    *bin_hours*.</span>
+<span class="sd">    """</span>
+    <span class="c1"># -- sort and check for trivial input ------------------------------------</span>
+    <span class="n">sorted_dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"datetime"</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">]</span>
+    <span class="n">df_ref</span> <span class="o">=</span> <span class="n">sorted_dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_ref</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sorted_dfs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># -- determine if binning is needed -------------------------------------</span>
+    <span class="n">datetimes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_ref</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">])</span>
+    <span class="n">median_delta_hours</span> <span class="o">=</span> <span class="n">datetimes</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span><span class="o">.</span><span class="n">median</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
+    <span class="k">if</span> <span class="n">median_delta_hours</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">median_delta_hours</span><span class="p">):</span>
+        <span class="n">median_delta_hours</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="k">if</span> <span class="n">median_delta_hours</span> <span class="o">&gt;=</span> <span class="n">bin_hours</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sorted_dfs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># -- assign bin IDs and compute bin edges --------------------------------</span>
+    <span class="n">origin</span> <span class="o">=</span> <span class="n">datetimes</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">bin_ids</span> <span class="o">=</span> <span class="p">((</span><span class="n">datetimes</span> <span class="o">-</span> <span class="n">origin</span><span class="p">)</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">bin_hours</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="n">bin_edges</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">bin_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bin_ids</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bin_ids</span> <span class="o">==</span> <span class="n">bin_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bin_edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># -- compute bin means for each series ----------------------------------</span>
+    <span class="n">coarse_dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">sorted_dfs</span><span class="p">:</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_edges</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">segment</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">bin_edges</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">:</span> <span class="n">bin_edges</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"datetime"</span><span class="p">:</span> <span class="n">segment</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s2">"value"</span><span class="p">:</span> <span class="n">segment</span><span class="p">[</span><span class="n">value_col</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="n">coarse_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">coarse_dfs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bin_edges</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="coarsen_timeseries_by_change_point">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.coarsen_timeseries_by_change_point">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coarsen_timeseries_by_change_point</span><span class="p">(</span>
+    <span class="n">df1</span><span class="p">,</span>
+    <span class="n">df2</span><span class="p">,</span>
+    <span class="n">df3</span><span class="p">,</span>
+    <span class="n">value_col</span><span class="o">=</span><span class="s2">"value"</span><span class="p">,</span>
+    <span class="n">pen</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">predecimate_bin_hours</span><span class="o">=</span><span class="mi">24</span><span class="p">,</span>
+    <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Coarsen three aligned time series using change-point detection.</span>
+
+<span class="sd">    When the native sampling interval is finer than *predecimate_bin_hours*,</span>
+<span class="sd">    means are computed in fixed-duration bins first; PELT runs on that coarse</span>
+<span class="sd">    flow series, then breakpoints are mapped back to the original resolution</span>
+<span class="sd">    for segment averaging.</span>
+<span class="sd">    """</span>
+    <span class="c1"># -- predecimate and run PELT change-point detection ---------------------</span>
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">,</span> <span class="n">df3</span><span class="p">]</span>
+    <span class="n">coarse_dfs</span><span class="p">,</span> <span class="n">bin_edges</span> <span class="o">=</span> <span class="n">_predecimate_aligned_series</span><span class="p">(</span>
+        <span class="n">dfs</span><span class="p">,</span> <span class="n">value_col</span><span class="o">=</span><span class="n">value_col</span><span class="p">,</span> <span class="n">bin_hours</span><span class="o">=</span><span class="n">predecimate_bin_hours</span>
+    <span class="p">)</span>
+
+    <span class="n">algo</span> <span class="o">=</span> <span class="n">rpt</span><span class="o">.</span><span class="n">Pelt</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">"l2"</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">coarse_dfs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">value_col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">change_points</span> <span class="o">=</span> <span class="n">algo</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">pen</span><span class="o">=</span><span class="n">pen</span><span class="p">)</span>
+
+    <span class="c1"># -- build segment means from original resolution ----------------------</span>
+    <span class="n">n_orig</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df1</span><span class="p">)</span>
+    <span class="n">dfs_coarse</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dfs</span><span class="p">:</span>
+        <span class="n">segments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"datetime"</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"value"</span><span class="p">:</span> <span class="n">df</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]})</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">cp</span> <span class="ow">in</span> <span class="n">change_points</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bin_edges</span><span class="p">[</span><span class="n">cp</span><span class="p">])</span> <span class="k">if</span> <span class="n">cp</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_edges</span><span class="p">)</span> <span class="k">else</span> <span class="n">n_orig</span>
+            <span class="n">segment</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">mean_value</span> <span class="o">=</span> <span class="n">segment</span><span class="p">[</span><span class="n">value_col</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">segments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"datetime"</span><span class="p">:</span> <span class="n">segment</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                    <span class="s2">"value"</span><span class="p">:</span> <span class="n">mean_value</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">end</span>
+        <span class="n">dfs_coarse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">segments</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">dfs_coarse</span></div>
+
+
+
+<div class="viewcode-block" id="compute_corrosion_for_interval">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.compute_corrosion_for_interval">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_corrosion_for_interval</span><span class="p">(</span>
+    <span class="n">inputs</span><span class="p">,</span>
+    <span class="n">outputs</span><span class="p">,</span>
+    <span class="n">vlp</span><span class="p">,</span>
+    <span class="n">co2_models</span><span class="p">,</span>
+    <span class="n">corrosion_models</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="p">,</span>
+    <span class="n">end_date</span><span class="p">,</span>
+    <span class="n">column_label</span><span class="p">,</span>
+    <span class="n">output_switch</span><span class="o">=</span><span class="s2">"rate"</span><span class="p">,</span>
+    <span class="n">esp_joint_start_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute corrosion rate or partial corrosion for a specific interval.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    esp_joint_start_idx : int</span>
+<span class="sd">        First tally index at or below the ESP (production wells).</span>
+<span class="sd">        ``corrosion_models`` and ``co2_models`` cover only joints from this</span>
+<span class="sd">        index onward.  Joints above get zero corrosion.</span>
+<span class="sd">    """</span>
+    <span class="c1"># -- subset time series to the interval ---------------------------------</span>
+    <span class="n">flow_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"datetime"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="s2">"value"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"flow"</span><span class="p">]})</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">flow_subset</span> <span class="o">=</span> <span class="n">flow_df</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">flow_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_date</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">flow_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">end_date</span><span class="p">)</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"datetime"</span><span class="p">)</span>
+
+    <span class="n">pressure_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"datetime"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="s2">"value"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"pressure"</span><span class="p">]})</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">pressure_subset</span> <span class="o">=</span> <span class="n">pressure_df</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">pressure_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_date</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pressure_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">end_date</span><span class="p">)</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"datetime"</span><span class="p">)</span>
+
+    <span class="n">temperature_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">"datetime"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="s2">"value"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"temperature"</span><span class="p">]}</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">temperature_subset</span> <span class="o">=</span> <span class="n">temperature_df</span><span class="p">[</span>
+        <span class="p">(</span><span class="n">temperature_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">start_date</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">temperature_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">end_date</span><span class="p">)</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"datetime"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">flow_subset</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="n">pressure_subset</span><span class="o">.</span><span class="n">empty</span> <span class="ow">or</span> <span class="n">temperature_subset</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No data for interval </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># -- coarsen time series ------------------------------------------------</span>
+    <span class="n">n_total_joints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"well_tally"</span><span class="p">])</span>
+    <span class="n">n_active_joints</span> <span class="o">=</span> <span class="n">n_total_joints</span> <span class="o">-</span> <span class="n">esp_joint_start_idx</span>
+    <span class="n">corrosion_rates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_total_joints</span><span class="p">)</span>
+    <span class="n">partial_corrosion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_total_joints</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">flow_subset</span><span class="p">,</span> <span class="n">pressure_subset</span><span class="p">,</span> <span class="n">temperature_subset</span> <span class="o">=</span> <span class="n">coarsen_timeseries_by_change_point</span><span class="p">(</span>
+            <span class="n">flow_subset</span><span class="p">,</span> <span class="n">pressure_subset</span><span class="p">,</span> <span class="n">temperature_subset</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">flow_values</span> <span class="o">=</span> <span class="n">flow_subset</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">pressure_values</span> <span class="o">=</span> <span class="n">pressure_subset</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">temperature_values</span> <span class="o">=</span> <span class="n">temperature_subset</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">flow_values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">pressure_values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">temperature_values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No data for interval </span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># -- update VLP parameters ----------------------------------------------</span>
+    <span class="n">n_time_points</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">flow_values</span><span class="p">)</span>
+    <span class="n">well_hydraulic_param</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"flow"</span><span class="p">:</span> <span class="n">flow_values</span><span class="p">,</span>
+        <span class="s2">"pressure"</span><span class="p">:</span> <span class="n">pressure_values</span><span class="p">,</span>
+        <span class="s2">"temperature"</span><span class="p">:</span> <span class="n">temperature_values</span><span class="p">,</span>
+        <span class="s2">"n_time_points"</span><span class="p">:</span> <span class="n">n_time_points</span><span class="p">,</span>
+        <span class="s2">"n_joints"</span><span class="p">:</span> <span class="n">n_active_joints</span><span class="p">,</span>
+        <span class="s2">"water_chemistry_data"</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"water_chemistry"</span><span class="p">),</span>
+        <span class="s2">"monthly_production_data"</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"monthly_production_data"</span><span class="p">),</span>
+        <span class="s2">"monthly_dates"</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"monthly_dates"</span><span class="p">),</span>
+        <span class="s2">"direction"</span><span class="p">:</span> <span class="s2">"down"</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">vlp</span><span class="o">.</span><span class="n">update_parameters</span><span class="p">(</span><span class="n">well_hydraulic_param</span><span class="p">)</span>
+
+    <span class="c1"># -- compute corrosion per active joint ---------------------------------</span>
+    <span class="k">for</span> <span class="n">active_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_active_joints</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">sec_temp_c</span><span class="p">,</span> <span class="n">sec_pres_bar</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">temperature_values</span><span class="p">,</span> <span class="n">pressure_values</span><span class="p">):</span>
+            <span class="n">co2_partial_pressure</span> <span class="o">=</span> <span class="n">co2_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span><span class="o">.</span><span class="n">get_co2_partial_pressure</span><span class="p">(</span>
+                <span class="n">sec_temp_c</span><span class="p">,</span> <span class="n">sec_pres_bar</span><span class="p">,</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"water_chemistry"</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">corrosion_rate</span> <span class="o">=</span> <span class="n">corrosion_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span><span class="o">.</span><span class="n">get_corrosion_rate</span><span class="p">(</span>
+                <span class="n">sec_temp_c</span><span class="p">,</span> <span class="n">sec_pres_bar</span><span class="p">,</span> <span class="n">co2_partial_pressure</span>
+            <span class="p">)</span>
+            <span class="n">total_idx</span> <span class="o">=</span> <span class="n">esp_joint_start_idx</span> <span class="o">+</span> <span class="n">active_idx</span>
+            <span class="n">corrosion_rates</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">corrosion_rate</span>
+
+        <span class="n">corrosion_rates</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span> <span class="o">/=</span> <span class="n">n_time_points</span>
+        <span class="n">delta_time</span> <span class="o">=</span> <span class="n">end_date</span> <span class="o">-</span> <span class="n">start_date</span>
+        <span class="n">partial_corrosion</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">corrosion_rates</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span> <span class="o">*</span> <span class="n">delta_time</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">31536000</span>
+        <span class="p">)</span>
+
+    <span class="c1"># -- store results in outputs -------------------------------------------</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">corrosion_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">"Joint"</span><span class="p">:</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_total_joints</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">column_label</span><span class="p">:</span> <span class="n">corrosion_rates</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">corrosion_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"Joint"</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="p">[</span><span class="s2">"modelledCorrosionRate"</span><span class="p">][</span><span class="n">column_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">corrosion_df</span><span class="p">[</span><span class="n">column_label</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">output_switch</span> <span class="o">==</span> <span class="s2">"partial"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"modelledCorrosionRateCalibrated"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+                <span class="n">outputs</span><span class="p">[</span><span class="s2">"modelledCorrosionRateCalibrated"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+            <span class="n">outputs</span><span class="p">[</span><span class="s2">"modelledCorrosionRateCalibrated"</span><span class="p">][</span><span class="n">column_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">partial_corrosion</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="get_corrosion_rate_from_models_segmented">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_models_segmented">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_corrosion_rate_from_models_segmented</span><span class="p">(</span>
+    <span class="n">inputs</span><span class="p">,</span>
+    <span class="n">outputs</span><span class="p">,</span>
+    <span class="n">corrosion_models</span><span class="p">,</span>
+    <span class="n">co2_models</span><span class="p">,</span>
+    <span class="n">vlp</span><span class="p">,</span>
+    <span class="n">calibrated_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute modelled corrosion rates over baseline/log-derived intervals."""</span>
+    <span class="c1"># -- initialise output DataFrame ----------------------------------------</span>
+    <span class="n">n_total_joints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"well_tally"</span><span class="p">])</span>
+    <span class="n">esp_joint_start_idx</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"esp_joint_start_idx"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">outputs</span><span class="p">[</span><span class="s2">"modelledCorrosionRate"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_total_joints</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">n_total_joints</span><span class="p">),</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"Joint No."</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># -- sort logs by date and build interval boundaries --------------------</span>
+    <span class="n">unsorted_logs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">"uploadedLogs"</span><span class="p">][</span><span class="s2">"name"</span><span class="p">],</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">"uploadedLogs"</span><span class="p">][</span><span class="s2">"date"</span><span class="p">],</span>
+            <span class="n">inputs</span><span class="p">[</span><span class="s2">"uploadedLogs"</span><span class="p">][</span><span class="s2">"data"</span><span class="p">],</span>
+            <span class="n">outputs</span><span class="p">[</span><span class="s2">"processedLogs"</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">sorted_logs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">unsorted_logs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"%H-%M-%S </span><span class="si">%d</span><span class="s2">-%m-%Y"</span><span class="p">))</span>
+
+    <span class="n">baseline_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"start_time"</span><span class="p">],</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S"</span><span class="p">)</span>
+    <span class="n">sorted_log_dates</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">log</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"%H-%M-%S </span><span class="si">%d</span><span class="s2">-%m-%Y"</span><span class="p">)</span> <span class="k">for</span> <span class="n">log</span> <span class="ow">in</span> <span class="n">sorted_logs</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_log_dates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"No logs =&gt; single interval from baseline to 'end of data' assumed."</span><span class="p">)</span>
+        <span class="n">interval_label</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Modelled Corrosion "</span>
+            <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">baseline_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y-%m-</span><span class="si">%d</span><span class="s1">'</span><span class="p">)</span><span class="si">}</span><span class="s2">-&gt;</span><span class="si">{</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y-%m-</span><span class="si">%d</span><span class="s1">'</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="p">)</span>
+        <span class="n">compute_corrosion_for_interval</span><span class="p">(</span>
+            <span class="n">inputs</span><span class="p">,</span>
+            <span class="n">outputs</span><span class="p">,</span>
+            <span class="n">vlp</span><span class="p">,</span>
+            <span class="n">co2_models</span><span class="p">,</span>
+            <span class="n">corrosion_models</span><span class="p">,</span>
+            <span class="n">baseline_date</span><span class="p">,</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+            <span class="n">interval_label</span><span class="p">,</span>
+            <span class="n">esp_joint_start_idx</span><span class="o">=</span><span class="n">esp_joint_start_idx</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">boundaries</span> <span class="o">=</span> <span class="p">[</span><span class="n">baseline_date</span><span class="p">]</span> <span class="o">+</span> <span class="n">sorted_log_dates</span>
+    <span class="k">if</span> <span class="n">calibrated_interval</span> <span class="o">==</span> <span class="s2">"last"</span><span class="p">:</span>
+        <span class="n">boundaries</span> <span class="o">=</span> <span class="n">boundaries</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+
+    <span class="c1"># -- compute corrosion for each interval --------------------------------</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">boundaries</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">start_date</span> <span class="o">=</span> <span class="n">boundaries</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="n">boundaries</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_log_dates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">end_label</span> <span class="o">=</span> <span class="n">end_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">col_label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">WALL_THICKNESS_CHANGE_RATE_PREFIX</span><span class="si">}</span><span class="s2"> (Nominal -&gt; </span><span class="si">{</span><span class="n">end_label</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">col_label</span> <span class="o">=</span> <span class="n">wall_thickness_change_rate_col</span><span class="p">(</span>
+                <span class="n">start_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span><span class="p">),</span>
+                <span class="n">end_date</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="n">compute_corrosion_for_interval</span><span class="p">(</span>
+            <span class="n">inputs</span><span class="p">,</span>
+            <span class="n">outputs</span><span class="p">,</span>
+            <span class="n">vlp</span><span class="p">,</span>
+            <span class="n">co2_models</span><span class="p">,</span>
+            <span class="n">corrosion_models</span><span class="p">,</span>
+            <span class="n">start_date</span><span class="p">,</span>
+            <span class="n">end_date</span><span class="p">,</span>
+            <span class="n">col_label</span><span class="p">,</span>
+            <span class="n">esp_joint_start_idx</span><span class="o">=</span><span class="n">esp_joint_start_idx</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="build_prod_corrosion_context">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.build_prod_corrosion_context">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_prod_corrosion_context</span><span class="p">(</span>
+    <span class="n">well_tally</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="p">,</span>
+    <span class="n">vlp</span><span class="p">,</span>
+    <span class="n">co2_models</span><span class="p">,</span>
+    <span class="n">esp_joint_start_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">boundaries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Precompute the parameter-independent inputs for prod-data corrosion.</span>
+
+<span class="sd">    Runs the expensive, calibration-invariant work once -- the VLP</span>
+<span class="sd">    pressure-drop solve, PVT, and CO2 partial-pressure model -- per</span>
+<span class="sd">    interval/time-step/joint, and caches the resulting per-joint pressure,</span>
+<span class="sd">    temperature, and CO2 partial pressure together with step durations and</span>
+<span class="sd">    flow.  :func:`corrosion_rates_from_context` (and the single-joint variant</span>
+<span class="sd">    used during calibration) can then re-run only the corrosion correlation,</span>
+<span class="sd">    which is the sole part that depends on the calibrated parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    esp_joint_start_idx : int</span>
+<span class="sd">        First tally index at or below the ESP.  Joints above receive ``NaN``</span>
+<span class="sd">        corrosion; the ESP joint uses the measured inlet P/T directly and the</span>
+<span class="sd">        VLP covers only the joints below it (see</span>
+<span class="sd">        :func:`get_corrosion_rate_from_prod_data`).</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        When True, print interval/zero-flow diagnostics (preserves the legacy</span>
+<span class="sd">        behaviour of the public entry point).</span>
+<span class="sd">    boundaries : list of datetime-like or None</span>
+<span class="sd">        Explicit interval boundaries (&gt;= 2, ascending).  When provided they are</span>
+<span class="sd">        used directly instead of being derived from the log-date metadata -- the</span>
+<span class="sd">        prediction path passes ``[latest_log_date, now]`` to build a single</span>
+<span class="sd">        forward window.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Context with ``joint_labels``, ``n_total_joints``, ``n_active_joints``,</span>
+<span class="sd">        ``esp_joint_start_idx``, ``degenerate`` (bool), and ``intervals`` -- a</span>
+<span class="sd">        list of per-interval dicts holding the cached arrays.</span>
+<span class="sd">    """</span>
+    <span class="c1"># -- initialise joint bookkeeping ---------------------------------------</span>
+    <span class="n">n_total_joints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">well_tally</span><span class="p">)</span>
+    <span class="n">n_active_joints</span> <span class="o">=</span> <span class="n">n_total_joints</span> <span class="o">-</span> <span class="n">esp_joint_start_idx</span>
+    <span class="n">joint_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Joint"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">well_tally</span><span class="p">)]</span>
+
+    <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"joint_labels"</span><span class="p">:</span> <span class="n">joint_labels</span><span class="p">,</span>
+        <span class="s2">"n_total_joints"</span><span class="p">:</span> <span class="n">n_total_joints</span><span class="p">,</span>
+        <span class="s2">"n_active_joints"</span><span class="p">:</span> <span class="n">n_active_joints</span><span class="p">,</span>
+        <span class="s2">"esp_joint_start_idx"</span><span class="p">:</span> <span class="n">esp_joint_start_idx</span><span class="p">,</span>
+        <span class="s2">"degenerate"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"intervals"</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">"interval_by_col"</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="p">}</span>
+
+    <span class="c1"># -- build time-series DataFrame ----------------------------------------</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"time"</span><span class="p">])</span>
+    <span class="n">prod_df</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">"datetime"</span><span class="p">:</span> <span class="n">times</span><span class="p">,</span>
+                <span class="s2">"flow"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"flow"</span><span class="p">],</span>
+                <span class="s2">"pressure"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"pressure"</span><span class="p">],</span>
+                <span class="s2">"temperature"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">"temperature"</span><span class="p">],</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">"datetime"</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">prod_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="n">context</span><span class="p">[</span><span class="s2">"degenerate"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">context</span>
+
+    <span class="c1"># -- use explicit boundaries when given (prediction window) -------------</span>
+    <span class="k">if</span> <span class="n">boundaries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">log_boundaries</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">boundaries</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_boundaries</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">log_boundaries</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">log_boundaries</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">context</span><span class="p">[</span><span class="s2">"degenerate"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="n">context</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># -- otherwise extract log boundaries from metadata -----------------</span>
+        <span class="n">logs_metadata</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"logs_metadata"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">baseline_date</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">other_dates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">logs_metadata</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"date"</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"date"</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"is_baseline"</span><span class="p">):</span>
+                <span class="n">baseline_date</span> <span class="o">=</span> <span class="n">dt</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">other_dates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">baseline_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">other_dates</span><span class="p">:</span>
+            <span class="n">log_boundaries</span> <span class="o">=</span> <span class="p">[</span><span class="n">baseline_date</span><span class="p">]</span> <span class="o">+</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other_dates</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">other_dates</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">log_boundaries</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other_dates</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_start</span> <span class="o">=</span> <span class="n">prod_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">data_end</span> <span class="o">=</span> <span class="n">prod_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">data_start</span> <span class="o">==</span> <span class="n">data_end</span><span class="p">:</span>
+                <span class="n">context</span><span class="p">[</span><span class="s2">"degenerate"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">return</span> <span class="n">context</span>
+            <span class="n">log_boundaries</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_start</span><span class="p">,</span> <span class="n">data_end</span><span class="p">]</span>
+
+    <span class="c1"># -- precompute hydraulics/PVT/CO2 per interval -------------------------</span>
+    <span class="n">has_esp</span> <span class="o">=</span> <span class="n">esp_joint_start_idx</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">n_vlp_joints</span> <span class="o">=</span> <span class="n">n_active_joints</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">has_esp</span> <span class="k">else</span> <span class="n">n_active_joints</span>
+
+    <span class="k">for</span> <span class="n">interval_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">log_boundaries</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">interval_start</span> <span class="o">=</span> <span class="n">log_boundaries</span><span class="p">[</span><span class="n">interval_idx</span><span class="p">]</span>
+        <span class="n">interval_end</span> <span class="o">=</span> <span class="n">log_boundaries</span><span class="p">[</span><span class="n">interval_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">prod_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">interval_start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">prod_df</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">interval_end</span><span class="p">)</span>
+        <span class="n">interval_data</span> <span class="o">=</span> <span class="n">prod_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">n_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">interval_data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_steps</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"No data for interval </span><span class="si">{</span><span class="n">interval_start</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">interval_end</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># -- compute step durations (non-uniform after coarsening) ----------</span>
+        <span class="n">step_times</span> <span class="o">=</span> <span class="n">interval_data</span><span class="p">[</span><span class="s2">"datetime"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">step_ends</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_times</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">interval_end</span><span class="p">)</span>
+        <span class="n">step_durations_yr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">end</span><span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">start</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="n">SECONDS_PER_YEAR</span>
+                <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">step_times</span><span class="p">,</span> <span class="n">step_ends</span><span class="p">)</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># -- run VLP -&gt; per-joint P/T -&gt; PVT -&gt; CO2 for each live step -------</span>
+        <span class="n">eff_flow_m3s</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">eff_durations_yr</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">eff_pres_bar</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">eff_temp_c</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">eff_co2_pp</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">step_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">):</span>
+            <span class="n">inlet_flow_m3s</span> <span class="o">=</span> <span class="n">interval_data</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">step_idx</span><span class="p">,</span> <span class="s2">"flow"</span><span class="p">]</span> <span class="o">/</span> <span class="mf">3600.0</span>
+            <span class="n">inlet_pres_bar</span> <span class="o">=</span> <span class="n">interval_data</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">step_idx</span><span class="p">,</span> <span class="s2">"pressure"</span><span class="p">]</span>
+            <span class="n">inlet_temp_c</span> <span class="o">=</span> <span class="n">interval_data</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">step_idx</span><span class="p">,</span> <span class="s2">"temperature"</span><span class="p">]</span>
+
+            <span class="c1"># -- skip missing (NaN/inf) or near-zero-flow readings ---------</span>
+            <span class="c1"># Database gaps come back as NaN; feeding them to the VLP makes</span>
+            <span class="c1"># mg = gmf * NaN -&gt; NaN, so ``mg == 0`` is False and the wrong</span>
+            <span class="c1"># (two-phase) flow model is selected.  Treat them like no-flow.</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">inlet_flow_m3s</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">inlet_pres_bar</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">inlet_temp_c</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="n">inlet_flow_m3s</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3600.0</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"  [SKIP] step=</span><span class="si">{</span><span class="n">step_idx</span><span class="si">}</span><span class="s2"> no/invalid flow | "</span>
+                        <span class="sa">f</span><span class="s2">"flow=</span><span class="si">{</span><span class="n">inlet_flow_m3s</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">3600.0</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> m3/h, "</span>
+                        <span class="sa">f</span><span class="s2">"P=</span><span class="si">{</span><span class="n">inlet_pres_bar</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> bar, T=</span><span class="si">{</span><span class="n">inlet_temp_c</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> C | "</span>
+                        <span class="sa">f</span><span class="s2">"dur=</span><span class="si">{</span><span class="n">step_durations_yr</span><span class="p">[</span><span class="n">step_idx</span><span class="p">]</span><span class="o">*</span><span class="n">SECONDS_PER_YEAR</span><span class="o">/</span><span class="mi">86400</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> days"</span>
+                    <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">inlet_pres_pa</span> <span class="o">=</span> <span class="n">inlet_pres_bar</span> <span class="o">*</span> <span class="mf">1e5</span>
+            <span class="n">inlet_temp_k</span> <span class="o">=</span> <span class="n">inlet_temp_c</span> <span class="o">+</span> <span class="mf">273.15</span>
+
+            <span class="c1"># -- build per-joint P/T arrays --------------------------------</span>
+            <span class="k">if</span> <span class="n">has_esp</span><span class="p">:</span>
+                <span class="c1"># ESP joint (active_idx 0): use measured P/T directly.</span>
+                <span class="c1"># Joints below ESP: compute via VLP.</span>
+                <span class="n">joint_pres_bar</span> <span class="o">=</span> <span class="p">[</span><span class="n">inlet_pres_bar</span><span class="p">]</span>
+                <span class="n">joint_temp_c</span> <span class="o">=</span> <span class="p">[</span><span class="n">inlet_temp_c</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">n_vlp_joints</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">vlp_input</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">"pressure"</span><span class="p">:</span> <span class="n">inlet_pres_pa</span><span class="p">,</span>
+                        <span class="s2">"temperature"</span><span class="p">:</span> <span class="n">inlet_temp_k</span><span class="p">,</span>
+                        <span class="s2">"flowrate"</span><span class="p">:</span> <span class="n">inlet_flow_m3s</span><span class="p">,</span>
+                        <span class="s2">"temperature_ambient"</span><span class="p">:</span> <span class="mf">15.0</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span>
+                        <span class="s2">"direction"</span><span class="p">:</span> <span class="s2">"down"</span><span class="p">,</span>
+                    <span class="p">}</span>
+                    <span class="n">vlp</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">vlp_input</span><span class="p">,</span> <span class="p">[])</span>
+                    <span class="n">vlp_output</span> <span class="o">=</span> <span class="n">vlp</span><span class="o">.</span><span class="n">get_output</span><span class="p">()</span>
+                    <span class="n">joint_pres_bar</span> <span class="o">+=</span> <span class="p">[</span><span class="n">p</span> <span class="o">/</span> <span class="mf">1e5</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">vlp_output</span><span class="p">[</span><span class="s2">"section_pressure_output"</span><span class="p">]]</span>
+                    <span class="n">joint_temp_c</span> <span class="o">+=</span> <span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mf">273.15</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">vlp_output</span><span class="p">[</span><span class="s2">"section_temperature_output"</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Injection well: VLP covers all joints from the wellhead.</span>
+                <span class="n">vlp_input</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">"pressure"</span><span class="p">:</span> <span class="n">inlet_pres_pa</span><span class="p">,</span>
+                    <span class="s2">"temperature"</span><span class="p">:</span> <span class="n">inlet_temp_k</span><span class="p">,</span>
+                    <span class="s2">"flowrate"</span><span class="p">:</span> <span class="n">inlet_flow_m3s</span><span class="p">,</span>
+                    <span class="s2">"temperature_ambient"</span><span class="p">:</span> <span class="mf">15.0</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span>
+                    <span class="s2">"direction"</span><span class="p">:</span> <span class="s2">"down"</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="n">vlp</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">vlp_input</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">vlp_output</span> <span class="o">=</span> <span class="n">vlp</span><span class="o">.</span><span class="n">get_output</span><span class="p">()</span>
+                <span class="n">joint_pres_bar</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="o">/</span> <span class="mf">1e5</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">vlp_output</span><span class="p">[</span><span class="s2">"section_pressure_output"</span><span class="p">]]</span>
+                <span class="n">joint_temp_c</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mf">273.15</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">vlp_output</span><span class="p">[</span><span class="s2">"section_temperature_output"</span><span class="p">]]</span>
+
+            <span class="c1"># -- per-joint PVT -&gt; CO2 partial pressure ---------------------</span>
+            <span class="n">step_co2_pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_active_joints</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">active_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_active_joints</span><span class="p">):</span>
+                <span class="n">rho_g</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">vlp</span><span class="o">.</span><span class="n">PVT</span><span class="o">.</span><span class="n">get_pvt</span><span class="p">(</span><span class="n">joint_temp_c</span><span class="p">[</span><span class="n">active_idx</span><span class="p">],</span> <span class="n">joint_pres_bar</span><span class="p">[</span><span class="n">active_idx</span><span class="p">])</span>
+
+                <span class="n">co2_input</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">"gas_pressure"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+                    <span class="s2">"co2_mol_fraction"</span><span class="p">:</span> <span class="mf">0.1882</span><span class="p">,</span>
+                    <span class="s2">"gas_water_ratio"</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+                    <span class="s2">"temperature_sample"</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span>
+                    <span class="s2">"temperature_system"</span><span class="p">:</span> <span class="n">joint_temp_c</span><span class="p">[</span><span class="n">active_idx</span><span class="p">],</span>
+                    <span class="s2">"gas_molecular_weight"</span><span class="p">:</span> <span class="mf">22.955</span><span class="p">,</span>
+                    <span class="s2">"gas_density"</span><span class="p">:</span> <span class="n">rho_g</span><span class="p">,</span>
+                <span class="p">}</span>
+                <span class="n">co2_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">co2_input</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">step_co2_pp</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">co2_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span><span class="o">.</span><span class="n">get_output</span><span class="p">()[</span>
+                    <span class="s2">"CO2 Partial Pressure [bar]"</span>
+                <span class="p">]</span>
+
+            <span class="n">eff_flow_m3s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inlet_flow_m3s</span><span class="p">)</span>
+            <span class="n">eff_durations_yr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_durations_yr</span><span class="p">[</span><span class="n">step_idx</span><span class="p">])</span>
+            <span class="n">eff_pres_bar</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">joint_pres_bar</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+            <span class="n">eff_temp_c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">joint_temp_c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+            <span class="n">eff_co2_pp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_co2_pp</span><span class="p">)</span>
+
+        <span class="c1"># -- stack cached arrays as (n_active_joints, n_eff_steps) ----------</span>
+        <span class="k">if</span> <span class="n">eff_pres_bar</span><span class="p">:</span>
+            <span class="n">pres_bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">eff_pres_bar</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">temp_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">eff_temp_c</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">co2_pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">eff_co2_pp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pres_bar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_active_joints</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">temp_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_active_joints</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="n">co2_pp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_active_joints</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">total_duration_yr</span> <span class="o">=</span> <span class="p">(</span><span class="n">interval_end</span> <span class="o">-</span> <span class="n">interval_start</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="n">SECONDS_PER_YEAR</span>
+
+        <span class="n">date_fmt</span> <span class="o">=</span> <span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span>
+        <span class="n">start_str</span> <span class="o">=</span> <span class="n">interval_start</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">date_fmt</span><span class="p">)</span>
+        <span class="n">end_str</span> <span class="o">=</span> <span class="n">interval_end</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">date_fmt</span><span class="p">)</span>
+
+        <span class="n">context</span><span class="p">[</span><span class="s2">"intervals"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">"rate_col"</span><span class="p">:</span> <span class="n">wall_thickness_change_rate_col</span><span class="p">(</span><span class="n">start_str</span><span class="p">,</span> <span class="n">end_str</span><span class="p">),</span>
+                <span class="s2">"corroded_col"</span><span class="p">:</span> <span class="n">wall_thickness_change_col</span><span class="p">(</span><span class="n">start_str</span><span class="p">,</span> <span class="n">end_str</span><span class="p">),</span>
+                <span class="s2">"start"</span><span class="p">:</span> <span class="n">start_str</span><span class="p">,</span>
+                <span class="s2">"end"</span><span class="p">:</span> <span class="n">end_str</span><span class="p">,</span>
+                <span class="s2">"total_duration_yr"</span><span class="p">:</span> <span class="n">total_duration_yr</span><span class="p">,</span>
+                <span class="s2">"n_eff_steps"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">eff_flow_m3s</span><span class="p">),</span>
+                <span class="s2">"flow_m3s"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">eff_flow_m3s</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                <span class="s2">"step_durations_yr"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">eff_durations_yr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span>
+                <span class="s2">"pres_bar"</span><span class="p">:</span> <span class="n">pres_bar</span><span class="p">,</span>
+                <span class="s2">"temp_c"</span><span class="p">:</span> <span class="n">temp_c</span><span class="p">,</span>
+                <span class="s2">"co2_pp"</span><span class="p">:</span> <span class="n">co2_pp</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="c1"># -- index intervals by their rate-column name (convenience lookup) -----</span>
+    <span class="n">context</span><span class="p">[</span><span class="s2">"interval_by_col"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">iv</span><span class="p">[</span><span class="s2">"rate_col"</span><span class="p">]:</span> <span class="n">iv</span> <span class="k">for</span> <span class="n">iv</span> <span class="ow">in</span> <span class="n">context</span><span class="p">[</span><span class="s2">"intervals"</span><span class="p">]}</span>
+
+    <span class="k">return</span> <span class="n">context</span></div>
+
+
+
+<div class="viewcode-block" id="corroded_mm_for_interval">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.corroded_mm_for_interval">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">corroded_mm_for_interval</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">active_idx</span><span class="p">,</span> <span class="n">corrosion_model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Integrate one joint's corrosion model over one cached interval.</span>
+
+<span class="sd">    Returns the corroded thickness [mm] for ``active_idx`` over ``interval`` by</span>
+<span class="sd">    summing ``rate * step_duration`` across the interval's effective steps.  This</span>
+<span class="sd">    is the shared inner loop used by the full-table, single-joint, and</span>
+<span class="sd">    single-(joint, interval) entry points.</span>
+<span class="sd">    """</span>
+    <span class="n">pres_bar</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"pres_bar"</span><span class="p">]</span>
+    <span class="n">temp_c</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"temp_c"</span><span class="p">]</span>
+    <span class="n">co2_pp</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"co2_pp"</span><span class="p">]</span>
+    <span class="n">flow_m3s</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"flow_m3s"</span><span class="p">]</span>
+    <span class="n">step_durations_yr</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"step_durations_yr"</span><span class="p">]</span>
+
+    <span class="n">corroded</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">step_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="s2">"n_eff_steps"</span><span class="p">]):</span>
+        <span class="n">corr_input</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"pressure"</span><span class="p">:</span> <span class="n">pres_bar</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="n">step_idx</span><span class="p">],</span>
+            <span class="s2">"temperature"</span><span class="p">:</span> <span class="n">temp_c</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="n">step_idx</span><span class="p">],</span>
+            <span class="s2">"co2_partial_pressure"</span><span class="p">:</span> <span class="n">co2_pp</span><span class="p">[</span><span class="n">active_idx</span><span class="p">,</span> <span class="n">step_idx</span><span class="p">],</span>
+            <span class="s2">"flow_rate"</span><span class="p">:</span> <span class="n">flow_m3s</span><span class="p">[</span><span class="n">step_idx</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="n">corrosion_model</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">corr_input</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">corroded</span> <span class="o">+=</span> <span class="n">corrosion_model</span><span class="o">.</span><span class="n">get_output</span><span class="p">()[</span><span class="s2">"corrosion_rate"</span><span class="p">]</span> <span class="o">*</span> <span class="n">step_durations_yr</span><span class="p">[</span><span class="n">step_idx</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">corroded</span></div>
+
+
+
+<div class="viewcode-block" id="corrosion_rates_from_context">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.corrosion_rates_from_context">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">corrosion_rates_from_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">corrosion_models</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Apply corrosion models to a precomputed context -&gt; result DataFrame.</span>
+
+<span class="sd">    Re-runs only the (cheap) corrosion correlation over the cached per-joint</span>
+<span class="sd">    pressure/temperature/CO2 arrays, reproducing the output of</span>
+<span class="sd">    :func:`get_corrosion_rate_from_prod_data` for the current model parameters.</span>
+<span class="sd">    """</span>
+    <span class="c1"># -- initialise result DataFrame ----------------------------------------</span>
+    <span class="n">n_total_joints</span> <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="s2">"n_total_joints"</span><span class="p">]</span>
+    <span class="n">esp_joint_start_idx</span> <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="s2">"esp_joint_start_idx"</span><span class="p">]</span>
+    <span class="n">n_active_joints</span> <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="s2">"n_active_joints"</span><span class="p">]</span>
+
+    <span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+        <span class="n">context</span><span class="p">[</span><span class="s2">"joint_labels"</span><span class="p">],</span>
+        <span class="n">index</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="n">n_total_joints</span><span class="p">),</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"Joint No."</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">context</span><span class="p">[</span><span class="s2">"degenerate"</span><span class="p">]:</span>
+        <span class="n">result_df</span><span class="p">[</span><span class="n">WALL_THICKNESS_CHANGE_RATE_PREFIX</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">return</span> <span class="n">result_df</span>
+
+    <span class="c1"># -- compute corrosion for each cached interval -------------------------</span>
+    <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">context</span><span class="p">[</span><span class="s2">"intervals"</span><span class="p">]:</span>
+        <span class="n">total_duration_yr</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"total_duration_yr"</span><span class="p">]</span>
+
+        <span class="n">corroded_mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_total_joints</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">corroded_mm</span><span class="p">[</span><span class="n">esp_joint_start_idx</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">for</span> <span class="n">active_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_active_joints</span><span class="p">):</span>
+            <span class="n">total_idx</span> <span class="o">=</span> <span class="n">esp_joint_start_idx</span> <span class="o">+</span> <span class="n">active_idx</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">corrosion_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span>
+            <span class="n">corroded_mm</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">corroded_mm_for_interval</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">active_idx</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+
+        <span class="c1"># -- derive average rate from total corroded thickness --------------</span>
+        <span class="k">if</span> <span class="n">total_duration_yr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">avg_rate</span> <span class="o">=</span> <span class="n">corroded_mm</span> <span class="o">/</span> <span class="n">total_duration_yr</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">avg_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">corroded_mm</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="n">result_df</span><span class="p">[</span><span class="n">interval</span><span class="p">[</span><span class="s2">"rate_col"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">avg_rate</span>
+        <span class="n">result_df</span><span class="p">[</span><span class="n">interval</span><span class="p">[</span><span class="s2">"corroded_col"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">corroded_mm</span>
+
+    <span class="k">return</span> <span class="n">result_df</span></div>
+
+
+
+<div class="viewcode-block" id="corrosion_rate_for_joint_interval">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.corrosion_rate_for_joint_interval">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">corrosion_rate_for_joint_interval</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">corrosion_model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Average modelled rate [mm/year] for one joint over one specific interval.</span>
+
+<span class="sd">    Single-(joint, interval) entry point used by the per-interval calibration:</span>
+<span class="sd">    it evaluates only the requested interval's cached arrays, so each SLSQP step</span>
+<span class="sd">    touches the minimum amount of work.  Returns ``None`` when the joint is out</span>
+<span class="sd">    of range, otherwise ``corroded_mm / interval_duration_yr`` (0.0 for a</span>
+<span class="sd">    zero-duration interval).</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">context</span><span class="p">[</span><span class="s2">"degenerate"</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">active_idx</span> <span class="o">=</span> <span class="n">total_idx</span> <span class="o">-</span> <span class="n">context</span><span class="p">[</span><span class="s2">"esp_joint_start_idx"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">active_idx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">active_idx</span> <span class="o">&gt;=</span> <span class="n">context</span><span class="p">[</span><span class="s2">"n_active_joints"</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">corroded</span> <span class="o">=</span> <span class="n">corroded_mm_for_interval</span><span class="p">(</span><span class="n">interval</span><span class="p">,</span> <span class="n">active_idx</span><span class="p">,</span> <span class="n">corrosion_model</span><span class="p">)</span>
+    <span class="n">total_duration_yr</span> <span class="o">=</span> <span class="n">interval</span><span class="p">[</span><span class="s2">"total_duration_yr"</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">corroded</span> <span class="o">/</span> <span class="n">total_duration_yr</span> <span class="k">if</span> <span class="n">total_duration_yr</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span></div>
+
+
+
+<div class="viewcode-block" id="corrosion_rates_for_joint_from_context">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.corrosion_rates_for_joint_from_context">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">corrosion_rates_for_joint_from_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">corrosion_model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return ``{rate_col: avg_rate_mm_yr}`` for a single joint over all intervals.</span>
+
+<span class="sd">    Convenience multi-interval variant of</span>
+<span class="sd">    :func:`corrosion_rate_for_joint_interval`; builds no DataFrame.</span>
+<span class="sd">    """</span>
+    <span class="n">rates</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">context</span><span class="p">[</span><span class="s2">"degenerate"</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">rates</span>
+
+    <span class="n">esp_joint_start_idx</span> <span class="o">=</span> <span class="n">context</span><span class="p">[</span><span class="s2">"esp_joint_start_idx"</span><span class="p">]</span>
+    <span class="n">active_idx</span> <span class="o">=</span> <span class="n">total_idx</span> <span class="o">-</span> <span class="n">esp_joint_start_idx</span>
+    <span class="k">if</span> <span class="n">active_idx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">active_idx</span> <span class="o">&gt;=</span> <span class="n">context</span><span class="p">[</span><span class="s2">"n_active_joints"</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">rates</span>
+
+    <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">context</span><span class="p">[</span><span class="s2">"intervals"</span><span class="p">]:</span>
+        <span class="n">rates</span><span class="p">[</span><span class="n">interval</span><span class="p">[</span><span class="s2">"rate_col"</span><span class="p">]]</span> <span class="o">=</span> <span class="n">corrosion_rate_for_joint_interval</span><span class="p">(</span>
+            <span class="n">context</span><span class="p">,</span> <span class="n">total_idx</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">corrosion_model</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">rates</span></div>
+
+
+
+<div class="viewcode-block" id="get_corrosion_rate_from_prod_data">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_prod_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_corrosion_rate_from_prod_data</span><span class="p">(</span>
+    <span class="n">well_tally</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">corrosion_models</span><span class="p">,</span> <span class="n">co2_models</span><span class="p">,</span> <span class="n">vlp</span><span class="p">,</span> <span class="n">esp_joint_start_idx</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute corrosion rate from production data using VLP per-joint P/T.</span>
+
+<span class="sd">    Splits the production window into intervals defined by log dates from</span>
+<span class="sd">    ``inputs["logs_metadata"]``.  For each time step within an interval the</span>
+<span class="sd">    VLP model is run to obtain pressure and temperature at every joint depth,</span>
+<span class="sd">    then CO2 partial pressure and corrosion rate are computed per joint.</span>
+
+<span class="sd">    Thin wrapper over :func:`build_prod_corrosion_context` +</span>
+<span class="sd">    :func:`corrosion_rates_from_context`; the split lets the calibration loop</span>
+<span class="sd">    reuse the precomputed (parameter-independent) hydraulics/PVT/CO2 context.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    esp_joint_start_idx : int</span>
+<span class="sd">        First tally index at or below the ESP.  Joints ``0..esp_joint_start_idx-1``</span>
+<span class="sd">        are above the ESP and receive ``NaN`` corrosion.  The ESP joint</span>
+<span class="sd">        (``active_idx == 0``) uses the measured inlet P/T directly; the VLP</span>
+<span class="sd">        geometry and outputs cover only the joints *below* the ESP.</span>
+<span class="sd">        ``corrosion_models`` / ``co2_models`` correspond to all active joints</span>
+<span class="sd">        (ESP joint + those below).  Use 0 (default) for injection wells where</span>
+<span class="sd">        the full tally is active and VLP covers all joints.</span>
+
+<span class="sd">    Returns a DataFrame with ``'Joint No.'`` and, for each interval, both a</span>
+<span class="sd">    ``'Corrosion rate [mm/year] (date1 -&gt; date2)'`` column and a</span>
+<span class="sd">    ``'Corroded [mm] (date1 -&gt; date2)'`` column.</span>
+<span class="sd">    """</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">build_prod_corrosion_context</span><span class="p">(</span>
+        <span class="n">well_tally</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="p">,</span>
+        <span class="n">vlp</span><span class="p">,</span>
+        <span class="n">co2_models</span><span class="p">,</span>
+        <span class="n">esp_joint_start_idx</span><span class="o">=</span><span class="n">esp_joint_start_idx</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">corrosion_rates_from_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">corrosion_models</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_single_reading_corrosion">
+<a class="viewcode-back" href="../../../codedocumentation/gemini_application.wims.corrosion_from_prod_data.html#gemini_application.wims.corrosion_from_prod_data.compute_single_reading_corrosion">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_single_reading_corrosion</span><span class="p">(</span>
+    <span class="n">inputs</span><span class="p">,</span>
+    <span class="n">outputs</span><span class="p">,</span>
+    <span class="n">vlp</span><span class="p">,</span>
+    <span class="n">co2_models</span><span class="p">,</span>
+    <span class="n">corrosion_models</span><span class="p">,</span>
+    <span class="n">flow_row</span><span class="p">,</span>
+    <span class="n">press_row</span><span class="p">,</span>
+    <span class="n">temp_row</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="p">,</span>
+    <span class="n">end_date</span><span class="p">,</span>
+    <span class="n">column_label</span><span class="p">,</span>
+    <span class="n">esp_joint_start_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Compute corrosion for a single reading interval.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    esp_joint_start_idx : int</span>
+<span class="sd">        First tally index at or below the ESP (production wells).</span>
+<span class="sd">        The ESP joint uses measured P/T directly; VLP covers only joints</span>
+<span class="sd">        below.  Joints above the ESP get zero corrosion.</span>
+<span class="sd">    """</span>
+    <span class="c1"># -- convert inlet readings to VLP units --------------------------------</span>
+    <span class="n">n_total_joints</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">"well_tally"</span><span class="p">])</span>
+    <span class="n">n_active_joints</span> <span class="o">=</span> <span class="n">n_total_joints</span> <span class="o">-</span> <span class="n">esp_joint_start_idx</span>
+    <span class="n">has_esp</span> <span class="o">=</span> <span class="n">esp_joint_start_idx</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">partial_corrosion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_total_joints</span><span class="p">)</span>
+
+    <span class="n">duration_hours</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_date</span> <span class="o">-</span> <span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mf">3600.0</span>
+    <span class="k">if</span> <span class="n">duration_hours</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">duration_hours</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="n">flow_val</span> <span class="o">=</span> <span class="n">flow_row</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span> <span class="o">/</span> <span class="mf">3600.0</span>
+    <span class="n">pres_bar</span> <span class="o">=</span> <span class="n">press_row</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span>
+    <span class="n">temp_c</span> <span class="o">=</span> <span class="n">temp_row</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span>
+    <span class="n">pres_pa</span> <span class="o">=</span> <span class="n">pres_bar</span> <span class="o">*</span> <span class="mf">1e5</span>
+    <span class="n">temp_k</span> <span class="o">=</span> <span class="n">temp_c</span> <span class="o">+</span> <span class="mf">273.15</span>
+
+    <span class="c1"># -- build per-joint P/T arrays -----------------------------------------</span>
+    <span class="k">if</span> <span class="n">has_esp</span><span class="p">:</span>
+        <span class="n">n_vlp_joints</span> <span class="o">=</span> <span class="n">n_active_joints</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">joint_pres_bar</span> <span class="o">=</span> <span class="p">[</span><span class="n">pres_bar</span><span class="p">]</span>
+        <span class="n">joint_temp_c</span> <span class="o">=</span> <span class="p">[</span><span class="n">temp_c</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">n_vlp_joints</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">vlp_input</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">"pressure"</span><span class="p">:</span> <span class="n">pres_pa</span><span class="p">,</span>
+                <span class="s2">"temperature"</span><span class="p">:</span> <span class="n">temp_k</span><span class="p">,</span>
+                <span class="s2">"flowrate"</span><span class="p">:</span> <span class="n">flow_val</span><span class="p">,</span>
+                <span class="s2">"temperature_ambient"</span><span class="p">:</span> <span class="mf">15.0</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span>
+                <span class="s2">"direction"</span><span class="p">:</span> <span class="s2">"down"</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">vlp</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">vlp_input</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">vlp_output</span> <span class="o">=</span> <span class="n">vlp</span><span class="o">.</span><span class="n">get_output</span><span class="p">()</span>
+            <span class="n">joint_pres_bar</span> <span class="o">+=</span> <span class="p">[</span><span class="n">p</span> <span class="o">/</span> <span class="mf">1e5</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">vlp_output</span><span class="p">[</span><span class="s2">"section_pressure_output"</span><span class="p">]]</span>
+            <span class="n">joint_temp_c</span> <span class="o">+=</span> <span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mf">273.15</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">vlp_output</span><span class="p">[</span><span class="s2">"section_temperature_output"</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vlp_input</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"pressure"</span><span class="p">:</span> <span class="n">pres_pa</span><span class="p">,</span>
+            <span class="s2">"temperature"</span><span class="p">:</span> <span class="n">temp_k</span><span class="p">,</span>
+            <span class="s2">"flowrate"</span><span class="p">:</span> <span class="n">flow_val</span><span class="p">,</span>
+            <span class="s2">"temperature_ambient"</span><span class="p">:</span> <span class="mf">15.0</span> <span class="o">+</span> <span class="mf">273.15</span><span class="p">,</span>
+            <span class="s2">"direction"</span><span class="p">:</span> <span class="s2">"down"</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">vlp</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">vlp_input</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">vlp_output</span> <span class="o">=</span> <span class="n">vlp</span><span class="o">.</span><span class="n">get_output</span><span class="p">()</span>
+        <span class="n">joint_pres_bar</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="o">/</span> <span class="mf">1e5</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">vlp_output</span><span class="p">[</span><span class="s2">"section_pressure_output"</span><span class="p">]]</span>
+        <span class="n">joint_temp_c</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mf">273.15</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">vlp_output</span><span class="p">[</span><span class="s2">"section_temperature_output"</span><span class="p">]]</span>
+
+    <span class="c1"># -- compute corrosion per active joint via PVT -&gt; CO2 -&gt; corrosion -----</span>
+    <span class="k">for</span> <span class="n">active_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_active_joints</span><span class="p">):</span>
+        <span class="n">sec_temp_c</span> <span class="o">=</span> <span class="n">joint_temp_c</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span>
+        <span class="n">sec_pres_bar</span> <span class="o">=</span> <span class="n">joint_pres_bar</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span>
+
+        <span class="p">(</span><span class="n">rho_g</span><span class="p">,</span> <span class="n">_rho_l</span><span class="p">,</span> <span class="n">_gmf</span><span class="p">,</span> <span class="n">_eta_g</span><span class="p">,</span> <span class="n">_eta_l</span><span class="p">,</span> <span class="n">_cp_g</span><span class="p">,</span> <span class="n">_cp_l</span><span class="p">,</span> <span class="n">_k_g</span><span class="p">,</span> <span class="n">_k_l</span><span class="p">,</span> <span class="n">_sigma</span><span class="p">)</span> <span class="o">=</span> <span class="n">vlp</span><span class="o">.</span><span class="n">PVT</span><span class="o">.</span><span class="n">get_pvt</span><span class="p">(</span>
+            <span class="n">sec_temp_c</span><span class="p">,</span> <span class="n">sec_pres_bar</span>
+        <span class="p">)</span>
+
+        <span class="n">co2_input</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"gas_pressure"</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="s2">"co2_mol_fraction"</span><span class="p">:</span> <span class="mf">0.1882</span><span class="p">,</span>
+            <span class="s2">"gas_water_ratio"</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s2">"temperature_sample"</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span>
+            <span class="s2">"temperature_system"</span><span class="p">:</span> <span class="n">sec_temp_c</span><span class="p">,</span>
+            <span class="s2">"gas_molecular_weight"</span><span class="p">:</span> <span class="mf">22.955</span><span class="p">,</span>
+            <span class="s2">"gas_density"</span><span class="p">:</span> <span class="n">rho_g</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">co2_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">co2_input</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">co2_pp</span> <span class="o">=</span> <span class="n">co2_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span><span class="o">.</span><span class="n">get_output</span><span class="p">()[</span><span class="s2">"CO2 Partial Pressure [bar]"</span><span class="p">]</span>
+
+        <span class="n">corr_input</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"pressure"</span><span class="p">:</span> <span class="n">sec_pres_bar</span><span class="p">,</span>
+            <span class="s2">"temperature"</span><span class="p">:</span> <span class="n">sec_temp_c</span><span class="p">,</span>
+            <span class="s2">"co2_partial_pressure"</span><span class="p">:</span> <span class="n">co2_pp</span><span class="p">,</span>
+            <span class="s2">"flow_rate"</span><span class="p">:</span> <span class="n">flow_val</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">corrosion_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span><span class="o">.</span><span class="n">calculate_output</span><span class="p">(</span><span class="n">corr_input</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">corrosion_rate</span> <span class="o">=</span> <span class="n">corrosion_models</span><span class="p">[</span><span class="n">active_idx</span><span class="p">]</span><span class="o">.</span><span class="n">get_output</span><span class="p">()[</span><span class="s2">"corrosion_rate"</span><span class="p">]</span>
+
+        <span class="n">total_idx</span> <span class="o">=</span> <span class="n">esp_joint_start_idx</span> <span class="o">+</span> <span class="n">active_idx</span>
+        <span class="n">partial_corrosion</span><span class="p">[</span><span class="n">total_idx</span><span class="p">]</span> <span class="o">+=</span> <span class="n">corrosion_rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">duration_hours</span> <span class="o">/</span> <span class="mf">8760.0</span><span class="p">)</span>
+
+    <span class="c1"># -- convert partial corrosion to rate and store ------------------------</span>
+    <span class="n">partial_corrosion</span> <span class="o">*=</span> <span class="mf">8760.0</span> <span class="o">/</span> <span class="n">duration_hours</span>
+    <span class="n">outputs</span><span class="p">[</span><span class="s2">"modelled_corrosion_rate"</span><span class="p">][</span><span class="n">column_label</span><span class="p">]</span> <span class="o">=</span> <span class="n">partial_corrosion</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

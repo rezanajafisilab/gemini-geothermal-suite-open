@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6.3.8.3. gemini_application.wims.corrosion_from_prod_data &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="6.3.8.4. gemini_application.wims.corrosion_model" href="gemini_application.wims.corrosion_model.html" />
+    <link rel="prev" title="6.3.8.2. gemini_application.wims.corrosion_from_logs" href="gemini_application.wims.corrosion_from_logs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index_models.html">5. Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index_sourcecode.html">6. Source code documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gemini_model.html">6.1. gemini_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_framework.html">6.2. gemini_framework</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gemini_application.html">6.3. gemini_application</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.application_abstract.html">6.3.1. gemini_application.application_abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.chatpopup.html">6.3.2. gemini_application.chatpopup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.esp.html">6.3.3. gemini_application.esp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.injectionwell.html">6.3.4. gemini_application.injectionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.productionwell.html">6.3.5. gemini_application.productionwell</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.reportgenerator.html">6.3.6. gemini_application.reportgenerator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gemini_application.tagbrowser.html">6.3.7. gemini_application.tagbrowser</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="gemini_application.wims.html">6.3.8. gemini_application.wims</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.common.html">6.3.8.1. gemini_application.wims.common</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_from_logs.html">6.3.8.2. gemini_application.wims.corrosion_from_logs</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">6.3.8.3. gemini_application.wims.corrosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.corrosion_model.html">6.3.8.4. gemini_application.wims.corrosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_prod_data.html">6.3.8.5. gemini_application.wims.erosion_from_prod_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_from_tally.html">6.3.8.6. gemini_application.wims.erosion_from_tally</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.erosion_model.html">6.3.8.7. gemini_application.wims.erosion_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gemini_application.wims.model_optimization.html">6.3.8.8. gemini_application.wims.model_optimization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gemini_interface.html">6.4. gemini_interface</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index_sourcecode.html"><span class="section-number">6. </span>Source code documentation</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.html"><span class="section-number">6.3. </span>gemini_application</a></li>
+          <li class="breadcrumb-item"><a href="gemini_application.wims.html"><span class="section-number">6.3.8. </span>gemini_application.wims</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6.3.8.3. </span>gemini_application.wims.corrosion_from_prod_data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/codedocumentation/gemini_application.wims.corrosion_from_prod_data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-gemini_application.wims.corrosion_from_prod_data">
+<span id="gemini-application-wims-corrosion-from-prod-data"></span><h1><span class="section-number">6.3.8.3. </span>gemini_application.wims.corrosion_from_prod_data<a class="headerlink" href="#module-gemini_application.wims.corrosion_from_prod_data" title="Link to this heading"></a></h1>
+<p>Utilities for corrosion rate estimation from production data.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.build_prod_corrosion_context" title="gemini_application.wims.corrosion_from_prod_data.build_prod_corrosion_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_prod_corrosion_context</span></code></a>(well_tally, ...)</p></td>
+<td><p>Precompute the parameter-independent inputs for prod-data corrosion.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.coarsen_timeseries_by_change_point" title="gemini_application.wims.corrosion_from_prod_data.coarsen_timeseries_by_change_point"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coarsen_timeseries_by_change_point</span></code></a>(df1, df2, df3)</p></td>
+<td><p>Coarsen three aligned time series using change-point detection.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.compute_corrosion_for_interval" title="gemini_application.wims.corrosion_from_prod_data.compute_corrosion_for_interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_corrosion_for_interval</span></code></a>(inputs, ...)</p></td>
+<td><p>Compute corrosion rate or partial corrosion for a specific interval.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.compute_single_reading_corrosion" title="gemini_application.wims.corrosion_from_prod_data.compute_single_reading_corrosion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_single_reading_corrosion</span></code></a>(inputs, ...)</p></td>
+<td><p>Compute corrosion for a single reading interval.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.corroded_mm_for_interval" title="gemini_application.wims.corrosion_from_prod_data.corroded_mm_for_interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">corroded_mm_for_interval</span></code></a>(interval, ...)</p></td>
+<td><p>Integrate one joint's corrosion model over one cached interval.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.corrosion_rate_for_joint_interval" title="gemini_application.wims.corrosion_from_prod_data.corrosion_rate_for_joint_interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">corrosion_rate_for_joint_interval</span></code></a>(context, ...)</p></td>
+<td><p>Average modelled rate [mm/year] for one joint over one specific interval.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.corrosion_rates_for_joint_from_context" title="gemini_application.wims.corrosion_from_prod_data.corrosion_rates_for_joint_from_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">corrosion_rates_for_joint_from_context</span></code></a>(...)</p></td>
+<td><p>Return <code class="docutils literal notranslate"><span class="pre">{rate_col:</span> <span class="pre">avg_rate_mm_yr}</span></code> for a single joint over all intervals.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.corrosion_rates_from_context" title="gemini_application.wims.corrosion_from_prod_data.corrosion_rates_from_context"><code class="xref py py-obj docutils literal notranslate"><span class="pre">corrosion_rates_from_context</span></code></a>(context, ...[, ...])</p></td>
+<td><p>Apply corrosion models to a precomputed context -&gt; result DataFrame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_models_segmented" title="gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_models_segmented"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_corrosion_rate_from_models_segmented</span></code></a>(...)</p></td>
+<td><p>Compute modelled corrosion rates over baseline/log-derived intervals.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_prod_data" title="gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_prod_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_corrosion_rate_from_prod_data</span></code></a>(...[, ...])</p></td>
+<td><p>Compute corrosion rate from production data using VLP per-joint P/T.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.build_prod_corrosion_context">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">build_prod_corrosion_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">co2_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_joint_start_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundaries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#build_prod_corrosion_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.build_prod_corrosion_context" title="Link to this definition"></a></dt>
+<dd><p>Precompute the parameter-independent inputs for prod-data corrosion.</p>
+<p>Runs the expensive, calibration-invariant work once – the VLP
+pressure-drop solve, PVT, and CO2 partial-pressure model – per
+interval/time-step/joint, and caches the resulting per-joint pressure,
+temperature, and CO2 partial pressure together with step durations and
+flow.  <a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.corrosion_rates_from_context" title="gemini_application.wims.corrosion_from_prod_data.corrosion_rates_from_context"><code class="xref py py-func docutils literal notranslate"><span class="pre">corrosion_rates_from_context()</span></code></a> (and the single-joint variant
+used during calibration) can then re-run only the corrosion correlation,
+which is the sole part that depends on the calibrated parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>esp_joint_start_idx</strong> (<em>int</em>) – First tally index at or below the ESP.  Joints above receive <code class="docutils literal notranslate"><span class="pre">NaN</span></code>
+corrosion; the ESP joint uses the measured inlet P/T directly and the
+VLP covers only the joints below it (see
+<a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_prod_data" title="gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_prod_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_corrosion_rate_from_prod_data()</span></code></a>).</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – When True, print interval/zero-flow diagnostics (preserves the legacy
+behaviour of the public entry point).</p></li>
+<li><p><strong>boundaries</strong> (<em>list</em><em> of </em><em>datetime-like</em><em> or </em><em>None</em>) – Explicit interval boundaries (&gt;= 2, ascending).  When provided they are
+used directly instead of being derived from the log-date metadata – the
+prediction path passes <code class="docutils literal notranslate"><span class="pre">[latest_log_date,</span> <span class="pre">now]</span></code> to build a single
+forward window.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Context with <code class="docutils literal notranslate"><span class="pre">joint_labels</span></code>, <code class="docutils literal notranslate"><span class="pre">n_total_joints</span></code>, <code class="docutils literal notranslate"><span class="pre">n_active_joints</span></code>,
+<code class="docutils literal notranslate"><span class="pre">esp_joint_start_idx</span></code>, <code class="docutils literal notranslate"><span class="pre">degenerate</span></code> (bool), and <code class="docutils literal notranslate"><span class="pre">intervals</span></code> – a
+list of per-interval dicts holding the cached arrays.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.coarsen_timeseries_by_change_point">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">coarsen_timeseries_by_change_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'value'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecimate_bin_hours</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#coarsen_timeseries_by_change_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.coarsen_timeseries_by_change_point" title="Link to this definition"></a></dt>
+<dd><p>Coarsen three aligned time series using change-point detection.</p>
+<p>When the native sampling interval is finer than <em>predecimate_bin_hours</em>,
+means are computed in fixed-duration bins first; PELT runs on that coarse
+flow series, then breakpoints are mapped back to the original resolution
+for segment averaging.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.compute_corrosion_for_interval">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">compute_corrosion_for_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">co2_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrosion_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_switch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_joint_start_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#compute_corrosion_for_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.compute_corrosion_for_interval" title="Link to this definition"></a></dt>
+<dd><p>Compute corrosion rate or partial corrosion for a specific interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>esp_joint_start_idx</strong> (<em>int</em>) – First tally index at or below the ESP (production wells).
+<code class="docutils literal notranslate"><span class="pre">corrosion_models</span></code> and <code class="docutils literal notranslate"><span class="pre">co2_models</span></code> cover only joints from this
+index onward.  Joints above get zero corrosion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.compute_single_reading_corrosion">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">compute_single_reading_corrosion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">co2_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrosion_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flow_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">press_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_joint_start_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#compute_single_reading_corrosion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.compute_single_reading_corrosion" title="Link to this definition"></a></dt>
+<dd><p>Compute corrosion for a single reading interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>esp_joint_start_idx</strong> (<em>int</em>) – First tally index at or below the ESP (production wells).
+The ESP joint uses measured P/T directly; VLP covers only joints
+below.  Joints above the ESP get zero corrosion.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.corroded_mm_for_interval">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">corroded_mm_for_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrosion_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#corroded_mm_for_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.corroded_mm_for_interval" title="Link to this definition"></a></dt>
+<dd><p>Integrate one joint’s corrosion model over one cached interval.</p>
+<p>Returns the corroded thickness [mm] for <code class="docutils literal notranslate"><span class="pre">active_idx</span></code> over <code class="docutils literal notranslate"><span class="pre">interval</span></code> by
+summing <code class="docutils literal notranslate"><span class="pre">rate</span> <span class="pre">*</span> <span class="pre">step_duration</span></code> across the interval’s effective steps.  This
+is the shared inner loop used by the full-table, single-joint, and
+single-(joint, interval) entry points.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.corrosion_rate_for_joint_interval">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">corrosion_rate_for_joint_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrosion_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#corrosion_rate_for_joint_interval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.corrosion_rate_for_joint_interval" title="Link to this definition"></a></dt>
+<dd><p>Average modelled rate [mm/year] for one joint over one specific interval.</p>
+<p>Single-(joint, interval) entry point used by the per-interval calibration:
+it evaluates only the requested interval’s cached arrays, so each SLSQP step
+touches the minimum amount of work.  Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> when the joint is out
+of range, otherwise <code class="docutils literal notranslate"><span class="pre">corroded_mm</span> <span class="pre">/</span> <span class="pre">interval_duration_yr</span></code> (0.0 for a
+zero-duration interval).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.corrosion_rates_for_joint_from_context">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">corrosion_rates_for_joint_from_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrosion_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#corrosion_rates_for_joint_from_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.corrosion_rates_for_joint_from_context" title="Link to this definition"></a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">{rate_col:</span> <span class="pre">avg_rate_mm_yr}</span></code> for a single joint over all intervals.</p>
+<p>Convenience multi-interval variant of
+<a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.corrosion_rate_for_joint_interval" title="gemini_application.wims.corrosion_from_prod_data.corrosion_rate_for_joint_interval"><code class="xref py py-func docutils literal notranslate"><span class="pre">corrosion_rate_for_joint_interval()</span></code></a>; builds no DataFrame.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.corrosion_rates_from_context">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">corrosion_rates_from_context</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrosion_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#corrosion_rates_from_context"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.corrosion_rates_from_context" title="Link to this definition"></a></dt>
+<dd><p>Apply corrosion models to a precomputed context -&gt; result DataFrame.</p>
+<p>Re-runs only the (cheap) corrosion correlation over the cached per-joint
+pressure/temperature/CO2 arrays, reproducing the output of
+<a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_prod_data" title="gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_prod_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_corrosion_rate_from_prod_data()</span></code></a> for the current model parameters.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_models_segmented">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">get_corrosion_rate_from_models_segmented</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrosion_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">co2_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibrated_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#get_corrosion_rate_from_models_segmented"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_models_segmented" title="Link to this definition"></a></dt>
+<dd><p>Compute modelled corrosion rates over baseline/log-derived intervals.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_prod_data">
+<span class="sig-prename descclassname"><span class="pre">gemini_application.wims.corrosion_from_prod_data.</span></span><span class="sig-name descname"><span class="pre">get_corrosion_rate_from_prod_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">well_tally</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">corrosion_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">co2_models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vlp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">esp_joint_start_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gemini_application/wims/corrosion_from_prod_data.html#get_corrosion_rate_from_prod_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gemini_application.wims.corrosion_from_prod_data.get_corrosion_rate_from_prod_data" title="Link to this definition"></a></dt>
+<dd><p>Compute corrosion rate from production data using VLP per-joint P/T.</p>
+<p>Splits the production window into intervals defined by log dates from
+<code class="docutils literal notranslate"><span class="pre">inputs[&quot;logs_metadata&quot;]</span></code>.  For each time step within an interval the
+VLP model is run to obtain pressure and temperature at every joint depth,
+then CO2 partial pressure and corrosion rate are computed per joint.</p>
+<p>Thin wrapper over <a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.build_prod_corrosion_context" title="gemini_application.wims.corrosion_from_prod_data.build_prod_corrosion_context"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_prod_corrosion_context()</span></code></a> +
+<a class="reference internal" href="#gemini_application.wims.corrosion_from_prod_data.corrosion_rates_from_context" title="gemini_application.wims.corrosion_from_prod_data.corrosion_rates_from_context"><code class="xref py py-func docutils literal notranslate"><span class="pre">corrosion_rates_from_context()</span></code></a>; the split lets the calibration loop
+reuse the precomputed (parameter-independent) hydraulics/PVT/CO2 context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>esp_joint_start_idx</strong> (<em>int</em>) – First tally index at or below the ESP.  Joints <code class="docutils literal notranslate"><span class="pre">0..esp_joint_start_idx-1</span></code>
+are above the ESP and receive <code class="docutils literal notranslate"><span class="pre">NaN</span></code> corrosion.  The ESP joint
+(<code class="docutils literal notranslate"><span class="pre">active_idx</span> <span class="pre">==</span> <span class="pre">0</span></code>) uses the measured inlet P/T directly; the VLP
+geometry and outputs cover only the joints <em>below</em> the ESP.
+<code class="docutils literal notranslate"><span class="pre">corrosion_models</span></code> / <code class="docutils literal notranslate"><span class="pre">co2_models</span></code> correspond to all active joints
+(ESP joint + those below).  Use 0 (default) for injection wells where
+the full tally is active and VLP covers all joints.</p></li>
+<li><p><strong>and</strong> (<em>Returns a DataFrame with 'Joint No.'</em>)</p></li>
+<li><p><strong>interval</strong> (<em>for each</em>)</p></li>
+<li><p><strong>a</strong> (<em>'Corrosion rate</em><em> [</em><em>mm/year</em><em>] </em><em>(</em><em>date1 -&gt; date2</em><em>)</em><em>' column and</em>)</p></li>
+<li><p><strong>a</strong></p></li>
+<li><p><strong>column.</strong> (<em>'Corroded</em><em> [</em><em>mm</em><em>] </em><em>(</em><em>date1 -&gt; date2</em><em>)</em><em>'</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="gemini_application.wims.corrosion_from_logs.html" class="btn btn-neutral float-left" title="6.3.8.2. gemini_application.wims.corrosion_from_logs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gemini_application.wims.corrosion_model.html" class="btn btn-neutral float-right" title="6.3.8.4. gemini_application.wims.corrosion_model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

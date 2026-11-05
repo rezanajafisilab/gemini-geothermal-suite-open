@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gemini_interface.blueprint.app_chatpopup.routes &mdash; GEMINI Geothermal Digital Twin (dioscuri)</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=14520fd3"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            GEMINI Geothermal Digital Twin
+          </a>
+              <div class="version">
+                dioscuri
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_about_gemini.html">1. About GEMINI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_getting_started.html">2. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_setup.html">3. Set-up</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_applications.html">4. Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_models.html">5. Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index_sourcecode.html">6. Source code documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary.html">7. Glossary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">GEMINI Geothermal Digital Twin</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">gemini_interface.blueprint.app_chatpopup.routes</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for gemini_interface.blueprint.app_chatpopup.routes</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">Chat Popup Application Routes.</span>
+
+<span class="sd">=============================</span>
+
+<span class="sd">This module handles AI-powered chat interface with RAG (Retrieval-Augmented Generation) capabilities</span>
+<span class="sd">including message processing and response generation.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">celery</span><span class="w"> </span><span class="kn">import</span> <span class="n">Celery</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_application.chatpopup.chatpopup</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatPopup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gemini_interface.blueprint.celerytasks</span><span class="w"> </span><span class="kn">import</span> <span class="n">rag_generate_response</span>
+
+<span class="c1"># Create the chat popup application blueprint</span>
+<span class="n">app_chatpopup</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">"app_chatpopup"</span><span class="p">,</span> <span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Initialize Celery for background task processing</span>
+<span class="n">celery</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span>
+    <span class="s2">"gemini-celery-app"</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CELERY_RESULT_BACKEND"</span><span class="p">,</span> <span class="s2">"redis://localhost:6379"</span><span class="p">),</span>
+    <span class="n">broker</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CELERY_BROKER_URL"</span><span class="p">,</span> <span class="s2">"redis://localhost:6379"</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># Global application instance for RAG operations</span>
+<span class="n">app_instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="load_plant">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_chatpopup.routes.html#gemini_interface.blueprint.app_chatpopup.routes.load_plant">[docs]</a>
+<span class="nd">@app_chatpopup</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/chatpopup/load_plant"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_plant</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Load a plant/project into the chat popup application instance."""</span>
+    <span class="k">global</span> <span class="n">app_instance</span>
+
+    <span class="n">app_instance</span> <span class="o">=</span> <span class="n">ChatPopup</span><span class="p">()</span>
+
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">load_plant</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">"GEMINI_PROJECT_FOLDER"</span><span class="p">],</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"field_name"</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="s2">"OK"</span></div>
+
+
+
+<div class="viewcode-block" id="env_bool">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_chatpopup.routes.html#gemini_interface.blueprint.app_chatpopup.routes.env_bool">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">env_bool</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Read an environment variable and interpret it as a boolean.</span>
+
+<span class="sd">    Returns `default` if the variable is not set. Truthy values are</span>
+<span class="sd">    case-insensitive and include: "1", "true", "yes", "y", and "on".</span>
+<span class="sd">    """</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">default</span>
+    <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"1"</span><span class="p">,</span> <span class="s2">"true"</span><span class="p">,</span> <span class="s2">"yes"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"on"</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="get_parameters">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_chatpopup.routes.html#gemini_interface.blueprint.app_chatpopup.routes.get_parameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_parameters</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Get configuration parameters for RAG and LLM integration."""</span>
+    <span class="c1"># Validate app_instance and plant name</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">app_instance</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">app_instance</span><span class="p">,</span> <span class="s2">"plant"</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"error"</span><span class="p">:</span> <span class="s2">"Plant not loaded. Call /load_plant first."</span><span class="p">}),</span> <span class="mi">400</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"docs_dir"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">project_path</span><span class="p">,</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">"rag_data"</span>
+    <span class="p">)</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"ollama_llm_model"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span>
+        <span class="s2">"LLM_MODEL_VERSION"</span>
+    <span class="p">)</span>  <span class="c1"># Fast--&gt;llama3.2, Accurate--&gt;mistral-nemo</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"ollama_translation_llm"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"TRANSLATION_LLM_MODEL"</span><span class="p">)</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"ollama_embeddings_model"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"EMBED_MODEL_VERSION"</span><span class="p">)</span>
+
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"chunk_size"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"collection_name"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"gemini_rag_collection_"</span> <span class="o">+</span> <span class="n">app_instance</span><span class="o">.</span><span class="n">plant</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"chunk_overlap"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"retrieve_candidates"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">60</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"mmr_lambda"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.75</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"max_context_chunks"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"max_context_chars"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16000</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"embedding_batch_size"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"chroma_add_batch_size"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">512</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"embedding_chunk_size"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">140</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"embedding_chunk_overlap"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"debug"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"chromadb_use_http"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"num_relevant_docs"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">18</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"similarity_threshold"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+    <span class="c1"># Connection to docker containers</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"chromadb_port"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"CHROMADB_GUI_PORT"</span><span class="p">))</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"chromadb_host"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"CHROMADB_GUI_HOST"</span><span class="p">)</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"chromadb_use_http"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"ollama_port"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"OLLAMA_GUI_PORT"</span><span class="p">))</span>
+    <span class="n">parameters</span><span class="p">[</span><span class="s2">"ollama_host"</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">"OLLAMA_GUI_HOST"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parameters</span></div>
+
+
+
+<div class="viewcode-block" id="initialize_rag">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_chatpopup.routes.html#gemini_interface.blueprint.app_chatpopup.routes.initialize_rag">[docs]</a>
+<span class="nd">@app_chatpopup</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/chatpopup/initialize_rag"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialize_rag</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Initialize the RAG system for chat functionality."""</span>
+    <span class="c1"># Initialize</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">get_parameters</span><span class="p">()</span>
+
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">init_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="c1"># Load documents</span>
+    <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="c1"># app_instance.initialize_model()</span>
+    <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">toc</span> <span class="o">-</span> <span class="n">tic</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"App: INITIALIZATION COMPLETED (</span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> s)"</span><span class="p">)</span>
+
+    <span class="c1"># Load documents and prepare embeddings</span>
+    <span class="n">tic</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">app_instance</span><span class="o">.</span><span class="n">update_data</span><span class="p">()</span>
+    <span class="n">toc</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">toc</span> <span class="o">-</span> <span class="n">tic</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"App: DATABASE UPDATED (</span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> s)"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"message"</span><span class="p">:</span> <span class="s2">"RAG initialization successful"</span><span class="p">}),</span> <span class="mi">200</span></div>
+
+
+
+<div class="viewcode-block" id="send_message">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_chatpopup.routes.html#gemini_interface.blueprint.app_chatpopup.routes.send_message">[docs]</a>
+<span class="nd">@app_chatpopup</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/chatpopup/send_message"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">send_message</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Send a message to the RAG system for processing."""</span>
+    <span class="n">user_message</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"message"</span><span class="p">]</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">get_parameters</span><span class="p">()</span>
+    <span class="c1"># Process the message</span>
+    <span class="c1"># response = app_instance.process_prompt(user_message)</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">rag_generate_response</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">user_message</span><span class="p">)</span>
+
+    <span class="n">task_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">"task_id"</span><span class="p">:</span> <span class="n">task_id</span><span class="p">}),</span> <span class="mi">202</span></div>
+
+
+
+<div class="viewcode-block" id="get_rag_response">
+<a class="viewcode-back" href="../../../../codedocumentation/gemini_interface.blueprint.app_chatpopup.routes.html#gemini_interface.blueprint.app_chatpopup.routes.get_rag_response">[docs]</a>
+<span class="nd">@app_chatpopup</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">"/app/chatpopup/get_rag_response"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">"POST"</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_rag_response</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Get the RAG response from the background task."""</span>
+    <span class="n">task_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s2">"task_id"</span><span class="p">]</span>
+
+    <span class="n">task_result</span> <span class="o">=</span> <span class="n">celery</span><span class="o">.</span><span class="n">AsyncResult</span><span class="p">(</span><span class="n">task_id</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">task_result</span><span class="o">.</span><span class="n">status</span>
+    <span class="n">result_data</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Initialize result_data to None</span>
+
+    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"SUCCESS"</span><span class="p">:</span>
+        <span class="n">result_data</span> <span class="o">=</span> <span class="n">task_result</span><span class="o">.</span><span class="n">result</span>
+    <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"FAILURE"</span><span class="p">:</span>
+        <span class="n">result_data</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">task_result</span><span class="o">.</span><span class="n">result</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ERROR: Task </span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2"> failed with result: </span><span class="si">{</span><span class="n">result_data</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"task_id"</span><span class="p">:</span> <span class="n">task_id</span><span class="p">,</span> <span class="s2">"task_status"</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span> <span class="s2">"task_result"</span><span class="p">:</span> <span class="n">result_data</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, TNO.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
